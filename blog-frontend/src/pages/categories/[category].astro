@@ -3,36 +3,34 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Card from '../../components/Card.astro';
 import AdSense from '../../components/AdSense.astro';
+import { getCategorySlug, getCategoryName } from '../../utils/slug';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog', ({ data }) => {
     return import.meta.env.PROD ? !data.draft : true;
   });
 
-  const categoryMap = new Map<string, string>();
-  allPosts.forEach(post => {
-    const slug = post.data.category.toLowerCase().replace(/\s+/g, '-');
-    categoryMap.set(slug, post.data.category);
-  });
+  const knownCategories = ['ai-productivity', 'tech-dev', 'side-income'];
+  const postCategories = allPosts.map(p => getCategorySlug(p.data.category));
+  const uniqueCategorySlugs = [...new Set([...knownCategories, ...postCategories])];
 
-  // Default known categories
-  categoryMap.set('ai-productivity', 'AI & 생산성');
-  categoryMap.set('tech-dev', '개발 & 테크');
-  categoryMap.set('side-income', '스마트 부업');
-
-  return Array.from(categoryMap.entries()).map(([slug, name]) => {
+  return uniqueCategorySlugs.map(slug => {
     const filteredPosts = allPosts
-      .filter(post => post.data.category.toLowerCase().replace(/\s+/g, '-') === slug)
+      .filter(post => getCategorySlug(post.data.category) === slug)
       .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
     return {
       params: { category: slug },
-      props: { categoryName: name, posts: filteredPosts },
+      props: {
+        categorySlug: slug,
+        categoryName: getCategoryName(slug),
+        posts: filteredPosts,
+      },
     };
   });
 }
 
-const { categoryName, posts } = Astro.props;
+const { categorySlug, categoryName, posts } = Astro.props;
 ---
 
 <BaseLayout

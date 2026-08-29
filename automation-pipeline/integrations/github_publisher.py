@@ -1,5 +1,6 @@
 import os
 import re
+import time
 import yaml
 import subprocess
 from datetime import datetime
@@ -22,27 +23,35 @@ class GitHubPublisher:
 
         os.makedirs(self.content_dir, exist_ok=True)
 
-    def generate_slug(self, title: str) -> str:
-        """한글 및 특수문자를 SEO 친화적인 URL 슬러그로 변환"""
-        # 영문, 숫자, 한글, 하이픈만 보존
-        slug = re.sub(r"[^\w\s-]", "", title).strip().lower()
-        slug = re.sub(r"[\s_]+", "-", slug)
+    def generate_slug(self, title: str, category: str = "general") -> str:
+        """
+        GitHub Pages 404 방지를 위해 영문 및 날짜 기반의 깔끔한 URL 슬러그 생성
+        """
         today_str = datetime.now().strftime("%Y-%m-%d")
-        return f"{today_str}-{slug[:45]}"
+        # 영문/숫자 단어 추출
+        ascii_words = re.findall(r"[a-zA-Z0-9]+", title.lower())
+        if ascii_words:
+            keyword_slug = "-".join(ascii_words[:4])
+        else:
+            cat_slug = "ai-tips" if "ai" in category.lower() else ("dev-tips" if "개발" in category else "passive-income")
+            keyword_slug = f"{cat_slug}-{int(time.time()) % 10000}"
+
+        return f"{today_str}-{keyword_slug}"
 
     def publish_article(self, article: Dict[str, Any]) -> str:
         """
         승인된 아티클 딕셔너리를 마크다운(.md) 파일로 저장하고 Git 커밋
         """
         title = article.get("title", "무제")
-        slug = self.generate_slug(title)
+        category = article.get("category", "General")
+        slug = self.generate_slug(title, category)
         filepath = os.path.join(self.content_dir, f"{slug}.md")
 
         frontmatter_data = {
             "title": title,
             "description": article.get("description", ""),
             "pubDate": datetime.now().strftime("%Y-%m-%d"),
-            "category": article.get("category", "General"),
+            "category": category,
             "tags": article.get("tags", []),
             "author": article.get("author", "TechFlow Editor"),
             "readingTime": article.get("readingTime", "5 min read"),
@@ -75,7 +84,7 @@ class GitHubPublisher:
         return filepath
 
     def _git_commit_and_push(self, filepath: str, title: str):
-        """Git 커밋 실행"""
+        """Git 커밋 및 Push 실행"""
         try:
             subprocess.run(["git", "add", filepath], cwd=self.repo_root, check=False)
             commit_msg = f"feat(blog): publish new post - {title[:30]}"

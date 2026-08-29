@@ -14,10 +14,10 @@ const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pu
 const recentPosts = sortedPosts.slice(0, 6);
 
 const categories = [
-  { name: '전체', href: `${base}/blog` },
-  { name: 'AI & 생산성', href: `${base}/categories/ai-productivity` },
-  { name: '개발 & 테크', href: `${base}/categories/tech-dev` },
-  { name: '스마트 부업', href: `${base}/categories/side-income` },
+  { name: '전체 글', href: `${base}/blog/` },
+  { name: 'AI & 생산성', href: `${base}/categories/ai-productivity/` },
+  { name: '개발 & 테크', href: `${base}/categories/tech-dev/` },
+  { name: '스마트 부업', href: `${base}/categories/side-income/` },
 ];
 ---
 
@@ -60,7 +60,7 @@ const categories = [
         <h2 class="text-2xl font-bold text-slate-900 tracking-tight">최신 아티클</h2>
         <p class="text-sm text-slate-500 mt-1">에이전트가 엄선한 고품질 테크 & 생산성 가이드</p>
       </div>
-      <a href={`${base}/blog`} class="text-sm font-semibold text-blue-600 hover:text-blue-700">
+      <a href={`${base}/blog/`} class="text-sm font-semibold text-blue-600 hover:text-blue-700">
         전체보기 →
       </a>
     </div>

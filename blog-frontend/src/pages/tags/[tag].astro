@@ -3,23 +3,28 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Card from '../../components/Card.astro';
 import AdSense from '../../components/AdSense.astro';
+import { getTagSlug } from '../../utils/slug';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog', ({ data }) => {
     return import.meta.env.PROD ? !data.draft : true;
   });
 
-  const uniqueTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))];
+  const tagMap = new Map<string, string>();
+  allPosts.forEach(post => {
+    (post.data.tags || []).forEach(tag => {
+      tagMap.set(getTagSlug(tag), tag);
+    });
+  });
 
-  return uniqueTags.map(tag => {
-    const slug = tag.toLowerCase().replace(/\s+/g, '-');
+  return Array.from(tagMap.entries()).map(([slug, tagName]) => {
     const filteredPosts = allPosts
-      .filter(post => (post.data.tags || []).some(t => t.toLowerCase().replace(/\s+/g, '-') === slug))
+      .filter(post => (post.data.tags || []).some(t => getTagSlug(t) === slug))
       .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
     return {
       params: { tag: slug },
-      props: { tagName: tag, posts: filteredPosts },
+      props: { tagName, posts: filteredPosts },
     };
   });
 }

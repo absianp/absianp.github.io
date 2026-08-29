@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import AdSense from '../components/AdSense.astro';
 import TableOfContents from '../components/TableOfContents.astro';
+import { getCategorySlug, getTagSlug } from '../utils/slug';
 
 export interface Props {
   frontmatter: {
@@ -32,6 +33,7 @@ const {
 } = frontmatter;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const categorySlug = getCategorySlug(category);
 
 const formattedDate = new Intl.DateTimeFormat('ko-KR', {
   year: 'numeric',
@@ -55,17 +57,20 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
     <nav class="flex items-center gap-2 text-xs text-slate-500 mb-6 font-medium">
       <a href={`${base}/`} class="hover:text-blue-600 transition-colors">홈</a>
       <span>/</span>
-      <a href={`${base}/blog`} class="hover:text-blue-600 transition-colors">블로그</a>
+      <a href={`${base}/blog/`} class="hover:text-blue-600 transition-colors">블로그</a>
       <span>/</span>
-      <span class="text-blue-600">{category}</span>
+      <a href={`${base}/categories/${categorySlug}/`} class="text-blue-600 hover:underline">{category}</a>
     </nav>
 
     <!-- Article Header -->
     <header class="mb-8">
       <div class="flex items-center gap-2 mb-4">
-        <span class="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-semibold rounded-full">
+        <a
+          href={`${base}/categories/${categorySlug}/`}
+          class="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-semibold rounded-full hover:bg-blue-100 transition-colors"
+        >
           {category}
-        </span>
+        </a>
         <span class="text-xs text-slate-400">•</span>
         <span class="text-xs text-slate-500">{readingTime}</span>
       </div>
@@ -127,7 +132,7 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
         <span class="text-xs font-semibold text-slate-500 mr-1">태그:</span>
         {tags.map(tag => (
           <a
-            href={`${base}/tags/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+            href={`${base}/tags/${getTagSlug(tag)}/`}
             class="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-600 rounded-lg text-xs font-medium transition-colors"
           >
             #{tag}
