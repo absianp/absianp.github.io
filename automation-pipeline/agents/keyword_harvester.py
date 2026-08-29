@@ -1,12 +1,14 @@
 import os
 import json
+import re
 import random
 from typing import List, Dict, Any
 from templates.prompt_templates import KEYWORD_HARVESTER_SYSTEM_PROMPT
+from integrations.antigravity_runner import AntigravityRunner
 
 class KeywordHarvester:
     """
-    구글 트렌드, RSS 피드, 타겟 키워드 풀을 분석하여
+    Antigravity CLI / SDK 또는 RSS 트렌드를 분석하여
     수익화 및 SEO에 최적화된 블로그 포스팅 주제를 발굴하는 에이전트
     """
 
@@ -14,6 +16,7 @@ class KeywordHarvester:
         self.config = config
         self.categories = config.get("content", {}).get("categories", [])
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
+        self.antigravity_runner = AntigravityRunner(config)
         self.rss_sources = [
             "https://feeds.feedburner.com/TechCrunch/",
             "https://news.ycombinator.com/rss",
@@ -21,7 +24,6 @@ class KeywordHarvester:
         ]
 
     def fetch_trending_keywords(self) -> List[str]:
-        """최신 글로벌/국내 테크 트렌드 키워드 수집 (RSS + Fallback)"""
         collected_titles = []
         try:
             import feedparser
@@ -45,9 +47,6 @@ class KeywordHarvester:
         return collected_titles
 
     def harvest_ideas(self, target_category: str = None) -> List[Dict[str, Any]]:
-        """
-        AI 모델을 호출하여 고가치 롱테일 키워드와 포스팅 주제 후보 3~5개를 생성
-        """
         selected_cat = None
         if target_category:
             for cat in self.categories:
@@ -60,6 +59,31 @@ class KeywordHarvester:
         category_name = selected_cat["name"] if selected_cat else "AI & 생산성"
         seed_keywords = selected_cat.get("keywords", []) if selected_cat else ["AI 자동화", "부업 블로그"]
 
+        user_prompt = f"""
+카테고리: {category_name}
+시드 키워드 풀: {', '.join(seed_keywords)}
+최근 트렌드 참고: {', '.join(self.fetch_trending_keywords()[:3])}
+
+위 데이터를 바탕으로 검색량은 꾸준하면서도 구글 애드센스 고단가 광고가 잘 붙고 클릭률이 높은 실전 포스팅 주제 후보 3개를 JSON 리스트로 제안해주세요.
+"""
+
+        # 1. Antigravity CLI / SDK 우선 실행
+        raw_output = self.antigravity_runner.generate_text(
+            system_prompt=KEYWORD_HARVESTER_SYSTEM_PROMPT,
+            user_prompt=user_prompt
+        )
+
+        if raw_output:
+            try:
+                clean_json = re.sub(r"^```json\s*", "", raw_output.strip())
+                clean_json = re.sub(r"\s*```$", "", clean_json)
+                ideas = json.loads(clean_json)
+                if isinstance(ideas, list) and len(ideas) > 0:
+                    return ideas
+            except Exception:
+                pass
+
+        # 2. Gemini API 호출 시도
         if self.api_key:
             try:
                 import google.generativeai as genai
@@ -69,21 +93,14 @@ class KeywordHarvester:
                     system_instruction=KEYWORD_HARVESTER_SYSTEM_PROMPT,
                     generation_config={"response_mime_type": "application/json"}
                 )
-
-                prompt = f"""
-카테고리: {category_name}
-시드 키워드 풀: {', '.join(seed_keywords)}
-최근 트렌드 참고: {', '.join(self.fetch_trending_keywords()[:3])}
-
-위 데이터를 바탕으로 검색량은 꾸준하면서도 구글 애드센스 고단가 광고가 잘 붙고 클릭률이 높은 실전 포스팅 주제 후보 3개를 제안해주세요.
-"""
-                response = model.generate_content(prompt)
+                response = model.generate_content(user_prompt)
                 ideas = json.loads(response.text)
                 if isinstance(ideas, list) and len(ideas) > 0:
                     return ideas
             except Exception as e:
-                print(f"[KeywordHarvester] Gemini API 호출 알림 (Fallback 모드로 전환): {e}")
+                print(f"[KeywordHarvester] API 호출 예외: {e}")
 
+        # 3. Fallback 아이디어
         return self._generate_fallback_ideas(category_name, seed_keywords)
 
     def _generate_fallback_ideas(self, category: str, keywords: List[str]) -> List[Dict[str, Any]]:

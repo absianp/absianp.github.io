@@ -3,17 +3,19 @@ import json
 import re
 from typing import Dict, Any, Optional
 from templates.prompt_templates import CONTENT_WRITER_SYSTEM_PROMPT
+from integrations.antigravity_runner import AntigravityRunner
 
 class ContentWriter:
     """
-    Google Gemini 모델을 활용하여 1,500~2,500자 이상의
-    SEO 최적화 마크다운 아티클과 Schema.org FAQ를 작성하는 에이전트
+    Google Antigravity CLI / SDK 또는 로컬 모델을 활용하여
+    1,500~2,500자 이상의 SEO 최적화 마크다운 아티클과 FAQ를 작성하는 에이전트
     """
 
     def __init__(self, config: Dict[str, Any], api_key: Optional[str] = None):
         self.config = config
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         self.model_name = config.get("agent", {}).get("model_name", "gemini-2.5-flash")
+        self.antigravity_runner = AntigravityRunner(config)
 
     def write_article(self, topic: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -25,6 +27,37 @@ class ContentWriter:
         tags = topic.get("tags", ["AI", "생산성", "테크"])
         key_points = topic.get("key_points", [])
 
+        user_prompt = f"""
+[작성 요청 사양]
+- 글 제목: {title}
+- 카테고리: {category}
+- 핵심 타겟 롱테일 키워드: {target_keyword}
+- 태그 후보: {', '.join(tags)}
+- 반드시 다룰 핵심 포인트:
+{chr(10).join([f"  * {kp}" for kp in key_points])}
+
+위 내용을 토대로 서론, 본론(H2, H3, 비교 표, 실전 팁), 결론, 그리고 3개의 FAQ를 충실하게 작성해주세요.
+반드시 지정된 JSON 포맷(title, description, category, tags, readingTime, markdown_content, faqs)으로만 응답하세요.
+"""
+
+        # 1. Antigravity CLI / SDK / On-Device 로컬 엔진 우선 호출
+        raw_output = self.antigravity_runner.generate_text(
+            system_prompt=CONTENT_WRITER_SYSTEM_PROMPT,
+            user_prompt=user_prompt
+        )
+
+        if raw_output:
+            try:
+                # JSON 파싱 시도 (마크다운 코드블록 제거)
+                clean_json = re.sub(r"^```json\s*", "", raw_output.strip())
+                clean_json = re.sub(r"\s*```$", "", clean_json)
+                article_data = json.loads(clean_json)
+                if isinstance(article_data, dict) and "markdown_content" in article_data:
+                    return article_data
+            except Exception:
+                pass
+
+        # 2. Gemini Direct API 호출 시도 (API 키가 있는 경우)
         if self.api_key:
             try:
                 import google.generativeai as genai
@@ -38,26 +71,13 @@ class ContentWriter:
                         "max_output_tokens": 8192
                     }
                 )
-
-                prompt = f"""
-[작성 요청 사양]
-- 글 제목: {title}
-- 카테고리: {category}
-- 핵심 타겟 롱테일 키워드: {target_keyword}
-- 태그 후보: {', '.join(tags)}
-- 반드시 다룰 핵심 포인트:
-{chr(10).join([f"  * {kp}" for kp in key_points])}
-
-위 내용을 토대로 서론, 본론(H2, H3, 비교 표, 실전 코드/가이드), 결론, 그리고 3개의 FAQ를 충실하게 작성해주세요.
-독자가 실제로 따라 할 수 있는 구체적인 꿀팁과 인사이트를 듬뿍 담아주세요.
-"""
-                response = model.generate_content(prompt)
+                response = model.generate_content(user_prompt)
                 article_data = json.loads(response.text)
                 return article_data
             except Exception as e:
-                print(f"[ContentWriter] Gemini API 생성 예외 (스마트 Fallback 템플릿 가동): {e}")
+                print(f"[ContentWriter] API 호출 예외 (Fallback 모드로 전환): {e}")
 
-        # Fallback Mock Article Generator
+        # 3. 고품질 Fallback 템플릿 가동
         return self._generate_fallback_article(topic)
 
     def _generate_fallback_article(self, topic: Dict[str, Any]) -> Dict[str, Any]:
@@ -67,7 +87,7 @@ class ContentWriter:
         target_kw = topic.get("target_keyword", "AI 활용법")
 
         content = f"""
-급변하는 2026년 디지털 환경에서 생산성을 극대화하기 위해서는 단순한 툴 사용을 넘어 **체계적인 AI 자동화 워크플로우**를 구축해야 합니다. 본 글에서는 초보자부터 실무자까지 누구나 즉시 적용할 수 있는 핵심 전략을 정리해 드립니다.
+급변하는 2026년 디지털 환경에서 생산성을 극대화하기 위해서는 단순한 툴 사용을 넘어 **체계적인 자동화 워크플로우**를 구축해야 합니다. 본 글에서는 초보자부터 실무자까지 누구나 즉시 적용할 수 있는 핵심 전략을 정리해 드립니다.
 
 ---
 
