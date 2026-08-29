@@ -17,9 +17,11 @@ export interface Props {
     faqs?: Array<{ question: string; answer: string }>;
   };
   headings: Array<{ depth: number; slug: string; text: string }>;
+  prevPost?: { title: string; slug: string; category?: string } | null;
+  nextPost?: { title: string; slug: string; category?: string } | null;
 }
 
-const { frontmatter, headings } = Astro.props;
+const { frontmatter, headings, prevPost, nextPost } = Astro.props;
 const {
   title,
   description,
@@ -85,9 +87,11 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
 
       <!-- Author & Date Info -->
       <div class="flex items-center gap-3 p-4 bg-white rounded-xl border border-slate-200/80 text-xs text-slate-500">
-        <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
-          TF
-        </div>
+        <img
+          src={`${base}/favicon.svg`}
+          alt="앱시안(absian) 로고"
+          class="w-8 h-8 rounded-lg shadow-sm flex-shrink-0"
+        />
         <div>
           <p class="font-semibold text-slate-800">{author}</p>
           <p>발행일: {formattedDate} {updatedDate && `(최종 수정: ${new Intl.DateTimeFormat('ko-KR').format(updatedDate)})`}</p>
@@ -141,14 +145,57 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
       </div>
     )}
 
+    <!-- Prev / Next Post Navigation Cards -->
+    <nav class="my-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {prevPost ? (
+        <a
+          href={`${base}/blog/${prevPost.slug}/`}
+          class="group p-5 bg-white hover:bg-blue-50/50 rounded-2xl border border-slate-200 hover:border-blue-300 shadow-sm hover:shadow transition-all duration-200 flex flex-col justify-between text-left"
+        >
+          <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-400 group-hover:text-blue-600 mb-2 transition-colors">
+            <span>←</span>
+            <span>이전 글</span>
+          </div>
+          <p class="text-sm font-bold text-slate-900 group-hover:text-blue-600 line-clamp-2 transition-colors">
+            {prevPost.title}
+          </p>
+        </a>
+      ) : (
+        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200/60 flex items-center justify-center text-xs text-slate-400">
+          가장 첫 번째 글입니다.
+        </div>
+      )}
+
+      {nextPost ? (
+        <a
+          href={`${base}/blog/${nextPost.slug}/`}
+          class="group p-5 bg-white hover:bg-blue-50/50 rounded-2xl border border-slate-200 hover:border-blue-300 shadow-sm hover:shadow transition-all duration-200 flex flex-col justify-between text-right"
+        >
+          <div class="flex items-center justify-end gap-1.5 text-xs font-semibold text-slate-400 group-hover:text-blue-600 mb-2 transition-colors">
+            <span>다음 글</span>
+            <span>→</span>
+          </div>
+          <p class="text-sm font-bold text-slate-900 group-hover:text-blue-600 line-clamp-2 transition-colors">
+            {nextPost.title}
+          </p>
+        </a>
+      ) : (
+        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200/60 flex items-center justify-center text-xs text-slate-400">
+          가장 최신 글입니다.
+        </div>
+      )}
+    </nav>
+
     <!-- Bottom AdSense Slot -->
     <AdSense slotId="4567890123" type="bottom-banner" />
 
     <!-- Author Bio Box -->
     <div class="mt-8 p-6 bg-slate-900 text-slate-200 rounded-2xl flex items-center gap-4">
-      <div class="w-12 h-12 rounded-xl bg-blue-600 flex-shrink-0 flex items-center justify-center font-bold text-lg text-white">
-        ⚡
-      </div>
+      <img
+        src={`${base}/favicon.svg`}
+        alt="앱시안(absian) 로고"
+        class="w-12 h-12 rounded-xl shadow-md flex-shrink-0"
+      />
       <div>
         <h4 class="font-bold text-white text-sm mb-1">{author}</h4>
         <p class="text-xs text-slate-400 leading-relaxed">
