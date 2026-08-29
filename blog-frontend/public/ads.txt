@@ -1,3 +1,1 @@
-# Google AdSense Publisher verification file
-# Replace pub-XXXXXXXXXXXXXXXX with your real Google AdSense Publisher ID
-google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+google.com, pub-3054784185688248, DIRECT, f08c47fec0942fa0

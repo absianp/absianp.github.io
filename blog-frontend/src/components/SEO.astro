@@ -27,8 +27,8 @@ const {
 
 const siteTitle = 'TechFlow & AI Insights';
 const formattedTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
-const absoluteImageUrl = new URL(image, Astro.site || 'https://yourusername.github.io').href;
-const siteUrl = Astro.site?.href || 'https://yourusername.github.io';
+const absoluteImageUrl = new URL(image, Astro.site || 'https://absianp.github.io/auto-blog').href;
+const siteUrl = Astro.site?.href || 'https://absianp.github.io/auto-blog';
 
 // Structured Data: Article / BlogPosting
 const articleSchema = article ? {
@@ -106,8 +106,8 @@ const faqSchema = (faqs && faqs.length > 0) ? {
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={absoluteImageUrl} />
 
-<!-- Google AdSense Auto Ads Script (Replace YOUR_ADSENSE_CLIENT_ID with ca-pub-XXXXX) -->
-<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+<!-- Google AdSense Official Script -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3054784185688248" crossorigin="anonymous"></script>
 
 <!-- JSON-LD Structured Data for High Google Search Visibility -->
 {articleSchema && (

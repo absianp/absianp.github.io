@@ -21,7 +21,7 @@ site:
 # 3. 구글 애드센스 (Google AdSense) 설정
 adsense:
   enabled: true
-  publisher_id: "ca-pub-XXXXXXXXXXXXXXXX" # 애드센스 승인 후 발급되는 ca-pub-ID 입력
+  publisher_id: "ca-pub-3054784185688248" # 구글 애드센스 인증 완료
   auto_ads: true
   slots:
     top_banner: "1234567890"
