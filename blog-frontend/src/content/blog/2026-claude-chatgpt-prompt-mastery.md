@@ -4,7 +4,7 @@ description: "원하는 결과물을 단 한 번의 질문으로 완벽하게 �
 pubDate: 2026-08-29
 category: "AI & 생산성"
 tags: ["Claude", "ChatGPT", "프롬프트", "생성형AI", "업무효율"]
-author: "TechFlow Editor"
+author: "앱시안 (absian)"
 readingTime: "7 min read"
 featured: true
 faqs:

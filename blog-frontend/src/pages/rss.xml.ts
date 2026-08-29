@@ -6,7 +6,7 @@ export async function GET(context: any) {
   const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
   return rss({
-    title: 'TechFlow & AI Insights',
+    title: '앱시안(absian) AI & 테크 인사이트',
     description: 'AI 생산성 도구, 개발 팁, 스마트 부업 및 테크 트렌드 전문 블로그',
     site: 'https://absianp.github.io',
     items: sortedPosts.map((post) => ({

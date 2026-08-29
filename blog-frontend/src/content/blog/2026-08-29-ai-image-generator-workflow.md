@@ -9,7 +9,7 @@ tags:
 - 업무효율
 - AI자동화
 - 2026트렌드
-author: TechFlow Editor
+author: 앱시안 (absian)
 readingTime: 6 min read
 featured: false
 draft: false

@@ -10,7 +10,7 @@ const blogCollection = defineCollection({
     heroImage: z.string().optional().default('/images/default-hero.svg'),
     category: z.string().default('General'),
     tags: z.array(z.string()).default([]),
-    author: z.string().default('TechFlow Editor'),
+    author: z.string().default('앱시안 (absian)'),
     readingTime: z.string().optional().default('5 min read'),
     featured: z.boolean().optional().default(false),
     draft: z.boolean().optional().default(false),

@@ -39,7 +39,7 @@ class PerformanceTracker:
         }
 
         report_markdown = f"""
-📊 *[TechFlow 주간 블로그 운영 성과 보고서]*
+📊 *[앱시안(absian) 주간 블로그 운영 성과 보고서]*
 🗓️ *기간*: `{stats['period']}`
 
 📈 *주요 지표 (SEO & 트래픽)*

@@ -19,13 +19,13 @@ const {
   article = false,
   pubDate,
   updatedDate,
-  author = 'TechFlow Editor',
+  author = '앱시안 (absian)',
   canonicalURL = Astro.url.href,
   faqs,
   tags = [],
 } = Astro.props;
 
-const siteTitle = 'TechFlow & AI Insights';
+const siteTitle = '앱시안(absian) AI & 테크 인사이트';
 const formattedTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
 const absoluteImageUrl = new URL(image, Astro.site || 'https://absianp.github.io/auto-blog').href;
 const siteUrl = Astro.site?.href || 'https://absianp.github.io/auto-blog';

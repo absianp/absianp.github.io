@@ -4,7 +4,7 @@ description: "반복적인 엑셀 취합, 이메일 발송, 웹 데이터 크롤
 pubDate: 2026-08-29
 category: "개발 & 테크"
 tags: ["파이썬", "업무자동화", "생산성", "크롤링", "Python"]
-author: "TechFlow Editor"
+author: "앱시안 (absian)"
 readingTime: "8 min read"
 featured: true
 faqs:

@@ -11,9 +11,9 @@ engine:
 
 # 2. 블로그 사이트 메타데이터 (도메인 루트)
 site:
-  title: "TechFlow & AI Insights"
+  title: "앱시안(absian) AI & 테크 인사이트"
   description: "AI 생산성 도구, 개발 팁, 스마트 부업 및 테크 트렌드 전문 블로그"
-  author: "TechFlow Lab"
+  author: "앱시안 (absian)"
   url: "https://absianp.github.io"
   default_language: "ko"
   theme_color: "#2563eb"

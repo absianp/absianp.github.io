@@ -4,7 +4,7 @@ description: "코딩 한 줄 없이 노션, Make, Gumroad, 블로그를 연결�
 pubDate: 2026-08-29
 category: "스마트 부업"
 tags: ["노코드", "디지털노마드", "패시브인컴", "부업", "Make", "Notion"]
-author: "TechFlow Editor"
+author: "앱시안 (absian)"
 readingTime: "6 min read"
 featured: true
 faqs:

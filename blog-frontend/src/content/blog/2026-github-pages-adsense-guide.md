@@ -4,7 +4,7 @@ description: "서버 비용 0원으로 운영되는 GitHub Pages와 Astro 정적
 pubDate: 2026-08-29
 category: "스마트 부업"
 tags: ["GitHub Pages", "구글 애드센스", "블로그 부업", "Astro", "SEO 최적화"]
-author: "TechFlow Editor"
+author: "앱시안 (absian)"
 readingTime: "7 min read"
 featured: true
 faqs:

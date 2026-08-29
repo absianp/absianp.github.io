@@ -53,7 +53,7 @@ class GitHubPublisher:
             "pubDate": datetime.now().strftime("%Y-%m-%d"),
             "category": category,
             "tags": article.get("tags", []),
-            "author": article.get("author", "TechFlow Editor"),
+            "author": article.get("author", "앱시안 (absian)"),
             "readingTime": article.get("readingTime", "5 min read"),
             "featured": article.get("featured", False),
             "draft": False,
