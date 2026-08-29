@@ -11,7 +11,7 @@ from agents.content_writer import ContentWriter
 from agents.policy_inspector import PolicyInspector
 from agents.performance_tracker import PerformanceTracker
 from integrations.github_publisher import GitHubPublisher
-from integrations.google_indexing import GoogleIndexingNotifier
+from integrations.google_indexing import GoogleIndexing
 from integrations.telegram_bot import TelegramNotifier
 
 def load_config(config_path: str = "config/config.yaml") -> dict:
@@ -35,9 +35,8 @@ def run_auto_pipeline(config: dict, auto_approve: bool = True, target_category: 
     writer = ContentWriter(config)
     inspector = PolicyInspector(config)
     publisher = GitHubPublisher(config)
-    indexer = GoogleIndexingNotifier(config)
+    indexer = GoogleIndexing(config)
     telegram = TelegramNotifier(config)
-    tracker = PerformanceTracker(config)
 
     # 1단계: 키워드 발굴 & 주제 선정
     print(f"\n🔍 [1단계: 자료 수집 및 키워드 발굴] 카테고리={target_category or '전체'}")
@@ -76,7 +75,7 @@ def run_auto_pipeline(config: dict, auto_approve: bool = True, target_category: 
 
     # 5단계: 검색엔진 크롤러 색인 요청
     print("\n📡 [5단계: 구글 검색엔진 크롤러 색인 요청 (Sitemap Ping)]")
-    indexer.ping_search_engines()
+    indexer.ping_sitemap()
 
     print("\n✨ 모든 에이전트 작업이 성공적으로 완료되었습니다!")
 
