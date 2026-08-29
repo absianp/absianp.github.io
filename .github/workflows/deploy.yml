@@ -14,6 +14,10 @@ concurrency:
   group: 'pages'
   cancel-in-progress: false
 
+env:
+  TELEGRAM_BOT_TOKEN: '8705878879:AAHaDbtz_9YVokSDhDAjZyRh1eRymPx-l0U'
+  TELEGRAM_CHAT_ID: '5017406279'
+
 jobs:
   build:
     name: Build Astro Static Site
@@ -25,7 +29,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
           cache-dependency-path: 'blog-frontend/package.json'
 
@@ -57,3 +61,21 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Notify Telegram on Success
+        if: success()
+        run: |
+          MESSAGE="🚀 <b>[GitHub Actions 배포 성공]</b>%0A━━━━━━━━━━━━━━━━━━━━%0A📦 <b>저장소</b>: absianp/absianp.github.io%0A📌 <b>커밋</b>: ${{ github.event.head_commit.message }}%0A🌐 <b>배포 URL</b>: https://absianp.github.io%0A✅ <i>전체 포스팅 및 웹페이지 배포가 완료되었습니다!</i>"
+          curl -s -X POST "https://api.telegram.org/bot${{ env.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d "chat_id=${{ env.TELEGRAM_CHAT_ID }}" \
+            -d "text=${MESSAGE}" \
+            -d "parse_mode=HTML"
+
+      - name: Notify Telegram on Failure
+        if: failure()
+        run: |
+          MESSAGE="🚨 <b>[GitHub Actions 빌드/배포 실패 경보]</b>%0A━━━━━━━━━━━━━━━━━━━━%0A⚠️ GitHub Actions 파이프라인에서 오류가 발생했습니다.%0A🔍 <b>확인 링크</b>: https://github.com/absianp/absianp.github.io/actions"
+          curl -s -X POST "https://api.telegram.org/bot${{ env.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d "chat_id=${{ env.TELEGRAM_CHAT_ID }}" \
+            -d "text=${MESSAGE}" \
+            -d "parse_mode=HTML"
