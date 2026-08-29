@@ -8,12 +8,12 @@ export async function GET(context: any) {
   return rss({
     title: 'TechFlow & AI Insights',
     description: 'AI 생산성 도구, 개발 팁, 스마트 부업 및 테크 트렌드 전문 블로그',
-    site: 'https://absianp.github.io/auto-blog',
+    site: 'https://absianp.github.io',
     items: sortedPosts.map((post) => ({
       title: post.data.title,
       pubDate: post.data.pubDate,
       description: post.data.description,
-      link: `/auto-blog/blog/${post.slug}/`,
+      link: `/blog/${post.slug}/`,
       categories: [post.data.category, ...(post.data.tags || [])],
     })),
     customData: `<language>ko-KR</language>`,

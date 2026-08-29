@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://absianp.github.io/auto-blog/sitemap.xml
+Sitemap: https://absianp.github.io/sitemap.xml

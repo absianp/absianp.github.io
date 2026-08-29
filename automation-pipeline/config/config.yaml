@@ -1,5 +1,5 @@
 # ==========================================
-# 🚀 Auto Blog System Configuration (absianp/auto-blog)
+# 🚀 Auto Blog System Configuration (absianp.github.io)
 # ==========================================
 
 # 1. AI 생성 엔진 설정 (Google Antigravity CLI / SDK / On-Device 지원)
@@ -9,12 +9,12 @@ engine:
   local_model: "gemma2:2b"     # 라즈베리파이 5 온디바이스 모델 (Ollama / LiteRT)
   ollama_url: "http://localhost:11434/v1"
 
-# 2. 블로그 사이트 메타데이터
+# 2. 블로그 사이트 메타데이터 (도메인 루트)
 site:
   title: "TechFlow & AI Insights"
   description: "AI 생산성 도구, 개발 팁, 스마트 부업 및 테크 트렌드 전문 블로그"
   author: "TechFlow Lab"
-  url: "https://absianp.github.io/auto-blog"
+  url: "https://absianp.github.io"
   default_language: "ko"
   theme_color: "#2563eb"
 

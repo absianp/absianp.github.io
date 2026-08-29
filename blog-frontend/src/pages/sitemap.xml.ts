@@ -1,8 +1,7 @@
 import { getCollection } from 'astro:content';
 
 export async function GET(context: any) {
-  const base = '/auto-blog';
-  const siteUrl = String(context.site || 'https://absianp.github.io').replace(/\/$/, '') + base;
+  const siteUrl = String(context.site || 'https://absianp.github.io').replace(/\/$/, '');
   const posts = await getCollection('blog', ({ data }) => !data.draft);
 
   const staticPages = [
