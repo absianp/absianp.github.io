@@ -5,13 +5,12 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-User=pi
-WorkingDirectory=/home/pi/auto_blog_system/automation-pipeline
+WorkingDirectory=/home/ian/auto_blog_system/automation-pipeline
 Environment=PYTHONUNBUFFERED=1
-EnvironmentFile=-/home/pi/auto_blog_system/automation-pipeline/config/.env
-ExecStart=/home/pi/auto_blog_system/automation-pipeline/venv/bin/python3 main_pipeline.py --mode auto --approve
+EnvironmentFile=-/home/ian/auto_blog_system/automation-pipeline/config/.env
+ExecStart=/home/ian/auto_blog_system/automation-pipeline/venv/bin/python3 main_pipeline.py --mode auto --approve
 StandardOutput=journal
 StandardError=journal
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
