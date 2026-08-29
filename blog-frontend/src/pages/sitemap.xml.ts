@@ -1,10 +1,10 @@
 import { getCollection } from 'astro:content';
 
 export async function GET(context: any) {
-  const siteUrl = String(context.site || 'https://yourusername.github.io').replace(/\/$/, '');
+  const base = '/auto-blog';
+  const siteUrl = String(context.site || 'https://absianp.github.io').replace(/\/$/, '') + base;
   const posts = await getCollection('blog', ({ data }) => !data.draft);
 
-  // Static pages
   const staticPages = [
     { url: '', changefreq: 'daily', priority: '1.0' },
     { url: '/blog', changefreq: 'daily', priority: '0.9' },

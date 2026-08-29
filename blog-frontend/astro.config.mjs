@@ -1,7 +1,8 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://yourusername.github.io',
+  site: 'https://absianp.github.io',
+  base: '/auto-blog',
   markdown: {
     syntaxHighlight: 'shiki',
     shikiConfig: {

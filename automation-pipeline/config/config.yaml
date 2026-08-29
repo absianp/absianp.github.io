@@ -1,5 +1,5 @@
 # ==========================================
-# 🚀 Auto Blog System Configuration
+# 🚀 Auto Blog System Configuration (absianp/auto-blog)
 # ==========================================
 
 # 1. AI 생성 엔진 설정 (Google Antigravity CLI / SDK / On-Device 지원)
@@ -14,7 +14,7 @@ site:
   title: "TechFlow & AI Insights"
   description: "AI 생산성 도구, 개발 팁, 스마트 부업 및 테크 트렌드 전문 블로그"
   author: "TechFlow Lab"
-  url: "https://yourusername.github.io/blog" # 배포될 GitHub Pages URL (또는 커스텀 도메인)
+  url: "https://absianp.github.io/auto-blog"
   default_language: "ko"
   theme_color: "#2563eb"
 
@@ -65,4 +65,4 @@ github:
   repo_root: "../"
   blog_content_dir: "../blog-frontend/src/content/blog"
   auto_git_commit: true
-  auto_git_push: false
+  auto_git_push: true

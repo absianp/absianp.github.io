@@ -31,6 +31,8 @@ const {
   faqs = [],
 } = frontmatter;
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 const formattedDate = new Intl.DateTimeFormat('ko-KR', {
   year: 'numeric',
   month: 'long',
@@ -51,9 +53,9 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
     <!-- Breadcrumb Navigation -->
     <nav class="flex items-center gap-2 text-xs text-slate-500 mb-6 font-medium">
-      <a href="/" class="hover:text-blue-600 transition-colors">홈</a>
+      <a href={`${base}/`} class="hover:text-blue-600 transition-colors">홈</a>
       <span>/</span>
-      <a href="/blog" class="hover:text-blue-600 transition-colors">블로그</a>
+      <a href={`${base}/blog`} class="hover:text-blue-600 transition-colors">블로그</a>
       <span>/</span>
       <span class="text-blue-600">{category}</span>
     </nav>
@@ -88,7 +90,7 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
       </div>
     </header>
 
-    <!-- Top AdSense Slot (High CTR position right below header) -->
+    <!-- Top AdSense Slot -->
     <AdSense slotId="1234567890" type="top-banner" />
 
     <!-- Table of Contents -->
@@ -102,7 +104,7 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
     <!-- Mid/In-Article AdSense Slot -->
     <AdSense slotId="2345678901" type="in-article" />
 
-    <!-- FAQ Accordion Section (Rich Snippets SEO) -->
+    <!-- FAQ Accordion Section -->
     {faqs && faqs.length > 0 && (
       <section class="my-10 p-6 bg-slate-100/70 rounded-2xl border border-slate-200">
         <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
@@ -125,7 +127,7 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
         <span class="text-xs font-semibold text-slate-500 mr-1">태그:</span>
         {tags.map(tag => (
           <a
-            href={`/tags/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+            href={`${base}/tags/${tag.toLowerCase().replace(/\s+/g, '-')}`}
             class="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-600 rounded-lg text-xs font-medium transition-colors"
           >
             #{tag}
@@ -137,7 +139,7 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
     <!-- Bottom AdSense Slot -->
     <AdSense slotId="4567890123" type="bottom-banner" />
 
-    <!-- Author Bio Box (AdSense E-E-A-T Quality Signals) -->
+    <!-- Author Bio Box -->
     <div class="mt-8 p-6 bg-slate-900 text-slate-200 rounded-2xl flex items-center gap-4">
       <div class="w-12 h-12 rounded-xl bg-blue-600 flex-shrink-0 flex items-center justify-center font-bold text-lg text-white">
         ⚡
