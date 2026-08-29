@@ -1,0 +1,12 @@
+[Unit]
+Description=Run Daily Morning Status Report at 08:00 KST
+RefuseManualStart=no
+RefuseManualStop=no
+
+[Timer]
+OnCalendar=*-*-* 08:00:00
+Persistent=true
+Unit=auto-blog-morning.service
+
+[Install]
+WantedBy=timers.target

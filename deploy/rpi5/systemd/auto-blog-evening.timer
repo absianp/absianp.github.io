@@ -1,0 +1,12 @@
+[Unit]
+Description=Run Daily Evening Status & Revenue Report at 19:00 KST
+RefuseManualStart=no
+RefuseManualStop=no
+
+[Timer]
+OnCalendar=*-*-* 19:00:00
+Persistent=true
+Unit=auto-blog-evening.service
+
+[Install]
+WantedBy=timers.target

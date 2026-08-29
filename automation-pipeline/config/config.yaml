@@ -11,7 +11,7 @@ engine:
 
 # 2. 블로그 사이트 메타데이터 (도메인 루트)
 site:
-  title: "앱시안(absian) AI & 테크 인사이트"
+  title: "앱시안(absian)"
   description: "AI 생산성 도구, 개발 팁, 스마트 부업 및 테크 트렌드 전문 블로그"
   author: "앱시안 (absian)"
   url: "https://absianp.github.io"
@@ -54,11 +54,11 @@ agent:
   temperature: 0.7
   max_output_tokens: 4096
 
-# 6. 사용자 승인 인터페이스 (Telegram Bot)
+# 6. 사용자 승인 & 모바일 스마트 브리핑 (Telegram Bot)
 telegram:
-  enabled: false
-  bot_token: ""
-  chat_id: ""
+  enabled: true
+  bot_token: "" # .env 파일의 TELEGRAM_BOT_TOKEN 에서 자동 로드
+  chat_id: ""   # .env 파일의 TELEGRAM_CHAT_ID 에서 자동 로드
 
 # 7. GitHub 및 배포 경로 설정
 github:

@@ -1,0 +1,16 @@
+[Unit]
+Description=Auto Blog - Daily Hardware & Health Monitor Report (12:00 KST)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/ian/auto_blog_system/automation-pipeline
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=-/home/ian/auto_blog_system/automation-pipeline/config/.env
+ExecStart=/home/ian/auto_blog_system/automation-pipeline/venv/bin/python3 main_pipeline.py --mode health
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

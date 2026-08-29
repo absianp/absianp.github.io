@@ -1,0 +1,12 @@
+[Unit]
+Description=Run System Health Monitor Report Daily at 12:00 KST
+RefuseManualStart=no
+RefuseManualStop=no
+
+[Timer]
+OnCalendar=*-*-* 12:00:00
+Persistent=true
+Unit=auto-blog-health.service
+
+[Install]
+WantedBy=timers.target
