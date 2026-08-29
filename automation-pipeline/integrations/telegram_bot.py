@@ -4,6 +4,25 @@ import requests
 from datetime import datetime
 from typing import Dict, Any, Optional
 
+def _load_env_file():
+    env_paths = [
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "../config/.env")),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), ".env")),
+        os.path.expanduser("~/auto_blog_system/automation-pipeline/config/.env")
+    ]
+    for path in env_paths:
+        if os.path.exists(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith("#") and "=" in line:
+                            k, v = line.split("=", 1)
+                            if k.strip() not in os.environ or not os.environ[k.strip()]:
+                                os.environ[k.strip()] = v.strip()
+            except Exception:
+                pass
+
 class TelegramNotifier:
     """
     앱시안(absian) 블로그 운영 텔레그램 스마트 알림 에이전트
@@ -15,11 +34,12 @@ class TelegramNotifier:
     """
 
     def __init__(self, config: Dict[str, Any]):
+        _load_env_file()
         self.config = config
         telegram_cfg = config.get("telegram", {})
         self.enabled = telegram_cfg.get("enabled", True)
         self.bot_token = telegram_cfg.get("bot_token") or os.getenv("TELEGRAM_BOT_TOKEN", "")
-        self.chat_id = telegram_cfg.get("chat_id") or os.getenv("TELEGRAM_CHAT_ID", "")
+        self.chat_id = str(telegram_cfg.get("chat_id") or os.getenv("TELEGRAM_CHAT_ID", ""))
         self.site_url = config.get("site", {}).get("url", "https://absianp.github.io")
         self.api_url = f"https://api.telegram.org/bot{self.bot_token}" if self.bot_token else None
 
@@ -114,9 +134,6 @@ class TelegramNotifier:
     # 3. 일일 사이트 현황 보고 (아침 8시 / 저녁 7시)
     # -------------------------------------------------------------
     def send_daily_site_status(self, report_type: str, stats: Dict[str, Any]) -> bool:
-        """
-        report_type: 'morning' (아침 8시) | 'evening' (저녁 7시)
-        """
         is_morning = (report_type == "morning")
         header_icon = "🌅" if is_morning else "🌆"
         header_title = "일일 아침 사이트 브리핑 (08:00)" if is_morning else "일일 저녁 사이트 현황 보고 (19:00)"
@@ -180,7 +197,7 @@ class TelegramNotifier:
         cpu_temp = health_data.get("cpu_temp", "48.5°C")
         disk_free = health_data.get("disk_free", "1.7TB (사용률 2%)")
         git_status = health_data.get("git_status", "정상 동기화")
-        timer_status = health_data.get("timer_status", "2개 타이머 모두 활성 (Active)")
+        timer_status = health_data.get("timer_status", "모든 타이머 정상 활성 (Active)")
         error_details = health_data.get("error_details", "")
 
         err_block = f"\n⚠️ <b>장애 원인</b>: <code>{error_details}</code>\n" if is_alert and error_details else ""
