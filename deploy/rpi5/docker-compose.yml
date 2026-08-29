@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # 1. 일일 자동 포스팅 에이전트 서비스
+  auto-blog-agent:
+    build:
+      context: ../..
+      dockerfile: deploy/rpi5/Dockerfile
+    container_name: auto-blog-agent
+    restart: unless-stopped
+    env_file:
+      - ../../automation-pipeline/config/.env
+    volumes:
+      - ../..:/app
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    command: ["python3", "main_pipeline.py", "--mode", "auto", "--approve"]
+
+  # 2. (선택 사항) 로컬 네트워크 블로그 프리뷰 서버 (포트 3000)
+  blog-preview-server:
+    build:
+      context: ../..
+      dockerfile: deploy/rpi5/Dockerfile
+    container_name: blog-preview-server
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    working_dir: /app/blog-frontend
+    command: ["npx", "astro", "dev", "--host", "0.0.0.0", "--port", "3000"]

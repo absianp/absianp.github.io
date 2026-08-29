@@ -1,0 +1,87 @@
+import os
+import re
+import yaml
+import subprocess
+from datetime import datetime
+from typing import Dict, Any
+
+class GitHubPublisher:
+    """
+    최종 승인된 아티클을 Astro Content Collection 마크다운 파일로 생성하고
+    Git Commit & Push를 통해 GitHub Pages 자동 배포를 트리거하는 모듈
+    """
+
+    def __init__(self, config: Dict[str, Any]):
+        self.config = config
+        self.repo_root = config.get("github", {}).get("repo_root", "../")
+        self.content_dir = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", config.get("github", {}).get("blog_content_dir", "../blog-frontend/src/content/blog"))
+        )
+        self.auto_commit = config.get("github", {}).get("auto_git_commit", True)
+        self.auto_push = config.get("github", {}).get("auto_git_push", False)
+
+        os.makedirs(self.content_dir, exist_ok=True)
+
+    def generate_slug(self, title: str) -> str:
+        """한글 및 특수문자를 SEO 친화적인 URL 슬러그로 변환"""
+        # 영문, 숫자, 한글, 하이픈만 보존
+        slug = re.sub(r"[^\w\s-]", "", title).strip().lower()
+        slug = re.sub(r"[\s_]+", "-", slug)
+        today_str = datetime.now().strftime("%Y-%m-%d")
+        return f"{today_str}-{slug[:45]}"
+
+    def publish_article(self, article: Dict[str, Any]) -> str:
+        """
+        승인된 아티클 딕셔너리를 마크다운(.md) 파일로 저장하고 Git 커밋
+        """
+        title = article.get("title", "무제")
+        slug = self.generate_slug(title)
+        filepath = os.path.join(self.content_dir, f"{slug}.md")
+
+        frontmatter_data = {
+            "title": title,
+            "description": article.get("description", ""),
+            "pubDate": datetime.now().strftime("%Y-%m-%d"),
+            "category": article.get("category", "General"),
+            "tags": article.get("tags", []),
+            "author": article.get("author", "TechFlow Editor"),
+            "readingTime": article.get("readingTime", "5 min read"),
+            "featured": article.get("featured", False),
+            "draft": False,
+        }
+
+        if "faqs" in article and article["faqs"]:
+            frontmatter_data["faqs"] = article["faqs"]
+
+        # YAML Frontmatter 직렬화
+        yaml_content = yaml.dump(
+            frontmatter_data,
+            allow_unicode=True,
+            default_flow_style=False,
+            sort_keys=False
+        )
+
+        full_content = f"---\n{yaml_content}---\n\n{article.get('markdown_content', '')}\n"
+
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(full_content)
+
+        print(f"📄 마크다운 아티클 생성 완료: {filepath}")
+
+        # Git Auto Commit & Push (선택 옵션)
+        if self.auto_commit:
+            self._git_commit_and_push(filepath, title)
+
+        return filepath
+
+    def _git_commit_and_push(self, filepath: str, title: str):
+        """Git 커밋 실행"""
+        try:
+            subprocess.run(["git", "add", filepath], cwd=self.repo_root, check=False)
+            commit_msg = f"feat(blog): publish new post - {title[:30]}"
+            subprocess.run(["git", "commit", "-m", commit_msg], cwd=self.repo_root, check=False)
+            if self.auto_push:
+                print("🚀 GitHub 원격 저장소로 Push 실행 중...")
+                subprocess.run(["git", "push", "origin", "main"], cwd=self.repo_root, check=False)
+        except Exception as e:
+            print(f"[GitHubPublisher] Git 작업 중 알림: {e}")

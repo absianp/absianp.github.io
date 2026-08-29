@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Card from '../../components/Card.astro';
+import AdSense from '../../components/AdSense.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog', ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout
+  title="전체 아티클 목록"
+  description="TechFlow의 모든 AI 도구, 테크 개발 가이드, 스마트 부업 포스트 모음"
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Page Header -->
+    <div class="mb-10 text-center sm:text-left">
+      <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">전체 아티클</h1>
+      <p class="text-slate-600 text-sm">총 {sortedPosts.length}개의 전문 아티클이 등록되어 있습니다.</p>
+    </div>
+
+    <AdSense slotId="1234567890" type="top-banner" />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-8">
+      {sortedPosts.map(post => (
+        <Card
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          slug={post.slug}
+          category={post.data.category}
+          readingTime={post.data.readingTime}
+          heroImage={post.data.heroImage}
+          tags={post.data.tags}
+        />
+      ))}
+    </div>
+
+    <AdSense slotId="4567890123" type="bottom-banner" />
+  </div>
+</BaseLayout>

@@ -1,0 +1,153 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import AdSense from '../components/AdSense.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+
+export interface Props {
+  frontmatter: {
+    title: string;
+    description: string;
+    pubDate: Date;
+    updatedDate?: Date;
+    category?: string;
+    tags?: string[];
+    author?: string;
+    readingTime?: string;
+    faqs?: Array<{ question: string; answer: string }>;
+  };
+  headings: Array<{ depth: number; slug: string; text: string }>;
+}
+
+const { frontmatter, headings } = Astro.props;
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  category = 'General',
+  tags = [],
+  author = 'TechFlow Editor',
+  readingTime = '5 min read',
+  faqs = [],
+} = frontmatter;
+
+const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(pubDate);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  article={true}
+  pubDate={pubDate}
+  updatedDate={updatedDate}
+  author={author}
+  faqs={faqs}
+  tags={tags}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Breadcrumb Navigation -->
+    <nav class="flex items-center gap-2 text-xs text-slate-500 mb-6 font-medium">
+      <a href="/" class="hover:text-blue-600 transition-colors">홈</a>
+      <span>/</span>
+      <a href="/blog" class="hover:text-blue-600 transition-colors">블로그</a>
+      <span>/</span>
+      <span class="text-blue-600">{category}</span>
+    </nav>
+
+    <!-- Article Header -->
+    <header class="mb-8">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-semibold rounded-full">
+          {category}
+        </span>
+        <span class="text-xs text-slate-400">•</span>
+        <span class="text-xs text-slate-500">{readingTime}</span>
+      </div>
+
+      <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
+        {title}
+      </h1>
+
+      <p class="text-base sm:text-lg text-slate-600 leading-relaxed mb-6">
+        {description}
+      </p>
+
+      <!-- Author & Date Info -->
+      <div class="flex items-center gap-3 p-4 bg-white rounded-xl border border-slate-200/80 text-xs text-slate-500">
+        <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+          TF
+        </div>
+        <div>
+          <p class="font-semibold text-slate-800">{author}</p>
+          <p>발행일: {formattedDate} {updatedDate && `(최종 수정: ${new Intl.DateTimeFormat('ko-KR').format(updatedDate)})`}</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Top AdSense Slot (High CTR position right below header) -->
+    <AdSense slotId="1234567890" type="top-banner" />
+
+    <!-- Table of Contents -->
+    <TableOfContents headings={headings} />
+
+    <!-- Article Markdown Content -->
+    <div class="prose prose-slate prose-lg max-w-none bg-white p-6 sm:p-10 rounded-2xl border border-slate-200/80 shadow-sm leading-relaxed">
+      <slot />
+    </div>
+
+    <!-- Mid/In-Article AdSense Slot -->
+    <AdSense slotId="2345678901" type="in-article" />
+
+    <!-- FAQ Accordion Section (Rich Snippets SEO) -->
+    {faqs && faqs.length > 0 && (
+      <section class="my-10 p-6 bg-slate-100/70 rounded-2xl border border-slate-200">
+        <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <span>❓ 자주 묻는 질문 (FAQ)</span>
+        </h2>
+        <div class="space-y-4">
+          {faqs.map((faq) => (
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+              <h3 class="font-semibold text-slate-900 text-sm mb-2">{faq.question}</h3>
+              <p class="text-slate-600 text-xs leading-relaxed">{faq.answer}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Tags List -->
+    {tags.length > 0 && (
+      <div class="my-8 flex flex-wrap items-center gap-2">
+        <span class="text-xs font-semibold text-slate-500 mr-1">태그:</span>
+        {tags.map(tag => (
+          <a
+            href={`/tags/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+            class="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-600 rounded-lg text-xs font-medium transition-colors"
+          >
+            #{tag}
+          </a>
+        ))}
+      </div>
+    )}
+
+    <!-- Bottom AdSense Slot -->
+    <AdSense slotId="4567890123" type="bottom-banner" />
+
+    <!-- Author Bio Box (AdSense E-E-A-T Quality Signals) -->
+    <div class="mt-8 p-6 bg-slate-900 text-slate-200 rounded-2xl flex items-center gap-4">
+      <div class="w-12 h-12 rounded-xl bg-blue-600 flex-shrink-0 flex items-center justify-center font-bold text-lg text-white">
+        ⚡
+      </div>
+      <div>
+        <h4 class="font-bold text-white text-sm mb-1">{author}</h4>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          AI 도구와 개발 자동화, 온라인 수익화 파이프라인을 연구하고 실용적인 가이드를 제공합니다.
+        </p>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

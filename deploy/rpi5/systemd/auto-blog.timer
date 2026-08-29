@@ -1,0 +1,12 @@
+[Unit]
+Description=Timer for Auto Blog Daily Agent Execution
+Requires=auto-blog.service
+
+[Timer]
+# 매일 아침 07:00 (KST)에 자동 글 작성 및 배포 실행
+OnCalendar=*-*-* 07:00:00
+# 라즈베리파이가 꺼져 있다 켜졌을 경우 누락된 실행 즉시 수행
+Persistent=true
+
+[Install]
+WantedBy=timers.target

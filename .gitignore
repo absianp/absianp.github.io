@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+deploy/rpi5/keys/rpi5_key
+deploy/rpi5/keys/rpi5_key.pub
+automation-pipeline/config/.env
+*.tar.gz

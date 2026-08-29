@@ -1,0 +1,11 @@
+[Unit]
+Description=Timer for Auto Blog Weekly Performance Report
+Requires=auto-blog-report.service
+
+[Timer]
+# 매주 일요일 저녁 20:00 (KST)에 주간 성과 요약 보고서 전송
+OnCalendar=Sun *-*-* 20:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

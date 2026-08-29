@@ -1,0 +1,61 @@
+# ==========================================
+# 🚀 Auto Blog System Configuration
+# ==========================================
+
+# 1. 블로그 사이트 메타데이터
+site:
+  title: "TechFlow & AI Insights"
+  description: "AI 생산성 도구, 개발 팁, 스마트 부업 및 테크 트렌드 전문 블로그"
+  author: "TechFlow Lab"
+  url: "https://yourusername.github.io/blog" # 배포될 GitHub Pages URL (또는 커스텀 도메인)
+  default_language: "ko"
+  theme_color: "#2563eb"
+
+# 2. 구글 애드센스 (Google AdSense) 설정
+adsense:
+  enabled: true
+  publisher_id: "ca-pub-XXXXXXXXXXXXXXXX" # 애드센스 승인 후 발급되는 ca-pub-ID 입력
+  auto_ads: true # 구글 자동 광고 활성화 여부
+  slots:
+    top_banner: "1234567890"       # 상단 배너 슬롯 ID
+    in_article_1: "2345678901"     # 본문 중간 #1 슬롯 ID
+    in_article_2: "3456789012"     # 본문 중간 #2 슬롯 ID
+    bottom_banner: "4567890123"    # 본문 하단 슬롯 ID
+    sidebar_banner: "5678901234"   # 사이드바 슬롯 ID
+
+# 3. 콘텐츠 생성 & 타겟 분야 설정
+content:
+  categories:
+    - name: "AI & 생산성"
+      slug: "ai-productivity"
+      keywords: ["ChatGPT 활용법", "Claude 프롬프트 팁", "AI 이미지 생성", "생산성 노션 템플릿", "무료 AI 툴 추천", "자동화 스크립트"]
+    - name: "개발 & 테크"
+      slug: "tech-dev"
+      keywords: ["파이썬 자동화", "웹 개발 기초", "깃허브 팁", "VS Code 필수 플러그인", "클라우드 무료 티어 활용"]
+    - name: "스마트 부업 & 재테크"
+      slug: "side-income"
+      keywords: ["무자본 디지털 노마드", "블로그 수익화 전략", "애드센스 승인 팁", "노코드 툴 활용 부업"]
+  
+  target_length_words: 1800 # 최소 목표 단어 수 (SEO 및 애드센스 고품질 가치 확보)
+  tone_style: "친절하면서도 전문적이고 명확한 해결책을 제시하는 존댓말 스타일"
+  include_faq: true         # Schema.org FAQ 구조화 데이터 포함 여부
+  include_toc: true         # 목차(Table of Contents) 포함 여부
+
+# 4. AI 에이전트 모델 설정
+agent:
+  model_name: "gemini-2.5-flash" # 또는 gemini-1.5-flash
+  temperature: 0.7
+  max_output_tokens: 4096
+
+# 5. 사용자 승인 인터페이스 (Telegram Bot)
+telegram:
+  enabled: false # 텔레그램 토큰 설정 시 true로 전환
+  bot_token: ""  # @BotFather에게 발급받은 토큰
+  chat_id: ""    # 알림 받을 텔레그램 chat ID
+
+# 6. GitHub 및 배포 경로 설정
+github:
+  repo_root: "../"
+  blog_content_dir: "../blog-frontend/src/content/blog"
+  auto_git_commit: true
+  auto_git_push: false # 로컬 테스트 시 false, 자동화 운영 시 true
