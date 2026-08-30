@@ -1,8 +1,6 @@
 ---
 // Giscus.astro
-// 사용자 설정: 아직 GitHub Discussions를 켜지 않으셨습니다!
-// 1. https://github.com/absianp/absianp.github.io/settings 에서 'Features' -> 'Discussions' 활성화
-// 2. giscus.app 에 접속해서 repo-id 와 category-id (Announcements 등) 확인 후 아래를 수정해주세요.
+// Giscus 댓글 컴포넌트
 ---
 <div class="giscus-container mt-12 pt-10 border-t border-slate-200">
   <div class="mb-6">
@@ -16,19 +14,18 @@
   </div>
   
   <script src="https://giscus.app/client.js"
-    data-repo="absianp/absianp.github.io"
-    data-repo-id="R_kgDOUH01Eg"
-    data-category="Announcements"
-    data-category-id="DIC_kwDOUH01Es4ClyCg"
-    data-mapping="pathname"
-    data-strict="0"
-    data-reactions-enabled="1"
-    data-emit-metadata="0"
-    data-input-position="bottom"
-    data-theme="light"
-    data-lang="ko"
-    data-loading="lazy"
-    crossorigin="anonymous"
-    async>
+        data-repo="absianp/absianp.github.io"
+        data-repo-id="R_kgDOUH01Eg"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOUH01Es4DEfpF"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        crossorigin="anonymous"
+        async>
   </script>
 </div>
