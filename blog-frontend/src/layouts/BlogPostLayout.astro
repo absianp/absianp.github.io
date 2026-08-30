@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import AdSense from '../components/AdSense.astro';
 import TableOfContents from '../components/TableOfContents.astro';
+import Giscus from '../components/Giscus.astro';
 import { getCategorySlug, getTagSlug } from '../utils/slug';
 
 export interface Props {
@@ -185,6 +186,9 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
         </div>
       )}
     </nav>
+
+    <!-- Giscus Comments -->
+    <Giscus />
 
     <!-- Bottom AdSense Slot -->
     <AdSense slotId="4567890123" type="bottom-banner" />

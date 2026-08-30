@@ -81,7 +81,7 @@ def run_auto_pipeline(config: dict, auto_approve: bool = True, target_category: 
 
 def main():
     parser = argparse.ArgumentParser(description="앱시안(absian) 자동화 블로그 파이프라인")
-    parser.add_argument("--mode", choices=["auto", "interactive", "report", "morning_report", "evening_report", "revenue_report", "health", "test_telegram"], default="auto")
+    parser.add_argument("--mode", choices=["auto", "trend", "interactive", "report", "morning_report", "evening_report", "revenue_report", "health", "test_telegram"], default="auto")
     parser.add_argument("--approve", action="store_true", help="초안 자동 승인 모드")
     parser.add_argument("--category", type=str, default=None, help="특정 카테고리 지정")
     args = parser.parse_args()
@@ -92,6 +92,18 @@ def main():
 
     if args.mode == "auto":
         run_auto_pipeline(config, auto_approve=True, target_category=args.category)
+
+    elif args.mode == "trend":
+        import subprocess
+        print("📰 [최신 트렌드 RAG 자동 포스팅] 시작...")
+        try:
+            # daily_trend_generator.py 실행
+            script_path = os.path.join(os.path.dirname(__file__), "daily_trend_generator.py")
+            subprocess.run([sys.executable, script_path], check=True)
+            print("✨ 트렌드 기반 포스팅이 생성되었습니다.")
+        except subprocess.CalledProcessError as e:
+            print(f"❌ 트렌드 스크립트 실행 실패: {e}")
+            telegram.send_health_report({"error_details": f"daily_trend_generator.py 실행 실패: {e}"}, is_alert=True)
 
     elif args.mode == "morning_report":
         # 매일 아침 08:00 KST
