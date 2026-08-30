@@ -48,7 +48,7 @@ const articleSchema = article ? {
     'name': siteTitle,
     'logo': {
       '@type': 'ImageObject',
-      'url': new URL('/favicon.svg', siteUrl).href,
+      'url': new URL('/favicon.png', siteUrl).href,
     },
   },
   'mainEntityOfPage': {
@@ -76,7 +76,7 @@ const faqSchema = (faqs && faqs.length > 0) ? {
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" href="/favicon.png" />
 <link rel="canonical" href={canonicalURL} />
 <meta name="generator" content={Astro.generator} />
 
