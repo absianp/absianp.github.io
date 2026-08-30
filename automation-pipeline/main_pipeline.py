@@ -60,8 +60,8 @@ def run_auto_pipeline(config: dict, auto_approve: bool = True, target_category: 
 
     # 3단계: 애드센스 정책 & SEO 품질 검사
     print("\n🔎 [3단계: SEO 점수 및 애드센스 정책 사전 검증]")
-    inspection = inspector.inspect(article)
-    inspector.print_inspection_report(inspection)
+    inspection = inspector.inspect_article(article)
+    print(inspection.get("summary", ""))
 
     # 4단계: 퍼블리싱 및 배포
     print("\n🚀 [4단계: Astro 블로그 저장소에 글 게시 및 배포]")
