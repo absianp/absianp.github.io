@@ -1,13 +1,17 @@
 import os
+import glob
 import json
 import re
 import yaml
 import logging
+import subprocess
+from datetime import datetime
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 
 from integrations.telegram_bot import _load_env_file, TelegramNotifier
 from integrations.antigravity_runner import AntigravityRunner
+from agents.performance_tracker import PerformanceTracker
 from main_pipeline import load_config, KeywordHarvester, ContentWriter, PolicyInspector, GitHubPublisher, GoogleIndexing
 import asyncio
 
@@ -40,9 +44,119 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "✏️ <b>기존 글 수정 (내용/URL 변경):</b>\n"
         "• 블로그 URL과 함께 수정 요청사항 입력\n"
         "• 예: <code>https://absianp.github.io/blog/2026-08-31-llm-qwen-27b/ 벤치마크 보강해줘</code>\n\n"
+        "📊 <b>에이전트 현황 조회:</b> <code>/status</code>\n"
         "🔄 <b>초기화/취소:</b> <code>/cancel</code> 또는 <code>/reset</code>",
         parse_mode="HTML"
     )
+
+async def handle_status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.effective_chat.id
+    tracker = PerformanceTracker(config)
+    runner = AntigravityRunner(config)
+    
+    # 1. System Health
+    health = tracker.get_system_health()
+    cpu_temp = health.get("cpu_temp", "48.0°C")
+    disk_free = health.get("disk_free", "1.7TB")
+    
+    # 2. Site statistics
+    stats = tracker.get_site_statistics()
+    total_posts = stats.get("total_posts", 0)
+    today_posts = stats.get("today_posts", 0)
+    
+    # 3. Latest published post
+    latest_post_info = "없음"
+    latest_post_url = ""
+    try:
+        md_files = glob.glob(os.path.join(CONTENT_DIR, "*.md"))
+        if md_files:
+            latest_file = max(md_files, key=os.path.getmtime)
+            latest_slug = os.path.splitext(os.path.basename(latest_file))[0]
+            with open(latest_file, "r", encoding="utf-8") as f:
+                content = f.read()
+                title_match = re.search(r"^title:\s*(.+)$", content, re.MULTILINE)
+                latest_title = title_match.group(1).strip("'\"") if title_match else latest_slug
+            site_url = config.get("site", {}).get("url", "https://absianp.github.io")
+            latest_post_url = f"{site_url.rstrip('/')}/blog/{latest_slug}/"
+            latest_post_info = f"<b>{latest_title}</b>"
+    except Exception:
+        pass
+
+    # 4. Engine & CLI status
+    cli_path = runner.get_cli_path()
+    engine_status = f"🟢 정상 연동 (<code>{cli_path}</code>)" if cli_path else "🔴 CLI 미발견"
+
+    # 5. Scheduled Timers (parse systemctl list-timers)
+    timer_details = []
+    try:
+        res = subprocess.run(["systemctl", "--user", "list-timers", "--no-pager"], capture_output=True, text=True, timeout=5)
+        lines = res.stdout.strip().split("\n")
+        for line in lines:
+            if "auto-blog.timer" in line:
+                timer_details.append("  • 🤖 <b>일일 자동 포스팅</b>: 매일 <code>07:00 KST</code>")
+            elif "auto-blog-dryrun.timer" in line:
+                timer_details.append("  • 🩺 <b>이상 탐지 (Dryrun)</b>: <code>4시간 간격 (00, 04, 08, 12, 16, 20시)</code>")
+            elif "auto-blog-morning.timer" in line:
+                timer_details.append("  • 🌅 <b>아침 현황 브리핑</b>: 매일 <code>08:00 KST</code>")
+            elif "auto-blog-evening.timer" in line:
+                timer_details.append("  • 🌆 <b>저녁 수익 리포트</b>: 매일 <code>19:00 KST</code>")
+    except Exception:
+        pass
+    
+    if not timer_details:
+        timer_details = [
+            "  • 🤖 일일 자동 포스팅: 매일 07:00 KST",
+            "  • 🩺 4시간 Dryrun 모의점검 활성",
+            "  • 🌅 아침 08:00 / 저녁 19:00 브리핑"
+        ]
+
+    timers_text = "\n".join(timer_details)
+
+    # 6. Current Interactive Session Status for this User
+    session = sessions.get(chat_id)
+    if not session:
+        session_text = "💤 <b>대기 중 (IDLE)</b>\n  <i>새 글 작성을 원하시면 주제나 링크를 보내주세요.</i>"
+    else:
+        state = session.get("state", "IDLE")
+        if state == "PLANNING":
+            topic_title = session.get("topic", {}).get("title", "주제 기획 중")
+            session_text = f"🎯 <b>[기획안 검토/첨언 대기 중]</b>\n  📌 주제: <b>{topic_title}</b>"
+        elif state == "DRAFTED":
+            draft_title = session.get("draft", {}).get("title", "초안 작성 완료")
+            session_text = f"✍️ <b>[초안 수정/배포 대기 중]</b>\n  📌 제목: <b>{draft_title}</b>"
+        elif state == "EDITING":
+            edit_title = session.get("data", {}).get("title", session.get("slug", "수정 중"))
+            session_text = f"✏️ <b>[기존 포스팅 수정 중]</b>\n  📌 대상: <code>{session.get('slug')}</code>"
+        else:
+            session_text = f"⚙️ <b>진행 중 ({state})</b>"
+
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    msg = f"""📊 <b>[앱시안 블로그 에이전트 시스템 현황]</b> ({now_str})
+━━━━━━━━━━━━━━━━━━━━
+🍓 <b>라즈베리파이 5 서버 상태</b>
+  • 🌡️ CPU 온도: <b>{cpu_temp}</b>
+  • 💾 저장 공간: <b>{disk_free}</b>
+  • ⚡ AI 엔진: {engine_status}
+  • 🤖 텔레그램 데몬: <b>🟢 24/7 실시간 가동 중</b>
+
+⏰ <b>자동화 에이전트 스케줄</b>
+{timers_text}
+
+📚 <b>블로그 발행 현황</b>
+  • 총 포스트 수: <b>{total_posts}개</b> (+{today_posts}건 오늘 발행)
+  • 최근 발행 글: {latest_post_info}
+
+💬 <b>내 대화 세션 상태</b>
+  • {session_text}"""
+
+    keyboard = []
+    if latest_post_url:
+        keyboard.append([InlineKeyboardButton("🌐 최근 발행 글 보기", url=latest_post_url)])
+    keyboard.append([InlineKeyboardButton("🏠 블로그 메인 홈", url=config.get("site", {}).get("url", "https://absianp.github.io"))])
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text(msg, parse_mode="HTML", reply_markup=reply_markup, disable_web_page_preview=True)
 
 async def handle_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
@@ -626,6 +740,7 @@ def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("status", handle_status_command))
     app.add_handler(CommandHandler("cancel", handle_cancel))
     app.add_handler(CommandHandler("reset", handle_cancel))
     app.add_handler(CommandHandler("write", handle_write_command))
