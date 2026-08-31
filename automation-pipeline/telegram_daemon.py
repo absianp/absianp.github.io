@@ -2,6 +2,7 @@ import os
 import glob
 import json
 import re
+import time
 import yaml
 import logging
 import subprocess
@@ -22,12 +23,11 @@ config = load_config()
 _load_env_file()
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
-# Chat session storage: { chat_id: { "state": ..., "topic": ..., "draft": ..., "slug": ..., "feedbacks": [...] } }
+# Chat session storage: { chat_id: { "state": ..., "topic": ..., "draft": ..., "slug": ..., "feedbacks": [...], "busy": ..., "action": ... } }
 sessions = {}
 
-CONTENT_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", config.get("github", {}).get("blog_content_dir", "../blog-frontend/src/content/blog"))
-)
+raw_content_dir = config.get("github", {}).get("blog_content_dir", "../blog-frontend/src/content/blog")
+CONTENT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), raw_content_dir))
 
 def extract_json(raw_text: str) -> dict:
     json_match = re.search(r"\{[\s\S]*\}", raw_text)
@@ -136,18 +136,23 @@ async def handle_status_command(update: Update, context: ContextTypes.DEFAULT_TY
     if not session:
         session_text = "💤 <b>대기 중 (IDLE)</b>\n  <i>새 글 작성을 원하시면 주제나 링크를 보내주세요.</i>"
     else:
-        state = session.get("state", "IDLE")
-        if state == "PLANNING":
-            topic_title = session.get("topic", {}).get("title", "주제 기획 중")
-            session_text = f"🎯 <b>[기획안 검토/첨언 대기 중]</b>\n  📌 주제: <b>{topic_title}</b>"
-        elif state == "DRAFTED":
-            draft_title = session.get("draft", {}).get("title", "초안 작성 완료")
-            session_text = f"✍️ <b>[초안 수정/배포 대기 중]</b>\n  📌 제목: <b>{draft_title}</b>"
-        elif state == "EDITING":
-            edit_title = session.get("data", {}).get("title", session.get("slug", "수정 중"))
-            session_text = f"✏️ <b>[기존 포스팅 수정 중]</b>\n  📌 대상: <code>{session.get('slug')}</code>"
+        if session.get("busy"):
+            action = session.get("action", "AI 작업 수행 중")
+            elapsed = int(time.time() - session.get("started_at", time.time()))
+            session_text = f"⏳ <b>[실시간 AI 작업 진행 중 ({elapsed}초 경과)]</b>\n  ⚡ <b>현재 작업</b>: {action}\n  <i>잠시만 기다려주시면 완료 메시지가 전송됩니다.</i>"
         else:
-            session_text = f"⚙️ <b>진행 중 ({state})</b>"
+            state = session.get("state", "IDLE")
+            if state == "PLANNING":
+                topic_title = session.get("topic", {}).get("title", "주제 기획 중")
+                session_text = f"🎯 <b>[기획안 검토/첨언 대기 중]</b>\n  📌 주제: <b>{topic_title}</b>"
+            elif state == "DRAFTED":
+                draft_title = session.get("draft", {}).get("title", "초안 작성 완료")
+                session_text = f"✍️ <b>[초안 수정/배포 대기 중]</b>\n  📌 제목: <b>{draft_title}</b>"
+            elif state == "EDITING":
+                edit_title = session.get("data", {}).get("title", session.get("slug", "수정 중"))
+                session_text = f"✏️ <b>[기존 포스팅 수정 대기 중]</b>\n  📌 대상: <code>{session.get('slug')}</code>"
+            else:
+                session_text = f"⚙️ <b>진행 중 ({state})</b>"
 
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -247,6 +252,11 @@ async def generate_or_update_topic_plan(message, chat_id, user_input, context, i
     processing_msg = await message.reply_text(loading_text)
 
     session = sessions.get(chat_id, {})
+    session["busy"] = True
+    session["action"] = "포스팅 기획안 업데이트 중" if is_update else "새 글 포스팅 기획안 작성 (Antigravity CLI)"
+    session["started_at"] = time.time()
+    sessions[chat_id] = session
+
     current_topic = session.get("topic")
     feedbacks = session.get("feedbacks", [user_input])
 
@@ -327,6 +337,9 @@ async def generate_or_update_topic_plan(message, chat_id, user_input, context, i
     except Exception as e:
         logger.error(f"Error in generate_or_update_topic_plan: {e}")
         await processing_msg.edit_text(f"❌ 기획안 처리 중 오류가 발생했습니다: {e}")
+    finally:
+        if chat_id in sessions:
+            sessions[chat_id]["busy"] = False
 
 # -------------------------------------------------------------
 # STEP 2: ARTICLE DRAFTING & ITERATIVE REFINEMENT
@@ -345,6 +358,11 @@ async def create_article_draft(chat_id, message_id, context):
         text="✍️ <b>Antigravity 에이전트가 1,500자 이상 심층 아티클 초안을 작성 중입니다... (약 1~2분 소요)</b>",
         parse_mode="HTML"
     )
+
+    session["busy"] = True
+    session["action"] = "본문 1,500자 이상 심층 초안 작성 (Antigravity CLI)"
+    session["started_at"] = time.time()
+    sessions[chat_id] = session
 
     try:
         writer = ContentWriter(config)
@@ -396,6 +414,9 @@ async def create_article_draft(chat_id, message_id, context):
     except Exception as e:
         logger.error(f"Error in create_article_draft: {e}")
         await status_msg.edit_text(f"❌ 본문 초안 작성 중 오류가 발생했습니다: {e}")
+    finally:
+        if chat_id in sessions:
+            sessions[chat_id]["busy"] = False
 
 async def refine_article_draft(message, chat_id, user_feedback, context):
     session = sessions.get(chat_id)
@@ -406,6 +427,11 @@ async def refine_article_draft(message, chat_id, user_feedback, context):
     processing_msg = await message.reply_text("🔄 보내주신 피드백/자료를 반영하여 본문 초안을 수정 및 보강 중입니다...")
 
     current_draft = session["draft"]
+    session["busy"] = True
+    session["action"] = "본문 피드백/첨언 반영 및 수정 중 (Antigravity CLI)"
+    session["started_at"] = time.time()
+    sessions[chat_id] = session
+
     try:
         runner = AntigravityRunner(config)
         system_prompt = "당신은 전문 수석 테크 에디터입니다. 기존 초안에 사용자의 수정 요청 및 추가 자료를 완벽히 반영하여 업그레이드하고, 반드시 유효한 JSON 형식으로만 응답하세요."
@@ -475,6 +501,9 @@ async def refine_article_draft(message, chat_id, user_feedback, context):
     except Exception as e:
         logger.error(f"Error in refine_article_draft: {e}")
         await processing_msg.edit_text(f"❌ 초안 수정 중 오류가 발생했습니다: {e}")
+    finally:
+        if chat_id in sessions:
+            sessions[chat_id]["busy"] = False
 
 # -------------------------------------------------------------
 # STEP 3: PUBLISHING TO GITHUB PAGES
@@ -574,6 +603,11 @@ async def process_edit_input(message, user_text, blog_url_match, context, is_upd
             await processing_msg.edit_text(f"❌ 해당 포스팅 파일(`{slug}.md`)을 블로그 저장소에서 찾을 수 없습니다.")
             return
 
+    session["busy"] = True
+    session["action"] = f"기존 글({slug}) 수정안 기획 (Antigravity CLI)"
+    session["started_at"] = time.time()
+    sessions[chat_id] = session
+
     try:
         with open(filepath, "r", encoding="utf-8") as f:
             original_raw = f.read()
@@ -650,6 +684,9 @@ async def process_edit_input(message, user_text, blog_url_match, context, is_upd
     except Exception as e:
         logger.error(f"Error in process_edit_input: {e}")
         await processing_msg.edit_text(f"❌ 수정 기획안 작성 중 오류가 발생했습니다: {e}")
+    finally:
+        if chat_id in sessions:
+            sessions[chat_id]["busy"] = False
 
 async def execute_edit_publish(chat_id, context):
     session = sessions.get(chat_id)
