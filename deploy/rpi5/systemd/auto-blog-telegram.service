@@ -1,0 +1,15 @@
+[Unit]
+Description=Auto Blog System - Interactive Telegram Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=ian
+WorkingDirectory=/home/ian/auto_blog_system/automation-pipeline
+Environment="GEMINI_API_KEY=YOUR_API_KEY_HERE"
+ExecStart=/home/ian/auto_blog_system/automation-pipeline/venv/bin/python3 telegram_daemon.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target
