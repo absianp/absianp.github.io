@@ -110,6 +110,7 @@ async def handle_status_command(update: Update, context: ContextTypes.DEFAULT_TY
     try:
         res = subprocess.run(["systemctl", "--user", "list-timers", "--no-pager"], capture_output=True, text=True, timeout=5)
         lines = res.stdout.strip().split("\n")
+        for line in lines:
             if "auto-blog.timer" in line:
                 timer_details.append("  • 🤖 <b>일일 자동 포스팅</b>: 매일 <code>07:00 KST</code>")
             elif "auto-blog-geeknews.timer" in line:
