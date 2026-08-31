@@ -113,6 +113,7 @@ async def process_edit_input(message, user_text, blog_url_match, context):
 출력 JSON 형식:
 {{
   "title": "수정된 매력적인 제목",
+  "new_slug": "사용자가 URL/슬러그 변경을 요청했거나, 제목에 맞게 영문 슬러그를 변경해야 할 경우에만 새로운 슬러그 지정 (예: 2026-08-31-qwen-27b-review). 변경이 불필요하면 기존 슬러그 그대로 유지",
   "description": "수정된 메타 디스크립션",
   "category": "카테고리",
   "tags": ["태그1", "태그2", "태그3"],
@@ -141,10 +142,15 @@ async def process_edit_input(message, user_text, blog_url_match, context):
             "filepath": filepath
         }
 
+        new_slug_info = ""
+        new_slug = modified_data.get("new_slug")
+        if new_slug and new_slug != slug:
+            new_slug_info = f"\n🔗 <b>URL 변경</b>: <code>{slug}</code> ➔ <code>{new_slug}</code>"
+
         reply_text = (
             f"✏️ <b>[기존 포스팅 수정 기획안]</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
-            f"📌 <b>대상 슬러그</b>: <code>{slug}</code>\n"
+            f"📌 <b>대상 슬러그</b>: <code>{slug}</code>{new_slug_info}\n"
             f"📝 <b>수정된 제목</b>: <b>{modified_data.get('title')}</b>\n"
             f"🏷️ <b>태그</b>: #{', #'.join(modified_data.get('tags', []))}\n\n"
             f"💡 <b>주요 변경 사항</b>:\n"
@@ -258,25 +264,27 @@ async def run_edit_pipeline_async(edit_item, chat_id, context):
     try:
         slug = edit_item["slug"]
         article_data = edit_item["data"]
+        new_slug = article_data.get("new_slug")
         publisher = GitHubPublisher(config)
         indexer = GoogleIndexing(config)
         
-        saved_path = publisher.update_existing_article(slug, article_data)
+        saved_path, final_slug = publisher.update_existing_article(slug, article_data, new_slug=new_slug)
         site_url = config.get("site", {}).get("url", "https://absianp.github.io")
-        full_post_url = f"{site_url.rstrip('/')}/blog/{slug}/"
+        full_post_url = f"{site_url.rstrip('/')}/blog/{final_slug}/"
         
         # Ping indexer
         indexer.ping_sitemap()
         
+        slug_changed_note = f"\n🔗 <b>새 URL</b>: <a href=\"{full_post_url}\">{full_post_url}</a>\n" if final_slug != slug else ""
+
         msg = f"""🎉 <b>[포스팅 수정 및 재배포 완료]</b>
 ━━━━━━━━━━━━━━━━━━━━
 📌 <b>제목</b>: <b>{article_data.get('title')}</b>
-💡 <b>수정 사항</b>: {article_data.get('change_summary', '수정 완료')}
-
-🔗 <b>수정된 글 바로가기</b>:
+💡 <b>수정 사항</b>: {article_data.get('change_summary', '수정 완료')}{slug_changed_note}
+🔗 <b>글 바로가기</b>:
 <a href="{full_post_url}">{full_post_url}</a>
 
-✨ <i>GitHub Pages에 성공적으로 재배포되었습니다!</i>"""
+✨ <i>GitHub Pages에 성공적으로 반영 및 재배포되었습니다!</i>"""
 
         reply_markup = {
             "inline_keyboard": [
