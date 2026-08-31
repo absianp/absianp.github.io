@@ -405,8 +405,11 @@ async def create_article_draft(chat_id, message_id, context):
 
         keyboard = [
             [InlineKeyboardButton("🚀 최종 발행 및 배포", callback_data="btn_publish_draft")],
-            [InlineKeyboardButton("📖 본문 전문 미리보기", callback_data="btn_view_full_draft")],
-            [InlineKeyboardButton("❌ 취소", callback_data="btn_cancel_session")]
+            [
+                InlineKeyboardButton("✏️ 추가 수정 (피드백)", callback_data="btn_request_more_draft_edit"),
+                InlineKeyboardButton("📖 초안 전문 보기", callback_data="btn_view_full_draft")
+            ],
+            [InlineKeyboardButton("❌ 취소 및 초기화", callback_data="btn_cancel_session")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await status_msg.edit_text(reply_text, reply_markup=reply_markup, parse_mode="HTML")
@@ -492,8 +495,11 @@ async def refine_article_draft(message, chat_id, user_feedback, context):
 
         keyboard = [
             [InlineKeyboardButton("🚀 최종 발행 및 배포", callback_data="btn_publish_draft")],
-            [InlineKeyboardButton("📖 수정된 전문 보기", callback_data="btn_view_full_draft")],
-            [InlineKeyboardButton("❌ 취소", callback_data="btn_cancel_session")]
+            [
+                InlineKeyboardButton("✏️ 추가 수정 (피드백)", callback_data="btn_request_more_draft_edit"),
+                InlineKeyboardButton("📖 수정된 전문 보기", callback_data="btn_view_full_draft")
+            ],
+            [InlineKeyboardButton("❌ 취소 및 초기화", callback_data="btn_cancel_session")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await processing_msg.edit_text(reply_text, reply_markup=reply_markup, parse_mode="HTML")
@@ -696,8 +702,11 @@ async def process_edit_input(message, user_text, blog_url_match, context, is_upd
         )
 
         keyboard = [
-            [InlineKeyboardButton("✅ 수정 및 재배포", callback_data="btn_apply_edit")],
-            [InlineKeyboardButton("📖 수정된 본문 미리보기", callback_data="btn_view_full_edit")],
+            [InlineKeyboardButton("🚀 최종 수정 및 재배포", callback_data="btn_apply_edit")],
+            [
+                InlineKeyboardButton("✏️ 추가 수정 (피드백)", callback_data="btn_request_more_edit"),
+                InlineKeyboardButton("📖 수정본 전문 보기", callback_data="btn_view_full_edit")
+            ],
             [InlineKeyboardButton("❌ 취소 및 초기화", callback_data="btn_cancel_session")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -806,6 +815,26 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         else:
             await context.bot.send_message(chat_id=chat_id, text="⚠️ 현재 확인 가능한 초안이 없습니다.")
+        return
+
+    if data == "btn_request_more_edit":
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text="💬 <b>[추가 수정 모드]</b>\n"
+                 "수정하고 싶은 점, 추가할 내용, 변경할 제목/URL 등을 <b>메시지로 편하게 보내주세요!</b>\n"
+                 "<i>(예: \"결론에 로컬 구동 팁 추가\", \"벤치마크 표에 MMLU 점수 추가\", \"URL을 2026-08-31-qwen-review 로 변경\")</i>",
+            parse_mode="HTML"
+        )
+        return
+
+    if data == "btn_request_more_draft_edit":
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text="💬 <b>[초안 추가 수정 모드]</b>\n"
+                 "초안에 추가/수정하고 싶은 내용을 <b>메시지로 편하게 보내주세요!</b>\n"
+                 "<i>(예: \"소제목 말투를 더 친절하게 바꿔줘\", \"FAQ에 설치 방법 추가해줘\")</i>",
+            parse_mode="HTML"
+        )
         return
 
     if data == "btn_view_full_edit":
