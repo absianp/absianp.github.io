@@ -5,7 +5,6 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/home/ian/auto_blog_system/automation-pipeline
-Environment="GEMINI_API_KEY=YOUR_API_KEY_HERE"
 ExecStart=/home/ian/auto_blog_system/automation-pipeline/venv/bin/python3 telegram_daemon.py
 Restart=always
 RestartSec=10

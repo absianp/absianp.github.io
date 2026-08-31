@@ -4,9 +4,7 @@ After=network.target
 
 [Service]
 Type=oneshot
-User=ian
 WorkingDirectory=/home/ian/auto_blog_system/automation-pipeline
-Environment="GEMINI_API_KEY=YOUR_API_KEY_HERE"
 ExecStart=/home/ian/auto_blog_system/automation-pipeline/venv/bin/python3 main_pipeline.py --mode dryrun
 
 [Install]
