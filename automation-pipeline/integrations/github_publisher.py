@@ -83,6 +83,63 @@ class GitHubPublisher:
 
         return filepath
 
+    def update_existing_article(self, slug: str, article: Dict[str, Any]) -> str:
+        """
+        기존 슬러그의 마크다운(.md) 파일을 수정된 내용으로 덮어쓰고 Git 커밋 & Push
+        """
+        filepath = os.path.join(self.content_dir, f"{slug}.md")
+        if not os.path.exists(filepath):
+            matched = [f for f in os.listdir(self.content_dir) if f.startswith(slug) and f.endswith(".md")]
+            if matched:
+                filepath = os.path.join(self.content_dir, matched[0])
+            else:
+                raise FileNotFoundError(f"수정할 게시글 파일을 찾을 수 없습니다: {slug}.md")
+
+        title = article.get("title", "무제")
+        category = article.get("category", "General")
+        pub_date = article.get("pubDate") or datetime.now().strftime("%Y-%m-%d")
+
+        frontmatter_data = {
+            "title": title,
+            "description": article.get("description", ""),
+            "pubDate": pub_date,
+            "category": category,
+            "tags": article.get("tags", []),
+            "author": article.get("author", "앱시안 (absian)"),
+            "readingTime": article.get("readingTime", "5 min read"),
+            "featured": article.get("featured", False),
+            "draft": False,
+        }
+
+        if "faqs" in article and article["faqs"]:
+            frontmatter_data["faqs"] = article["faqs"]
+
+        yaml_content = yaml.dump(
+            frontmatter_data,
+            allow_unicode=True,
+            default_flow_style=False,
+            sort_keys=False
+        )
+
+        full_content = f"---\n{yaml_content}---\n\n{article.get('markdown_content', '')}\n"
+
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(full_content)
+
+        print(f"📄 마크다운 아티클 수정 완료: {filepath}")
+
+        if self.auto_commit:
+            try:
+                subprocess.run(["git", "add", filepath], cwd=self.repo_root, check=False)
+                commit_msg = f"fix(blog): update post - {title[:30]}"
+                subprocess.run(["git", "commit", "-m", commit_msg], cwd=self.repo_root, check=False)
+                if self.auto_push:
+                    subprocess.run(["git", "push", "origin", "main"], cwd=self.repo_root, check=False)
+            except Exception as e:
+                print(f"[GitHubPublisher] Git 작업 중 알림: {e}")
+
+        return filepath
+
     def _git_commit_and_push(self, filepath: str, title: str):
         """Git 커밋 및 Push 실행"""
         try:
