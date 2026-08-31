@@ -34,18 +34,37 @@ def extract_json(raw_text: str) -> dict:
     clean_json = json_match.group(0) if json_match else raw_text.strip()
     return json.loads(clean_json)
 
+async def handle_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    msg = """📚 <b>[앱시안 블로그 에이전트 명령어 & 사용 가이드]</b>
+━━━━━━━━━━━━━━━━━━━━
+🤖 <b>기본 명령어 목록:</b>
+
+• <code>/status</code> : 라즈베리파이 상태, 타이머 스케줄, 발행 현황 및 대화 세션 조회
+• <code>/write [주제/자료]</code> : 새로운 블로그 포스팅 기획 및 작성 시작
+• <code>/edit [URL] [요청사항]</code> : 기존 블로그 포스팅 내용 또는 URL(슬러그) 수정
+• <code>/cancel</code> 또는 <code>/reset</code> : 진행 중인 기획/초안 작업 취소 및 초기화
+• <code>/help</code> : 사용 가능한 명령어 목록 및 사용 가이드 보기
+
+━━━━━━━━━━━━━━━━━━━━
+💡 <b>명령어 없이 자연어로 바로 쓰기:</b>
+
+1. <b>새 글 작성:</b>
+   • 주제, 뉴스 기사 URL, 유튜브 요약본 등을 채팅창에 그대로 전송
+   • <i>기획안 확인 후 [본문 초안 작성] 또는 [즉시 발행] 선택</i>
+
+2. <b>대화형 첨언 및 본문 보강:</b>
+   • 기획안이나 초안 단계에서 추가하고 싶은 내용을 메시지로 계속 전송하면 실시간으로 본문에 반영
+
+3. <b>기존 글 수정:</b>
+   • <code>https://absianp.github.io/blog/...</code> 링크와 함께 수정할 내용을 입력"""
+
+    await update.message.reply_text(msg, parse_mode="HTML")
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "👋 <b>앱시안 인터랙티브 블로그 AI 에이전트입니다.</b>\n\n"
-        "✨ <b>새 글 작성 (기획 ➔ 첨언/수정 ➔ 초안 ➔ 배포):</b>\n"
-        "• 주제나 참고 자료/URL을 채팅창에 입력해주세요.\n"
-        "• 예: <code>/write 2026년 AI 1인 개발 실무 활용법</code>\n"
-        "• <i>기획안 및 초안 단계에서 언제든 추가 자료나 피드백을 주시면 즉시 본문에 반영됩니다.</i>\n\n"
-        "✏️ <b>기존 글 수정 (내용/URL 변경):</b>\n"
-        "• 블로그 URL과 함께 수정 요청사항 입력\n"
-        "• 예: <code>https://absianp.github.io/blog/2026-08-31-llm-qwen-27b/ 벤치마크 보강해줘</code>\n\n"
-        "📊 <b>에이전트 현황 조회:</b> <code>/status</code>\n"
-        "🔄 <b>초기화/취소:</b> <code>/cancel</code> 또는 <code>/reset</code>",
+        "👋 <b>앱시안 인터랙티브 블로그 AI 에이전트에 오신 것을 환영합니다!</b>\n\n"
+        "자유롭게 작성하고 싶은 <b>주제</b>나 <b>참고 링크/자료</b>를 채팅창에 보내주시면 글 작성이 시작됩니다.\n\n"
+        "전체 명령어 및 사용 방법이 궁금하시면 언제든 <code>/help</code> 를 입력해 주세요! 🚀",
         parse_mode="HTML"
     )
 
@@ -740,6 +759,7 @@ def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("help", handle_help_command))
     app.add_handler(CommandHandler("status", handle_status_command))
     app.add_handler(CommandHandler("cancel", handle_cancel))
     app.add_handler(CommandHandler("reset", handle_cancel))
