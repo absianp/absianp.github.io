@@ -79,9 +79,43 @@ def run_auto_pipeline(config: dict, auto_approve: bool = True, target_category: 
 
     print("\n✨ 모든 에이전트 작업이 성공적으로 완료되었습니다!")
 
+def run_dryrun_pipeline(config: dict):
+    print("=" * 60)
+    print("🔍 [헬스체크 에이전트] 파이프라인 Dry-run 이상 탐지 가동 시작")
+    print("=" * 60)
+    telegram = TelegramNotifier(config)
+    
+    try:
+        harvester = KeywordHarvester(config)
+        writer = ContentWriter(config)
+        inspector = PolicyInspector(config)
+        
+        # 1단계: 키워드 발굴 테스트 (API 의존성 체크)
+        ideas = harvester.harvest_ideas(None)
+        if not ideas:
+            raise Exception("키워드 발굴 실패 (결과 없음)")
+        
+        selected_topic = ideas[0]
+        
+        # 2단계: 아티클 작성 테스트 (LLM 의존성 체크)
+        article = writer.write_article(selected_topic)
+        if not article or "title" not in article:
+            raise Exception("아티클 생성 실패 (LLM 응답 오류)")
+            
+        # 3단계: 정책 검사 테스트 (코드 로직 체크)
+        inspection = inspector.inspect_article(article)
+        if "score" not in inspection:
+            raise Exception("정책 검사(PolicyInspector) 로직 에러")
+            
+        print("✅ Dry-run 체크 완료: 파이프라인 전 과정(탐색->작성->검사) 정상 동작 확인.")
+        
+    except Exception as e:
+        print(f"❌ Dry-run 이상 탐지: {e}")
+        telegram.send_health_report({"error_details": f"🚨 [Dry-run 실패] 파이프라인 에러 감지: {e}"}, is_alert=True)
+
 def main():
     parser = argparse.ArgumentParser(description="앱시안(absian) 자동화 블로그 파이프라인")
-    parser.add_argument("--mode", choices=["auto", "trend", "interactive", "report", "morning_report", "evening_report", "revenue_report", "health", "test_telegram"], default="auto")
+    parser.add_argument("--mode", choices=["auto", "dryrun", "trend", "interactive", "report", "morning_report", "evening_report", "revenue_report", "health", "test_telegram"], default="auto")
     parser.add_argument("--approve", action="store_true", help="초안 자동 승인 모드")
     parser.add_argument("--category", type=str, default=None, help="특정 카테고리 지정")
     args = parser.parse_args()
@@ -92,6 +126,9 @@ def main():
 
     if args.mode == "auto":
         run_auto_pipeline(config, auto_approve=True, target_category=args.category)
+        
+    elif args.mode == "dryrun":
+        run_dryrun_pipeline(config)
 
     elif args.mode == "trend":
         import subprocess

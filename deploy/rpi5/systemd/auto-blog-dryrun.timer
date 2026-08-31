@@ -1,0 +1,12 @@
+[Unit]
+Description=Run Dryrun Agent Every 4 Hours
+RefuseManualStart=no
+RefuseManualStop=no
+
+[Timer]
+OnCalendar=*-*-* 00/4:00:00
+Persistent=true
+Unit=auto-blog-dryrun.service
+
+[Install]
+WantedBy=timers.target
