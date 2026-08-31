@@ -65,9 +65,12 @@ async def process_user_input(message, user_text, context):
         if not raw_output:
             raise Exception("Antigravity 파이프라인에서 응답을 생성하지 못했습니다.")
             
-        # Extract JSON block if surrounded by markdown
-        clean_json = re.sub(r"^```(?:json)?\s*", "", raw_output.strip())
-        clean_json = re.sub(r"\s*```$", "", clean_json)
+        # Extract JSON block reliably using regex
+        json_match = re.search(r"\{[\s\S]*\}", raw_output)
+        if json_match:
+            clean_json = json_match.group(0)
+        else:
+            clean_json = raw_output.strip()
         
         topic_data = json.loads(clean_json)
         topic_id = str(message.message_id)

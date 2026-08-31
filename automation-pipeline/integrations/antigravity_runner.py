@@ -54,10 +54,10 @@ class AntigravityRunner:
                 env["PATH"] = f"{os.path.expanduser('~/.local/bin')}:/usr/local/bin:/usr/bin:/bin:" + env.get("PATH", "")
                 
                 result = subprocess.run(
-                    [cli_path, "-p", full_prompt],
+                    [cli_path, "--dangerously-skip-permissions", "-p", full_prompt],
                     capture_output=True,
                     text=True,
-                    timeout=180,
+                    timeout=240,
                     env=env
                 )
                 if result.returncode == 0 and result.stdout.strip():
