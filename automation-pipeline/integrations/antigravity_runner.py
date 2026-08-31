@@ -18,29 +18,52 @@ class AntigravityRunner:
         self.local_model = self.engine_cfg.get("local_model", "gemma2:2b")
         self.ollama_url = self.engine_cfg.get("ollama_url", "http://localhost:11434/v1")
 
+    def get_cli_path(self) -> Optional[str]:
+        """agy 또는 antigravity CLI 실행 파일 경로 탐색"""
+        candidates = [
+            shutil.which(self.cli_cmd),
+            shutil.which("agy"),
+            shutil.which("antigravity"),
+            os.path.expanduser("~/.local/bin/agy"),
+            os.path.expanduser("~/.local/bin/antigravity"),
+            "/home/ian/.local/bin/agy",
+            "/home/ian/Antigravity-arm64/antigravity",
+            "/usr/local/bin/agy",
+            "/usr/bin/agy"
+        ]
+        for path in candidates:
+            if path and os.path.exists(path) and os.access(path, os.X_OK):
+                return path
+        return None
+
     def is_cli_available(self) -> bool:
-        """agy 또는 antigravity CLI 설치 여부 확인"""
-        return shutil.which(self.cli_cmd) is not None or shutil.which("antigravity") is not None
+        return self.get_cli_path() is not None
 
     def generate_text(self, system_prompt: str, user_prompt: str) -> Optional[str]:
         """
         Antigravity CLI 또는 SDK, 로컬 엔진을 통해 텍스트 생성 수행
         """
         # 1. Antigravity CLI (`agy`) 실행 시도
-        if self.is_cli_available():
+        cli_path = self.get_cli_path()
+        if cli_path:
             try:
-                cmd_name = self.cli_cmd if shutil.which(self.cli_cmd) else "antigravity"
                 full_prompt = f"{system_prompt}\n\n[USER REQUEST]\n{user_prompt}"
                 
-                print(f"🤖 Antigravity CLI ({cmd_name})를 호출하여 콘텐츠 생성 중...")
+                print(f"🤖 Antigravity CLI ({cli_path})를 호출하여 콘텐츠 생성 중...")
+                env = os.environ.copy()
+                env["PATH"] = f"{os.path.expanduser('~/.local/bin')}:/usr/local/bin:/usr/bin:/bin:" + env.get("PATH", "")
+                
                 result = subprocess.run(
-                    [cmd_name, "-p", full_prompt, "--non-interactive"],
+                    [cli_path, "-p", full_prompt],
                     capture_output=True,
                     text=True,
-                    timeout=120
+                    timeout=180,
+                    env=env
                 )
                 if result.returncode == 0 and result.stdout.strip():
                     return result.stdout.strip()
+                else:
+                    print(f"[AntigravityRunner] CLI 반환 에러 code={result.returncode}: {result.stderr}")
             except Exception as e:
                 print(f"[AntigravityRunner] CLI 실행 예외: {e}")
 
