@@ -616,24 +616,38 @@ async def process_edit_input(message, user_text, blog_url_match, context, is_upd
         system_prompt = "당신은 전문 기술 블로그 에디터입니다. 기존 글을 사용자의 요청에 맞추어 보강 및 수정하고, 반드시 유효한 JSON 형식으로만 응답해야 합니다."
         
         feedbacks = session.get("feedbacks", [user_text])
-        user_prompt = f"""
-[기존 포스팅 내용]
-{original_raw}
+        if is_update and session.get("data"):
+            prev_data = session["data"]
+            base_content = prev_data.get("markdown_content", original_raw)
+            base_title = prev_data.get("title", "")
+            base_slug = prev_data.get("new_slug", slug)
+            prompt_context = f"""[직전 수정본 내용]
+- 현재 제목: {base_title}
+- 현재 URL 슬러그: {base_slug}
+- 현재 메타 설명: {prev_data.get('description', '')}
+- 현재 FAQ: {json.dumps(prev_data.get('faqs', []), ensure_ascii=False)}
+- 현재 본문 마크다운:
+{base_content}"""
+        else:
+            prompt_context = f"[기존 원본 포스팅 내용]\n{original_raw}"
 
-[사용자 수정 요청사항]
+        user_prompt = f"""
+{prompt_context}
+
+[사용자의 추가 수정 요청사항]
 {user_text}
 
 [전체 요청 히스토리]
 {chr(10).join([f"- {fb}" for fb in feedbacks])}
 
-위 사용자 요청사항을 반영하여 기존 글을 전면 수정/보강해주세요.
+위 사용자 요청사항을 반영하여 글을 전면 수정/보강해주세요.
 프론트매터 메타데이터(title, description, category, tags, faqs 등)와 본문(markdown_content)을 충실하게 작성하고,
 무엇이 변경되었는지 핵심 요약(change_summary)을 포함하여 오직 유효한 JSON 형식으로 응답하세요.
 
 출력 JSON 형식:
 {{
   "title": "수정된 매력적인 제목",
-  "new_slug": "사용자가 URL/슬러그 변경을 요청했거나, 제목에 맞게 영문 슬러그를 변경해야 할 경우에만 새로운 슬러그 지정 (예: 2026-08-31-qwen-27b-review). 변경이 불필요하면 기존 슬러그 그대로 유지",
+  "new_slug": "사용자가 URL/슬러그 변경을 요청했거나, 제목에 맞게 영문 슬러그를 변경해야 할 경우에만 새로운 슬러그 지정 (예: 2026-08-31-qwen-38-27b-review). 변경이 불필요하면 기존 슬러그 그대로 유지",
   "description": "수정된 메타 디스크립션",
   "category": "카테고리",
   "tags": ["태그1", "태그2", "태그3"],
@@ -663,19 +677,27 @@ async def process_edit_input(message, user_text, blog_url_match, context, is_upd
         if new_slug and new_slug != slug:
             new_slug_info = f"\n🔗 <b>URL 변경</b>: <code>{slug}</code> ➔ <code>{new_slug}</code>"
 
+        header_title = "🔄 <b>[추가 수정안 업데이트 완료]</b>" if is_update else "✏️ <b>[기존 포스팅 수정 기획안]</b>"
+        char_count = len(modified_data.get("markdown_content", "").replace(" ", "").replace("\n", ""))
+
         reply_text = (
-            f"✏️ <b>[기존 포스팅 수정 기획안]</b>\n"
+            f"{header_title}\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
             f"📌 <b>대상 슬러그</b>: <code>{slug}</code>{new_slug_info}\n"
             f"📝 <b>수정된 제목</b>: <b>{modified_data.get('title')}</b>\n"
+            f"📏 <b>본문 분량</b>: <code>{char_count:,}자</code> | ⏱️ {modified_data.get('readingTime', '7 min read')}\n"
             f"🏷️ <b>태그</b>: #{', #'.join(modified_data.get('tags', []))}\n\n"
             f"💡 <b>주요 변경 사항</b>:\n"
             f"{modified_data.get('change_summary', '본문 및 구조 보강')}\n\n"
-            f"💡 <i>추가 수정사항이 있다면 메시지를 보내주세요. 마음에 드시면 아래 버튼을 눌러 재배포하세요.</i>"
+            f"━━━━━━━━━━━━━━━━━━━━\n"
+            f"💡 <b>진행 방법</b>:\n"
+            f"• 추가로 수정하거나 덧붙이고 싶은 내용이 있다면 <b>메시지로 편하게 계속 보내주세요. 실시간으로 수정안이 업데이트</b>됩니다.\n"
+            f"• 수정 내용이 마음에 드시면 아래 <b>[✅ 수정 및 재배포]</b> 버튼을 눌러주세요."
         )
 
         keyboard = [
             [InlineKeyboardButton("✅ 수정 및 재배포", callback_data="btn_apply_edit")],
+            [InlineKeyboardButton("📖 수정된 본문 미리보기", callback_data="btn_view_full_edit")],
             [InlineKeyboardButton("❌ 취소 및 초기화", callback_data="btn_cancel_session")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -776,7 +798,6 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         session = sessions.get(chat_id)
         if session and session.get("draft"):
             content = session["draft"].get("markdown_content", "본문 없음")
-            # Telegram has 4096 character limit
             if len(content) > 3500:
                 content = content[:3500] + "\n\n... (분량 초과로 일부 생략) ..."
             await context.bot.send_message(
@@ -786,6 +807,21 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         else:
             await context.bot.send_message(chat_id=chat_id, text="⚠️ 현재 확인 가능한 초안이 없습니다.")
+        return
+
+    if data == "btn_view_full_edit":
+        session = sessions.get(chat_id)
+        if session and session.get("data"):
+            content = session["data"].get("markdown_content", "본문 없음")
+            if len(content) > 3500:
+                content = content[:3500] + "\n\n... (분량 초과로 일부 생략) ..."
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=f"📖 <b>[수정된 본문 전문]</b>\n\n{content}",
+                parse_mode="Markdown"
+            )
+        else:
+            await context.bot.send_message(chat_id=chat_id, text="⚠️ 현재 확인 가능한 수정본이 없습니다.")
         return
 
 def main():
