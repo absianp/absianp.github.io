@@ -1,10 +1,12 @@
 import os
 import json
+import re
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 
 from integrations.telegram_bot import _load_env_file, TelegramNotifier
+from integrations.antigravity_runner import AntigravityRunner
 from main_pipeline import load_config, KeywordHarvester, ContentWriter, PolicyInspector, GitHubPublisher, GoogleIndexing
 import asyncio
 
@@ -37,18 +39,17 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     await process_user_input(update.message, user_text, context)
 
 async def process_user_input(message, user_text, context):
-    processing_msg = await message.reply_text("⏳ 입력하신 자료를 분석하여 포스팅 주제를 기획 중입니다...")
+    processing_msg = await message.reply_text("⏳ 입력하신 자료를 분석하여 포스팅 기획안을 작성 중입니다. (Antigravity CLI 가동 중...)")
     
     try:
-        harvester = KeywordHarvester(config)
-        
-        # We will dynamically prompt Gemini to convert user_text into a topic struct
-        prompt = f"""
+        system_prompt = "당신은 수익화 블로그 기획 전문가입니다. 오직 유효한 JSON 형식으로만 응답해야 합니다."
+        user_prompt = f"""
 다음 사용자의 입력 자료나 주제를 바탕으로 블로그 포스팅 기획안을 작성해주세요.
-JSON 형식으로 응답하세요.
+반드시 마크다운 없이 순수 JSON 형식으로 응답하세요.
+
 입력 자료: {user_text}
 
-형식:
+출력 JSON 형식:
 {{
   "title": "클릭을 유도하는 매력적인 제목",
   "category": "AI & 생산성",
@@ -57,12 +58,18 @@ JSON 형식으로 응답하세요.
   "key_points": ["포인트1", "포인트2", "포인트3"]
 }}
 """
-        import google.generativeai as genai
-        genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        model = genai.GenerativeModel("gemini-2.5-flash", generation_config={"response_mime_type": "application/json"})
-        response = model.generate_content(prompt)
+        # Antigravity CLI / SDK 를 통해 텍스트 생성
+        runner = AntigravityRunner(config)
+        raw_output = runner.generate_text(system_prompt=system_prompt, user_prompt=user_prompt)
         
-        topic_data = json.loads(response.text)
+        if not raw_output:
+            raise Exception("Antigravity 파이프라인에서 응답을 생성하지 못했습니다.")
+            
+        # Extract JSON block if surrounded by markdown
+        clean_json = re.sub(r"^```(?:json)?\s*", "", raw_output.strip())
+        clean_json = re.sub(r"\s*```$", "", clean_json)
+        
+        topic_data = json.loads(clean_json)
         topic_id = str(message.message_id)
         pending_topics[topic_id] = topic_data
         
@@ -83,6 +90,9 @@ JSON 형식으로 응답하세요.
         
         await processing_msg.edit_text(reply_text, reply_markup=reply_markup, parse_mode="HTML")
         
+    except json.JSONDecodeError:
+        logger.error(f"JSON 파싱 실패: {raw_output}")
+        await processing_msg.edit_text(f"❌ 기획안 파싱 실패. AI가 JSON 형식을 반환하지 않았습니다.\n(결과: {raw_output[:100]}...)")
     except Exception as e:
         logger.error(f"Error in process_user_input: {e}")
         await processing_msg.edit_text(f"❌ 기획안 작성 중 오류가 발생했습니다: {e}")
@@ -104,9 +114,8 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await query.edit_message_text("⚠️ 세션이 만료되었거나 데이터를 찾을 수 없습니다. 다시 시도해주세요.")
             return
             
-        await query.edit_message_text("✍️ AI 에이전트가 본문을 작성하고 있습니다. 약 1~2분 정도 소요됩니다...")
+        await query.edit_message_text("✍️ Antigravity 에이전트가 본문을 작성하고 있습니다. 약 1~2분 정도 소요됩니다...")
         
-        # Run pipeline in a separate thread so we don't block the async loop
         asyncio.create_task(run_interactive_pipeline_async(topic, query.message.chat_id, query.message.message_id, context))
 
 async def run_interactive_pipeline_async(topic, chat_id, message_id, context):
@@ -132,10 +141,9 @@ async def run_interactive_pipeline_async(topic, chat_id, message_id, context):
         # 5단계: 색인 요청
         indexer.ping_sitemap()
         
-        # 텔레그램 공식 알림 전송 (기존 봇 기능)
+        # 텔레그램 공식 알림 전송
         telegram.send_article_published(article, inspection, full_post_url)
         
-        # 사용자에게 완료 메시지
         await context.bot.send_message(
             chat_id=chat_id, 
             text=f"🎉 성공적으로 게시되었습니다!\n\n🔗 {full_post_url}"
