@@ -798,12 +798,11 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         session = sessions.get(chat_id)
         if session and session.get("draft"):
             content = session["draft"].get("markdown_content", "본문 없음")
-            if len(content) > 3500:
-                content = content[:3500] + "\n\n... (분량 초과로 일부 생략) ..."
+            if len(content) > 3800:
+                content = content[:3800] + "\n\n... (분량 초과로 일부 생략되었습니다) ..."
             await context.bot.send_message(
                 chat_id=chat_id,
-                text=f"📖 <b>[본문 초안 전문]</b>\n\n{content}",
-                parse_mode="Markdown"
+                text=f"📖 [본문 초안 전문 미리보기]\n\n{content}"
             )
         else:
             await context.bot.send_message(chat_id=chat_id, text="⚠️ 현재 확인 가능한 초안이 없습니다.")
@@ -813,12 +812,11 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         session = sessions.get(chat_id)
         if session and session.get("data"):
             content = session["data"].get("markdown_content", "본문 없음")
-            if len(content) > 3500:
-                content = content[:3500] + "\n\n... (분량 초과로 일부 생략) ..."
+            if len(content) > 3800:
+                content = content[:3800] + "\n\n... (분량 초과로 일부 생략되었습니다) ..."
             await context.bot.send_message(
                 chat_id=chat_id,
-                text=f"📖 <b>[수정된 본문 전문]</b>\n\n{content}",
-                parse_mode="Markdown"
+                text=f"📖 [수정된 본문 전문 미리보기]\n\n{content}"
             )
         else:
             await context.bot.send_message(chat_id=chat_id, text="⚠️ 현재 확인 가능한 수정본이 없습니다.")
