@@ -113,9 +113,53 @@ def run_dryrun_pipeline(config: dict):
         print(f"❌ Dry-run 이상 탐지: {e}")
         telegram.send_health_report({"error_details": f"🚨 [Dry-run 실패] 파이프라인 에러 감지: {e}"}, is_alert=True)
 
+def run_geeknews_weekly_pipeline(config: dict):
+    site_title = config.get("site", {}).get("title", "앱시안(absian)")
+    site_url = config.get("site", {}).get("url", "https://absianp.github.io")
+    print("=" * 60)
+    print(f"📰 [{site_title}] 긱뉴스(GeekNews) 주간 테크 브리핑 파이프라인 가동 (매주 금요일 08:00 KST)")
+    print(f"📌 블로그: {site_title} ({site_url})")
+    print("=" * 60)
+
+    from agents.geeknews_harvester import GeekNewsHarvester
+    harvester = GeekNewsHarvester(config)
+    writer = ContentWriter(config)
+    inspector = PolicyInspector(config)
+    publisher = GitHubPublisher(config)
+    indexer = GoogleIndexing(config)
+    telegram = TelegramNotifier(config)
+
+    print("\n🔍 [1단계: GeekNews 주간 기사 수집 및 브리핑 기획]")
+    topic = harvester.harvest_weekly_briefing_topic()
+    print(f"🎯 기획된 주제: {topic.get('title')}")
+    telegram.send_topic_discovered(topic)
+
+    print("\n✍️ [2단계: AI 심층 아티클 작성 (Antigravity CLI)]")
+    article = writer.write_article(topic)
+    if topic.get("slug"):
+        article["slug"] = topic["slug"]
+    print(f"✅ 글 작성 완료! 제목: {article.get('title')}")
+
+    print("\n🧐 [3단계: 애드센스 품질 정책 검증]")
+    inspection = inspector.inspect_article(article)
+    print(f"📊 품질 점수: {inspection.get('score')}점 / 글자 수: {inspection.get('char_count')}자")
+
+    print("\n🚀 [4단계: GitHub Pages 발행 및 배포]")
+    saved_path = publisher.publish_article(article)
+    slug = article.get("slug") or os.path.splitext(os.path.basename(saved_path))[0]
+    full_post_url = f"{site_url.rstrip('/')}/blog/{slug}/"
+    print(f"🔗 배포 완료: {full_post_url}")
+
+    print("\n📡 [5단계: 구글 검색엔진 색인 요청 (Sitemap Ping)]")
+    indexer.ping_sitemap()
+
+    print("\n📲 [6단계: 텔레그램 발행 완료 알림 전송]")
+    telegram.send_article_published(article, inspection, full_post_url)
+    print("🎉 GeekNews 주간 테크 브리핑 발행 완료!")
+
 def main():
     parser = argparse.ArgumentParser(description="앱시안(absian) 자동화 블로그 파이프라인")
-    parser.add_argument("--mode", choices=["auto", "dryrun", "trend", "interactive", "report", "morning_report", "evening_report", "revenue_report", "health", "test_telegram"], default="auto")
+    parser.add_argument("--mode", choices=["auto", "dryrun", "geeknews_weekly", "trend", "interactive", "report", "morning_report", "evening_report", "revenue_report", "health", "test_telegram"], default="auto")
     parser.add_argument("--approve", action="store_true", help="초안 자동 승인 모드")
     parser.add_argument("--category", type=str, default=None, help="특정 카테고리 지정")
     args = parser.parse_args()
@@ -127,6 +171,9 @@ def main():
     if args.mode == "auto":
         run_auto_pipeline(config, auto_approve=True, target_category=args.category)
         
+    elif args.mode == "geeknews_weekly":
+        run_geeknews_weekly_pipeline(config)
+
     elif args.mode == "dryrun":
         run_dryrun_pipeline(config)
 

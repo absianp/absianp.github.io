@@ -110,9 +110,10 @@ async def handle_status_command(update: Update, context: ContextTypes.DEFAULT_TY
     try:
         res = subprocess.run(["systemctl", "--user", "list-timers", "--no-pager"], capture_output=True, text=True, timeout=5)
         lines = res.stdout.strip().split("\n")
-        for line in lines:
             if "auto-blog.timer" in line:
                 timer_details.append("  • 🤖 <b>일일 자동 포스팅</b>: 매일 <code>07:00 KST</code>")
+            elif "auto-blog-geeknews.timer" in line:
+                timer_details.append("  • 📰 <b>GeekNews 주간 브리핑</b>: 매주 금요일 <code>08:00 KST</code>")
             elif "auto-blog-dryrun.timer" in line:
                 timer_details.append("  • 🩺 <b>이상 탐지 (Dryrun)</b>: <code>4시간 간격 (00, 04, 08, 12, 16, 20시)</code>")
             elif "auto-blog-morning.timer" in line:
@@ -125,6 +126,7 @@ async def handle_status_command(update: Update, context: ContextTypes.DEFAULT_TY
     if not timer_details:
         timer_details = [
             "  • 🤖 일일 자동 포스팅: 매일 07:00 KST",
+            "  • 📰 GeekNews 주간 브리핑: 매주 금요일 08:00 KST",
             "  • 🩺 4시간 Dryrun 모의점검 활성",
             "  • 🌅 아침 08:00 / 저녁 19:00 브리핑"
         ]
