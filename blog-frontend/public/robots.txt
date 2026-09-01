@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 
-# Sitemaps
+# Sitemaps & Feeds
 Sitemap: https://absianp.github.io/sitemap.xml
+Sitemap: https://absianp.github.io/rss.xml

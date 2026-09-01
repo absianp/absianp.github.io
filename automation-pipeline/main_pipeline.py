@@ -70,6 +70,10 @@ def run_auto_pipeline(config: dict, auto_approve: bool = True, target_category: 
     full_post_url = f"{site_url.rstrip('/')}/blog/{post_slug}/"
     print(f"🎉 성공적으로 게시되었습니다: {full_post_url}")
 
+    # 키워드 큐(keywords.csv) 상태 갱신
+    if selected_topic.get("_csv_keyword"):
+        harvester.mark_csv_keyword_published(selected_topic["_csv_keyword"], post_slug)
+
     # 📲 텔레그램 알림 2: 새 글 작성 및 배포 보고
     telegram.send_article_published(article, inspection, full_post_url)
 

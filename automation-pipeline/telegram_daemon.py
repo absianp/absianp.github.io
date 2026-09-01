@@ -157,6 +157,20 @@ async def handle_status_command(update: Update, context: ContextTypes.DEFAULT_TY
             else:
                 session_text = f"⚙️ <b>진행 중 ({state})</b>"
 
+    # Keywords Queue Status
+    csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "data", "keywords.csv"))
+    queue_summary = "등록된 큐 없음"
+    if os.path.exists(csv_path):
+        try:
+            import csv
+            with open(csv_path, "r", encoding="utf-8") as f:
+                r_list = list(csv.DictReader(f))
+                ready_c = len([r for r in r_list if r.get("status") == "ready"])
+                next_kw = next((r.get("keyword") for r in r_list if r.get("status") == "ready"), "없음")
+                queue_summary = f"대기 <b>{ready_c}개</b> / 총 {len(r_list)}개 (다음: <i>{next_kw[:16]}...</i>)"
+        except Exception:
+            pass
+
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     msg = f"""📊 <b>[앱시안 블로그 에이전트 시스템 현황]</b> ({now_str})
@@ -170,8 +184,9 @@ async def handle_status_command(update: Update, context: ContextTypes.DEFAULT_TY
 ⏰ <b>자동화 에이전트 스케줄</b>
 {timers_text}
 
-📚 <b>블로그 발행 현황</b>
+📚 <b>블로그 콘텐츠 & 키워드 큐</b>
   • 총 포스트 수: <b>{total_posts}개</b> (+{today_posts}건 오늘 발행)
+  • 📋 고단가 롱테일 큐: {queue_summary}
   • 최근 발행 글: {latest_post_info}
 
 💬 <b>내 대화 세션 상태</b>

@@ -10,6 +10,8 @@ export interface Props {
   canonicalURL?: string;
   faqs?: Array<{ question: string; answer: string }>;
   tags?: string[];
+  gaId?: string;
+  naverVerification?: string;
 }
 
 const {
@@ -23,11 +25,19 @@ const {
   canonicalURL = Astro.url.href,
   faqs,
   tags = [],
+  gaId = import.meta.env.PUBLIC_GA_ID || '',
+  naverVerification = import.meta.env.PUBLIC_NAVER_VERIFICATION || '',
 } = Astro.props;
 
 const siteTitle = '앱시안(absian) AI & 테크 인사이트';
 const formattedTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
-const absoluteImageUrl = new URL(image, Astro.site || 'https://absianp.github.io').href;
+
+const articleSlug = Astro.params.slug;
+const resolvedImage = (article && articleSlug && (image === '/images/default-hero.svg' || !image))
+  ? `/og/${articleSlug}.svg`
+  : image;
+
+const absoluteImageUrl = new URL(resolvedImage, Astro.site || 'https://absianp.github.io').href;
 const siteUrl = Astro.site?.href || 'https://absianp.github.io';
 
 // Structured Data: Article / BlogPosting
@@ -109,6 +119,24 @@ const faqSchema = (faqs && faqs.length > 0) ? {
 <!-- Google AdSense Official Script & Account Verification -->
 <meta name="google-adsense-account" content="ca-pub-3054784185688248" />
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3054784185688248" crossorigin="anonymous"></script>
+
+<!-- Naver Search Advisor Verification -->
+{naverVerification && (
+  <meta name="naver-site-verification" content={naverVerification} />
+)}
+
+<!-- Google Analytics 4 (GA4) -->
+{gaId && (
+  <>
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+    <script is:inline define:vars={{ gaId }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', gaId);
+    </script>
+  </>
+)}
 
 <!-- JSON-LD Structured Data for High Google Search Visibility -->
 {articleSchema && (
