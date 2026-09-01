@@ -1,0 +1,13 @@
+[Unit]
+Description=Auto Blog System - GeekNews Weekly Briefing (Every Friday 08:00 KST)
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/ian/auto_blog_system/automation-pipeline
+ExecStart=/home/ian/auto_blog_system/automation-pipeline/venv/bin/python3 main_pipeline.py --mode geeknews_weekly
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

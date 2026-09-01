@@ -1,0 +1,9 @@
+[Unit]
+Description=Auto Blog System - GeekNews Weekly Timer (Every Friday 08:00 KST)
+
+[Timer]
+OnCalendar=Fri *-*-* 08:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
