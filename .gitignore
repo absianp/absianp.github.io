@@ -5,10 +5,19 @@ venv/
 __pycache__/
 *.pyc
 .DS_Store
-deploy/rpi5/keys/rpi5_key
-deploy/rpi5/keys/rpi5_key.pub
-automation-pipeline/config/.env
+# Secrets, Credentials & Keys
 .env
 *.env
-**/.env
+*.env.*
+**/.env*
+automation-pipeline/config/.env
+deploy/rpi5/keys/
+*.key
+*.pem
+*.pfx
+*.p12
+*credentials*.json
+*service-account*.json
+*secret*
+
 *.tar.gz
