@@ -99,6 +99,17 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
           <p>발행일: {formattedDate} {updatedDate && `(최종 수정: ${new Intl.DateTimeFormat('ko-KR').format(updatedDate)})`}</p>
         </div>
       </div>
+
+      <!-- Hero Thumbnail Banner -->
+      {Astro.params.slug && (
+        <div class="my-6 rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm aspect-[1200/630] bg-slate-900">
+          <img
+            src={`${base}/og/${Astro.params.slug}.svg`}
+            alt={title}
+            class="w-full h-full object-cover"
+          />
+        </div>
+      )}
     </header>
 
     <!-- Top AdSense Slot -->

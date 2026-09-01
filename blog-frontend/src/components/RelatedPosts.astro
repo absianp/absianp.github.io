@@ -71,15 +71,26 @@ const relatedPosts = scoredPosts.slice(0, limit).map((item) => item.post);
         return (
           <a
             href={`/blog/${post.slug}/`}
-            class="group flex flex-col justify-between bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm hover:shadow-md hover:border-blue-400/80 transition-all duration-200"
+            class="group flex flex-col justify-between bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-md hover:border-blue-400/80 transition-all duration-200"
           >
-            <div>
-              <div class="flex items-center justify-between text-xs text-slate-400 mb-3">
-                <span class="px-2.5 py-0.5 bg-blue-50 text-blue-600 font-semibold rounded-full group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                  {post.data.category}
-                </span>
-                <span>{post.data.readingTime || '5 min'}</span>
-              </div>
+            <!-- Dynamic SVG Thumbnail -->
+            <div class="aspect-[1200/630] bg-slate-900 border-b border-slate-100 overflow-hidden">
+              <img
+                src={`/og/${post.slug}.svg`}
+                alt={post.data.title}
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            </div>
+
+            <div class="p-5 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between text-xs text-slate-400 mb-3">
+                  <span class="px-2.5 py-0.5 bg-blue-50 text-blue-600 font-semibold rounded-full group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    {post.data.category}
+                  </span>
+                  <span>{post.data.readingTime || '5 min'}</span>
+                </div>
 
               <h4 class="font-bold text-slate-900 text-base leading-snug group-hover:text-blue-600 transition-colors line-clamp-2 mb-2">
                 {post.data.title}
@@ -96,9 +107,10 @@ const relatedPosts = scoredPosts.slice(0, limit).map((item) => item.post);
                 읽어보기 &rarr;
               </span>
             </div>
-          </a>
-        );
-      })}
+          </div>
+        </a>
+      );
+    })}
     </div>
   </section>
 )}
