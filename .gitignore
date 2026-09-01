@@ -19,5 +19,7 @@ deploy/rpi5/keys/
 *credentials*.json
 *service-account*.json
 *secret*
+*token*.json
+adsense_*.json
 
 *.tar.gz
