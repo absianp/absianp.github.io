@@ -15,8 +15,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  TELEGRAM_BOT_TOKEN: '8705878879:AAHaDbtz_9YVokSDhDAjZyRh1eRymPx-l0U'
-  TELEGRAM_CHAT_ID: '5017406279'
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
 jobs:
   build:
