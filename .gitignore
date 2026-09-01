@@ -8,4 +8,7 @@ __pycache__/
 deploy/rpi5/keys/rpi5_key
 deploy/rpi5/keys/rpi5_key.pub
 automation-pipeline/config/.env
+.env
+*.env
+**/.env
 *.tar.gz
