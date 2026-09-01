@@ -27,8 +27,8 @@ const {
 
 const siteTitle = '앱시안(absian) AI & 테크 인사이트';
 const formattedTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
-const absoluteImageUrl = new URL(image, Astro.site || 'https://absianp.github.io/auto-blog').href;
-const siteUrl = Astro.site?.href || 'https://absianp.github.io/auto-blog';
+const absoluteImageUrl = new URL(image, Astro.site || 'https://absianp.github.io').href;
+const siteUrl = Astro.site?.href || 'https://absianp.github.io';
 
 // Structured Data: Article / BlogPosting
 const articleSchema = article ? {
@@ -106,7 +106,8 @@ const faqSchema = (faqs && faqs.length > 0) ? {
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={absoluteImageUrl} />
 
-<!-- Google AdSense Official Script -->
+<!-- Google AdSense Official Script & Account Verification -->
+<meta name="google-adsense-account" content="ca-pub-3054784185688248" />
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3054784185688248" crossorigin="anonymous"></script>
 
 <!-- JSON-LD Structured Data for High Google Search Visibility -->

@@ -5,19 +5,19 @@ export async function GET(context: any) {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
 
   const staticPages = [
-    { url: '', changefreq: 'daily', priority: '1.0' },
-    { url: '/blog', changefreq: 'daily', priority: '0.9' },
-    { url: '/about', changefreq: 'monthly', priority: '0.7' },
-    { url: '/privacy-policy', changefreq: 'monthly', priority: '0.5' },
-    { url: '/terms', changefreq: 'monthly', priority: '0.5' },
-    { url: '/contact', changefreq: 'monthly', priority: '0.6' },
-    { url: '/categories/ai-productivity', changefreq: 'weekly', priority: '0.8' },
-    { url: '/categories/tech-dev', changefreq: 'weekly', priority: '0.8' },
-    { url: '/categories/side-income', changefreq: 'weekly', priority: '0.8' },
+    { url: '/', changefreq: 'daily', priority: '1.0' },
+    { url: '/blog/', changefreq: 'daily', priority: '0.9' },
+    { url: '/about/', changefreq: 'monthly', priority: '0.7' },
+    { url: '/privacy-policy/', changefreq: 'monthly', priority: '0.5' },
+    { url: '/terms/', changefreq: 'monthly', priority: '0.5' },
+    { url: '/contact/', changefreq: 'monthly', priority: '0.6' },
+    { url: '/categories/ai-productivity/', changefreq: 'weekly', priority: '0.8' },
+    { url: '/categories/tech-dev/', changefreq: 'weekly', priority: '0.8' },
+    { url: '/categories/side-income/', changefreq: 'weekly', priority: '0.8' },
   ];
 
   const postPages = posts.map(post => ({
-    url: `/blog/${post.slug}`,
+    url: `/blog/${post.slug}/`,
     lastmod: (post.data.updatedDate || post.data.pubDate).toISOString().split('T')[0],
     changefreq: 'weekly',
     priority: post.data.featured ? '0.9' : '0.8',
