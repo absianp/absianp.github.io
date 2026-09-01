@@ -46,7 +46,75 @@ class KeywordHarvester:
             ]
         return collected_titles
 
+    def harvest_from_csv_queue(self, target_category: str = None) -> Dict[str, Any]:
+        """고단가 롱테일 키워드 큐(keywords.csv)에서 ready 상태의 키워드 1건을 선출"""
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "keywords.csv"))
+        if not os.path.exists(csv_path):
+            return None
+        import csv
+        try:
+            with open(csv_path, "r", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for r in reader:
+                    if r.get("status") == "ready":
+                        if target_category and target_category not in r.get("category", ""):
+                            continue
+                        keyword = r.get("keyword", "")
+                        category = r.get("category", "스마트 부업 & 재테크")
+                        cpc = r.get("estimated_cpc", "2.5")
+                        words = keyword.split()
+                        target_kw = f"{words[0]} {words[1]}" if len(words) > 1 else keyword
+                        return {
+                            "title": keyword,
+                            "category": category,
+                            "target_keyword": target_kw,
+                            "tags": [category.split("&")[0].strip(), "고단가수익", "재테크", words[0]],
+                            "key_points": [
+                                f"{keyword} 핵심 개념 및 실전 원리 분석",
+                                "초보자도 바로 적용할 수 있는 단계별 실천 가이드",
+                                "수익 극대화 및 리스크 관리 핵심 체크포인트",
+                                "자주 묻는 질문(FAQ) 및 실전 꿀팁 요약"
+                            ],
+                            "_csv_keyword": keyword,
+                            "_estimated_cpc": cpc
+                        }
+        except Exception as e:
+            print(f"⚠️ keywords.csv 읽기 실패: {e}")
+        return None
+
+    def mark_csv_keyword_published(self, keyword: str, slug: str):
+        """발행 완료된 키워드의 상태를 published로 갱신"""
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "keywords.csv"))
+        if not os.path.exists(csv_path):
+            return
+        import csv
+        from datetime import datetime
+        rows = []
+        try:
+            with open(csv_path, "r", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                fieldnames = reader.fieldnames
+                for r in reader:
+                    if r.get("keyword") == keyword:
+                        r["status"] = "published"
+                        r["published_date"] = datetime.now().strftime("%Y-%m-%d")
+                        r["post_slug"] = slug
+                    rows.append(r)
+            with open(csv_path, "w", encoding="utf-8", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(rows)
+            print(f"✅ keywords.csv 상태 업데이트 완료: '{keyword}' ➔ published")
+        except Exception as e:
+            print(f"⚠️ keywords.csv 업데이트 실패: {e}")
+
     def harvest_ideas(self, target_category: str = None) -> List[Dict[str, Any]]:
+        # 1. 고단가 롱테일 키워드 큐(keywords.csv) 우선 확인
+        csv_topic = self.harvest_from_csv_queue(target_category)
+        if csv_topic:
+            print(f"🎯 [keywords.csv] 고단가 큐에서 우선 선출된 키워드: '{csv_topic['title']}' (예상 CPC: ${csv_topic.get('_estimated_cpc', '2.5')})")
+            return [csv_topic]
+
         selected_cat = None
         if target_category:
             for cat in self.categories:
