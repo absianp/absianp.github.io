@@ -1,8 +1,4 @@
 User-agent: *
 Allow: /
 
-User-agent: Yeti
-Allow: /
-
 Sitemap: https://absianp.github.io/sitemap.xml
-Sitemap: https://absianp.github.io/rss.xml
