@@ -34,16 +34,6 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
 ---
 
 <article class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 flex flex-col group">
-  <!-- Dynamic SVG Thumbnail Card -->
-  <a href={`${base}/blog/${slug}/`} class="block overflow-hidden aspect-[1200/630] bg-slate-900 border-b border-slate-100">
-    <img
-      src={`${base}/og/${slug}.svg`}
-      alt={title}
-      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-      loading="lazy"
-    />
-  </a>
-
   <div class="p-6 flex-1 flex flex-col">
     <div class="flex items-center justify-between gap-2 mb-3">
       <a
