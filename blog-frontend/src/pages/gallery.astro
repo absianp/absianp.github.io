@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ThumbnailCard from '../components/ThumbnailCard.astro';
 import AdSense from '../components/AdSense.astro';
 import { getCollection } from 'astro:content';
+import { getPostSummary } from '../utils/summary';
 
 const allPosts = await getCollection('blog', ({ data }) => {
   return import.meta.env.PROD ? !data.draft : true;
@@ -58,6 +59,7 @@ const categories = ['전체', 'AI & 생산성', '개발 & 테크', '스마트 �
         <div class="gallery-item" data-category={post.data.category}>
           <ThumbnailCard
             title={post.data.title}
+            summary={getPostSummary(post)}
             description={post.data.description}
             slug={post.slug}
             category={post.data.category}

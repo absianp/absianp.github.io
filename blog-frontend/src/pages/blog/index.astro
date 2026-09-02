@@ -4,6 +4,7 @@ import Card from '../../components/Card.astro';
 import ThumbnailCard from '../../components/ThumbnailCard.astro';
 import AdSense from '../../components/AdSense.astro';
 import { getCollection } from 'astro:content';
+import { getPostSummary } from '../../utils/summary';
 
 const allPosts = await getCollection('blog', ({ data }) => {
   return import.meta.env.PROD ? !data.draft : true;
@@ -75,6 +76,8 @@ const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pu
           {sortedPosts.map(post => (
             <ThumbnailCard
               title={post.data.title}
+              summary={getPostSummary(post)}
+              description={post.data.description}
               slug={post.slug}
               category={post.data.category}
               pubDate={post.data.pubDate}
