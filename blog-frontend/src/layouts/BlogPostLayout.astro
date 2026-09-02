@@ -4,6 +4,7 @@ import AdSense from '../components/AdSense.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import Giscus from '../components/Giscus.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
+import DigitalProductCTA from '../components/DigitalProductCTA.astro';
 import { getCategorySlug, getTagSlug } from '../utils/slug';
 
 export interface Props {
@@ -130,6 +131,11 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
           ))}
         </div>
       </section>
+    )}
+
+    <!-- Digital Product / Obsidian AI Starter Vault CTA -->
+    {tags.some(t => t.includes('옵시디언') || t.includes('생산성') || t.includes('템플릿')) && (
+      <DigitalProductCTA />
     )}
 
     <!-- Tags List -->
