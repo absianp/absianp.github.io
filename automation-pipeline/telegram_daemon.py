@@ -7,6 +7,7 @@ import yaml
 import logging
 import subprocess
 from datetime import datetime
+from typing import Any, Dict, List, Optional
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 
@@ -29,10 +30,65 @@ sessions = {}
 raw_content_dir = config.get("github", {}).get("blog_content_dir", "../blog-frontend/src/content/blog")
 CONTENT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), raw_content_dir))
 
-def extract_json(raw_text: str) -> dict:
-    json_match = re.search(r"\{[\s\S]*\}", raw_text)
-    clean_json = json_match.group(0) if json_match else raw_text.strip()
-    return json.loads(clean_json)
+def extract_json(raw_text: str) -> Any:
+    clean = raw_text.strip()
+    clean = re.sub(r"^```json\s*", "", clean, flags=re.MULTILINE)
+    clean = re.sub(r"^```\s*", "", clean, flags=re.MULTILINE)
+    clean = re.sub(r"\s*```$", "", clean, flags=re.MULTILINE)
+    
+    # 1. Direct parse
+    try:
+        return json.loads(clean)
+    except Exception:
+        pass
+    
+    # 2. Try JSON Array [ ... ] (다중 글 / 시리즈 목록)
+    list_match = re.search(r"\[[\s\S]*\]", clean)
+    if list_match:
+        try:
+            return json.loads(list_match.group(0))
+        except Exception:
+            pass
+            
+    # 3. Try JSON Object { ... } (단일 글)
+    dict_match = re.search(r"\{[\s\S]*\}", clean)
+    if dict_match:
+        try:
+            return json.loads(dict_match.group(0))
+        except Exception:
+            pass
+            
+    raise ValueError(f"유효한 JSON 데이터를 추출하지 못했습니다:\n{raw_text[:200]}")
+
+def fetch_url_context(url: str) -> str:
+    """사용자가 전송한 웹 링크의 본문 및 목차 요약 발췌"""
+    try:
+        from curl_cffi import requests
+        from bs4 import BeautifulSoup
+        r = requests.get(url, impersonate="chrome120", timeout=12)
+        if r.status_code != 200:
+            return f"(URL 접근 실패 HTTP {r.status_code})"
+        soup = BeautifulSoup(r.text, "html.parser")
+        title = soup.title.string.strip() if soup.title else ""
+        
+        # 목차 및 헤딩 수집
+        headings = [h.get_text(strip=True) for h in soup.find_all(["h1", "h2", "h3"])][:15]
+        headings_text = "\n".join([f"- {h}" for h in headings if len(h) > 2])
+
+        # 주요 텍스트 본문 추출
+        text_body = soup.get_text(separator=" ", strip=True)[:2500]
+        
+        return f"""
+[참고 URL 원문 발췌 데이터: {url}]
+- 페이지 제목: {title}
+- 주요 목차 및 챕터:
+{headings_text}
+- 주요 본문 내용 요약:
+{text_body}
+"""
+    except Exception as e:
+        logger.warning(f"URL 내용 수집 실패 ({url}): {e}")
+        return ""
 
 async def handle_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg = """📚 <b>[앱시안 블로그 에이전트 명령어 & 사용 가이드]</b>
@@ -282,6 +338,14 @@ async def generate_or_update_topic_plan(message, chat_id, user_input, context, i
         runner = AntigravityRunner(config)
         system_prompt = "당신은 수익화 및 SEO 전문 블로그 기획 에이전트입니다. 오직 유효한 JSON 형식으로만 응답해야 합니다."
 
+        # URL 링크가 포함된 경우 웹페이지 본문 및 목차 자동 수집
+        url_match = re.search(r"https?://[^\s]+", user_input)
+        url_context = ""
+        if url_match:
+            raw_url = url_match.group(0).rstrip(".,)")
+            if not "github.com" in raw_url and not "absianp.github.io" in raw_url:
+                url_context = fetch_url_context(raw_url)
+
         if is_update and current_topic:
             user_prompt = f"""
 [기존 포스팅 기획안]
@@ -289,44 +353,100 @@ async def generate_or_update_topic_plan(message, chat_id, user_input, context, i
 
 [사용자의 추가 첨언 및 신규 자료]
 {user_input}
+{url_context}
 
 [전체 요청 히스토리]
 {chr(10).join([f"- {fb}" for fb in feedbacks])}
 
 기존 기획안에 사용자의 추가 첨언 및 요구사항을 정밀하게 반영하여 한층 더 완성도 높은 기획안으로 업데이트해주세요.
-반드시 마크다운 없이 순수 JSON 형식으로 응답하세요.
-
-출력 JSON 형식:
-{{
-  "title": "클릭률과 검색 유입을 극대화하는 매력적인 제목",
-  "category": "AI & 생산성",
-  "target_keyword": "핵심 롱테일 키워드",
-  "tags": ["태그1", "태그2", "태그3", "태그4"],
-  "key_points": ["반드시 다룰 핵심 포인트1", "포인트2", "포인트3", "추가된 첨언 포인트4"]
-}}
+- 사용자가 여러 개의 글(시리즈/챕터별) 작성을 요청하는 경우: JSON 리스트 [ {{ ... }}, {{ ... }} ] 형식
+- 단일 글인 경우: 단일 JSON 객체 {{ ... }} 형식
+반드시 마크다운(```json) 없이 순수 JSON 형식으로만 응답하세요.
 """
         else:
             user_prompt = f"""
-다음 사용자의 입력 자료나 주제를 바탕으로 블로그 포스팅 기획안을 작성해주세요.
-반드시 마크다운 없이 순수 JSON 형식으로 응답하세요.
+다음 사용자의 입력 자료나 요청을 바탕으로 전문 블로그 포스팅 기획안을 작성해주세요.
 
-입력 자료: {user_input}
+[사용자 입력/요청]
+{user_input}
+{url_context}
 
-출력 JSON 형식:
-{{
-  "title": "클릭률과 검색 유입을 극대화하는 매력적인 제목",
-  "category": "AI & 생산성",
-  "target_keyword": "핵심 롱테일 키워드",
-  "tags": ["태그1", "태그2", "태그3", "태그4"],
-  "key_points": ["핵심 포인트1", "포인트2", "포인트3"]
-}}
+[출력 형식 및 작성 가이드]
+1. 사용자가 '여러 개', '시리즈', '각 챕터별', 'n개' 등 복수 포스팅을 요구하거나, 링크된 자료에 여러 챕터/주제가 있어 각 주제별 1개씩 복수 글 작성을 요구하는 경우:
+   반드시 각 글의 기획안을 포함하는 **JSON 리스트** 형식으로 응답하세요:
+   [
+     {{
+       "title": "클릭률과 검색 유입을 극대화하는 매력적인 제목 1",
+       "category": "AI & 생산성",
+       "target_keyword": "핵심 키워드",
+       "tags": ["태그1", "태그2", "태그3"],
+       "key_points": ["다룰 핵심 내용1", "핵심 내용2", "핵심 내용3"]
+     }},
+     {{
+       "title": "매력적인 제목 2",
+       "category": "개발 & 테크",
+       "target_keyword": "핵심 키워드",
+       "tags": ["태그1", "태그2"],
+       "key_points": ["다룰 핵심 내용1", "핵심 내용2"]
+     }}
+   ]
+
+2. 단일 글 작성 요청인 경우:
+   단일 JSON 객체 형식으로 응답하세요:
+   {{
+     "title": "클릭률과 검색 유입을 극대화하는 매력적인 제목",
+     "category": "AI & 생산성",
+     "target_keyword": "핵심 롱테일 키워드",
+     "tags": ["태그1", "태그2", "태그3", "태그4"],
+     "key_points": ["핵심 포인트1", "포인트2", "포인트3"]
+   }}
+
+반드시 마크다운 코드블록(```json) 없이 순수한 JSON으로만 응답하세요.
 """
         raw_output = runner.generate_text(system_prompt=system_prompt, user_prompt=user_prompt)
         if not raw_output:
             raise Exception("Antigravity 파이프라인에서 응답을 생성하지 못했습니다.")
 
         topic_data = extract_json(raw_output)
+
+        # 1. 다중 글(시리즈/챕터별) 기획안 처리
+        if isinstance(topic_data, list):
+            session["topics"] = topic_data
+            session["topic"] = topic_data[0] if topic_data else {}
+            session["is_multi"] = True
+            session["state"] = "PLANNING_MULTI"
+            sessions[chat_id] = session
+
+            topics_count = len(topic_data)
+            header_title = f"📚 <b>[다중 포스팅 기획안 - 총 {topics_count}편]</b>"
+            topics_list_str = "\n\n".join([
+                f"<b>{idx+1}. {t.get('title')}</b>\n"
+                f"   🏷️ {t.get('category')} | 🎯 #{t.get('target_keyword')}\n"
+                f"   🏷️ 태그: #{', #'.join(t.get('tags', []))}\n"
+                f"   📝 핵심: {', '.join(t.get('key_points', [])[:2])}"
+                for idx, t in enumerate(topic_data)
+            ])
+
+            reply_text = (
+                f"{header_title}\n"
+                f"━━━━━━━━━━━━━━━━━━━━\n"
+                f"{topics_list_str}\n\n"
+                f"━━━━━━━━━━━━━━━━━━━━\n"
+                f"💡 <i>요청하신 자료/챕터별로 총 {topics_count}편의 글이 연속 기획되었습니다.</i>\n"
+                f"아래 버튼을 누르면 1편부터 {topics_count}편까지 <b>자동으로 고품질 작성 및 순차 배포</b>를 진행합니다."
+            )
+
+            keyboard = [
+                [InlineKeyboardButton(f"🚀 {topics_count}편 일괄 순차 발행 & 배포", callback_data="btn_batch_publish")],
+                [InlineKeyboardButton("❌ 취소 및 초기화", callback_data="btn_cancel_session")]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            await processing_msg.edit_text(reply_text, reply_markup=reply_markup, parse_mode="HTML")
+            return
+
+        # 2. 단일 글 기획안 처리
         session["topic"] = topic_data
+        session["is_multi"] = False
         session["state"] = "PLANNING"
         sessions[chat_id] = session
 
@@ -593,6 +713,93 @@ async def execute_publish(chat_id, context, is_draft=True):
         logger.error(f"Error in execute_publish: {e}")
         await status_msg.edit_text(f"❌ 배포 중 오류가 발생했습니다: {e}")
 
+async def execute_batch_publish(chat_id, context):
+    session = sessions.get(chat_id)
+    if not session or not session.get("topics"):
+        await context.bot.send_message(chat_id=chat_id, text="⚠️ 발행할 다중 포스팅 작업 세션을 찾을 수 없습니다.")
+        return
+
+    topics = session["topics"]
+    total = len(topics)
+
+    status_msg = await context.bot.send_message(
+        chat_id=chat_id,
+        text=f"🚀 <b>[다중 글 일괄 발행 시작 (총 {total}편)]</b>\n"
+             f"Antigravity 에이전트가 각 챕터별 심층 글을 순차적으로 작성 및 배포합니다...",
+        parse_mode="HTML"
+    )
+
+    session["busy"] = True
+    session["action"] = f"다중 글({total}편) 순차 생성 및 배포"
+    session["started_at"] = time.time()
+    sessions[chat_id] = session
+
+    try:
+        writer = ContentWriter(config)
+        publisher = GitHubPublisher(config)
+        inspector = PolicyInspector(config)
+        telegram = TelegramNotifier(config)
+        indexer = GoogleIndexing(config)
+        site_url = config.get("site", {}).get("url", "https://absianp.github.io")
+
+        published_results = []
+
+        for idx, topic in enumerate(topics):
+            current_num = idx + 1
+            await status_msg.edit_text(
+                f"✍️ <b>[{current_num}/{total}편 심층 본문 작성 중...]</b>\n"
+                f"📌 <b>{topic.get('title')}</b>\n"
+                f"⏳ 약 1~2분 소요됩니다... (진행률: {int((idx/total)*100)}%)",
+                parse_mode="HTML"
+            )
+
+            # Write article
+            article = writer.write_article(topic)
+            inspection = inspector.inspect_article(article)
+            saved_path = publisher.publish_article(article)
+
+            post_slug = os.path.splitext(os.path.basename(saved_path))[0]
+            full_post_url = f"{site_url.rstrip('/')}/blog/{post_slug}/"
+            published_results.append({
+                "title": article.get("title"),
+                "url": full_post_url,
+                "score": inspection.get("score", 90),
+                "char_count": inspection.get("char_count", 1500)
+            })
+
+            # Send Telegram alert for each article
+            telegram.send_article_published(article, inspection, full_post_url)
+
+        # Ping search console sitemap
+        indexer.ping_sitemap()
+
+        # Clear session
+        if chat_id in sessions:
+            del sessions[chat_id]
+
+        summary_lines = "\n".join([
+            f"{i+1}. <a href='{r['url']}'>{r['title']}</a> ({r['char_count']:,}자)"
+            for i, r in enumerate(published_results)
+        ])
+
+        final_msg = f"""🎉 <b>[총 {total}편 일괄 포스팅 & 배포 완료!]</b>
+━━━━━━━━━━━━━━━━━━━━
+요청하신 모든 챕터별 아티클이 고품질로 성공적으로 작성되어 GitHub Pages에 배포되었습니다.
+
+📚 <b>발행된 포스팅 목록:</b>
+{summary_lines}
+
+✨ 검색 엔진 색인 요청(핑)이 전송되었으며, 블로그 메인 화면 및 갤러리에서 즉시 확인하실 수 있습니다."""
+
+        await status_msg.edit_text(final_msg, parse_mode="HTML", disable_web_page_preview=True)
+
+    except Exception as e:
+        logger.error(f"Error in execute_batch_publish: {e}")
+        await status_msg.edit_text(f"❌ 다중 포스팅 처리 중 오류가 발생했습니다: {e}")
+    finally:
+        if chat_id in sessions:
+            sessions[chat_id]["busy"] = False
+
 # -------------------------------------------------------------
 # STEP 4: EXISTING BLOG POST EDITING
 # -------------------------------------------------------------
@@ -809,6 +1016,11 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if data == "btn_quick_publish":
         await query.edit_message_text("🚀 즉시 작성 및 배포를 시작합니다...")
         asyncio.create_task(execute_publish(chat_id, context, is_draft=False))
+        return
+
+    if data == "btn_batch_publish":
+        await query.edit_message_text("🚀 다중 포스팅 일괄 생성 및 순차 배포를 시작합니다...")
+        asyncio.create_task(execute_batch_publish(chat_id, context))
         return
 
     if data == "btn_publish_draft":
