@@ -5,6 +5,7 @@ import ThumbnailCard from '../components/ThumbnailCard.astro';
 import AdSense from '../components/AdSense.astro';
 import { getCollection } from 'astro:content';
 import { getPostSummary } from '../utils/summary';
+import { getDynamicCategories } from '../utils/categories';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -15,12 +16,13 @@ const allPosts = await getCollection('blog', ({ data }) => {
 const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 const recentPosts = sortedPosts.slice(0, 12);
 
+const { primaryCategories, secondaryCategories } = await getDynamicCategories(3);
+
 const categories = [
   { name: '전체 글', href: `${base}/blog/` },
   { name: '갤러리', href: `${base}/gallery/` },
-  { name: 'AI & 생산성', href: `${base}/categories/ai-productivity/` },
-  { name: '개발 & 테크', href: `${base}/categories/tech-dev/` },
-  { name: '스마트 부업', href: `${base}/categories/side-income/` },
+  ...primaryCategories.map(c => ({ name: c.name, href: c.href })),
+  ...(secondaryCategories.length > 0 ? [{ name: `기타 (+${secondaryCategories.length})`, href: `${base}/categories/` }] : []),
 ];
 ---
 

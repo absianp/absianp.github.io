@@ -19,11 +19,13 @@ export async function getStaticPaths() {
       .filter(post => getCategorySlug(post.data.category) === slug)
       .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
+    const firstRawName = filteredPosts[0]?.data.category;
+
     return {
       params: { category: slug },
       props: {
         categorySlug: slug,
-        categoryName: getCategoryName(slug),
+        categoryName: getCategoryName(slug, firstRawName),
         posts: filteredPosts,
       },
     };
