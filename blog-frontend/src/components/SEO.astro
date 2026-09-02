@@ -29,8 +29,16 @@ const {
   naverVerification = import.meta.env.PUBLIC_NAVER_VERIFICATION || 'ca222471eefa2cd5ee78b56c06323e07',
 } = Astro.props;
 
-const siteTitle = '앱시안(absian) AI & 테크 인사이트';
-const formattedTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
+const siteTitle = '앱시안(absian)';
+let formattedTitle = title;
+
+if (!title.includes('앱시안') && !title.includes('absian')) {
+  if (title.length + siteTitle.length + 3 <= 40) {
+    formattedTitle = `${title} | ${siteTitle}`;
+  } else {
+    formattedTitle = title;
+  }
+}
 
 const articleSlug = Astro.params.slug;
 const resolvedImage = (article && articleSlug && (image === '/images/default-hero.svg' || !image))
