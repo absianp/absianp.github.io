@@ -1,8 +1,8 @@
 keyword,category,estimated_cpc,search_intent,status,published_date,post_slug
-IRP 세액공제 한도 및 ETF 투자 실전 포트폴리오,스마트 부업 & 재테크,2.85,정보/투자 탐색,ready,,
-2026 ISA 계좌 비과세 혜택 완벽 비교와 고배당 ETF 전략,스마트 부업 & 재테크,2.50,재테크/절세,ready,,
-AWS Solutions Architect Associate(SAA-C03) 단기 합격 로드맵,개발 & 테크,2.20,자격증/클라우드,ready,,
-n8n 셀프호스팅으로 구축하는 무료 업무 자동화 파이프라인,AI & 생산성,1.95,생산성/자동화,ready,,
+IRP 세액공제 한도 및 ETF 투자 실전 포트폴리오,스마트 부업 & 재테크,2.85,정보/투자 탐색,published,2026-09-04,2026-09-04-irp-etf
+2026 ISA 계좌 비과세 혜택 완벽 비교와 고배당 ETF 전략,스마트 부업 & 재테크,2.50,재테크/절세,published,2026-09-04,2026-09-04-2026-isa-etf-0
+AWS Solutions Architect Associate(SAA-C03) 단기 합격 로드맵,개발 & 테크,2.20,자격증/클라우드,published,2026-09-04,2026-09-04-aws-solutions-architect-associate
+n8n 셀프호스팅으로 구축하는 무료 업무 자동화 파이프라인,AI & 생산성,1.95,생산성/자동화,published,2026-09-04,2026-09-04-n8n
 노션 템플릿 검로드(Gumroad) 글로벌 달러 판매 실전 가이드,스마트 부업 & 재테크,2.10,디지털노마드/부업,ready,,
 구글 애드센스 RPM 2배 끌어올리는 고단가 키워드 및 광고 배치 공식,스마트 부업 & 재테크,3.10,수익화/블로그,ready,,
 쿠버네티스 CKA 자격증 비전공자 한 달 독학 합격 비법,개발 & 테크,2.40,커리어/데브옵스,ready,,
