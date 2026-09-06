@@ -24,3 +24,4 @@ adsense_*.json
 
 *.tar.gz
 automation-pipeline/data/draft_queue.json
+SESSION_HANDOFF_MASTER.md
