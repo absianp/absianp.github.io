@@ -19,7 +19,7 @@ Vercel vs Cloudflare Pages vs GitHub Pages 정적 사이트 호스팅 완벽 비
 Supabase 무료 티어로 풀스택 백엔드 1시간 만에 구축하기,개발 & 테크,2.05,백엔드/DB,published,2026-09-06,2026-09-06-supabase-1-db-api
 도커 이미지 경량화 및 멀티스테이지 빌드 프로덕션 모범 사례,개발 & 테크,1.80,컨테이너/도커,published,2026-09-07,2026-09-07-90
 Make(구 Integromat)를 활용한 인스타그램/스레드 자동 포스팅 파이프라인,AI & 생산성,1.90,SNS자동화,published,2026-09-07,2026-09-07-make-integromat
-Docker vs Podman 차이점과 루트리스(Rootless) 컨테이너 실무 가이드,개발 & 테크,2.10,컨테이너/보안,ready,,
+Docker vs Podman 차이점과 루트리스(Rootless) 컨테이너 실무 가이드,개발 & 테크,2.10,컨테이너/보안,published,2026-09-07,2026-09-07-docker-vs-podman-rootless
 FastAPI와 Celery Redis를 결합한 비동기 백그라운드 작업 큐 구축,개발 & 테크,2.45,백엔드/파이썬,ready,,
 Cursor AI IDE 단축키와 실전 프롬프트로 코딩 속도 3배 높이기,AI & 생산성,2.30,AI코딩/생산성,ready,,
 테라폼(Terraform) AWS 인프라 구축 기초와 상태(tfstate) 관리 모범 사례,개발 & 테크,3.20,클라우드/IaC,ready,,
