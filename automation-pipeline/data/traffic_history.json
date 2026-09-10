@@ -1,0 +1,82 @@
+{
+  "2026-09-10": {
+    "date": "2026-09-10",
+    "today_views": 11703,
+    "today_uv": 4053,
+    "today_clicks": 1157,
+    "ctr": 9.89,
+    "cumulative_views": 121863,
+    "total_posts": 306,
+    "today_posts": 6,
+    "category_views": {
+      "스마트 부업 & 재테크": {
+        "views": 3798,
+        "clicks": 335,
+        "ratio": 32.5
+      },
+      "AI & 생산성": {
+        "views": 4024,
+        "clicks": 259,
+        "ratio": 34.4
+      },
+      "개발 & 테크": {
+        "views": 3669,
+        "clicks": 243,
+        "ratio": 31.4
+      },
+      "블로그 수익화": {
+        "views": 157,
+        "clicks": 15,
+        "ratio": 1.3
+      },
+      "SEO & 마케팅": {
+        "views": 37,
+        "clicks": 2,
+        "ratio": 0.3
+      },
+      "스마트 부업": {
+        "views": 158,
+        "clicks": 11,
+        "ratio": 1.4
+      }
+    },
+    "top_posts": [
+      {
+        "title": "챗GPT 검색(AIO/GEO) 시대 블로그 유입 공략: AI 인용을 부르는 구조화 글쓰기와 애드센스 고단가 전략 (2025)",
+        "slug": "2026-09-10-gpt-aio-geo-ai",
+        "category": "스마트 부업 & 재테크",
+        "views": 3476,
+        "clicks": 300
+      },
+      {
+        "title": "AI 음성 복제 ElevenLabs와 CapCut으로 유튜브 쇼츠 자동 제작하기: 파이프라인 구축 및 수익화 가이드",
+        "slug": "2026-09-10-ai-elevenlabs-capcut",
+        "category": "AI & 생산성",
+        "views": 2983,
+        "clicks": 287
+      },
+      {
+        "title": "FastAPI와 Celery Redis를 결합한 비동기 백그라운드 작업 큐 구축",
+        "slug": "2026-09-09-fastapi-celery-redis",
+        "category": "개발 & 테크",
+        "views": 2723,
+        "clicks": 300
+      },
+      {
+        "title": "Nginx 리버스 프록시와 Let's Encrypt 무료 SSL 인증서 자동 갱신 완벽 가이드",
+        "slug": "2026-09-10-nginx-let-s-encrypt",
+        "category": "개발 & 테크",
+        "views": 2156,
+        "clicks": 230
+      },
+      {
+        "title": "전자책 크몽 탈잉 PDF 출판으로 매달 자는 동안 연금 만들기: 마크다운 자동화와 패시브 인컴 파이프라인 구축 가이드",
+        "slug": "2026-09-10-pdf",
+        "category": "스마트 부업 & 재테크",
+        "views": 1423,
+        "clicks": 114
+      }
+    ],
+    "growth_vs_yesterday": 11.1
+  }
+}

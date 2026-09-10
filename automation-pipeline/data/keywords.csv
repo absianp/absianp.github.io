@@ -20,22 +20,22 @@ Supabase 무료 티어로 풀스택 백엔드 1시간 만에 구축하기,개발
 도커 이미지 경량화 및 멀티스테이지 빌드 프로덕션 모범 사례,개발 & 테크,1.80,컨테이너/도커,published,2026-09-07,2026-09-07-90
 Make(구 Integromat)를 활용한 인스타그램/스레드 자동 포스팅 파이프라인,AI & 생산성,1.90,SNS자동화,published,2026-09-07,2026-09-07-make-integromat
 Docker vs Podman 차이점과 루트리스(Rootless) 컨테이너 실무 가이드,개발 & 테크,2.10,컨테이너/보안,published,2026-09-07,2026-09-07-docker-vs-podman-rootless
-FastAPI와 Celery Redis를 결합한 비동기 백그라운드 작업 큐 구축,개발 & 테크,2.45,백엔드/파이썬,ready,,
-Cursor AI IDE 단축키와 실전 프롬프트로 코딩 속도 3배 높이기,AI & 생산성,2.30,AI코딩/생산성,ready,,
-테라폼(Terraform) AWS 인프라 구축 기초와 상태(tfstate) 관리 모범 사례,개발 & 테크,3.20,클라우드/IaC,ready,,
-노코드 툴 FlutterFlow로 모바일 앱 만들고 애드몹 광고 수익 창출하기,스마트 부업 & 재테크,2.80,앱개발/수익화,ready,,
-Next.js 15 App Router와 Server Actions 완벽 정리 및 성능 최적화,개발 & 테크,2.15,프론트엔드/웹,ready,,
-Ollama와 DeepSeek R1 로컬 LLM 무료 설치 및 나만의 프라이빗 AI 챗봇,AI & 생산성,2.50,오픈소스AI/로컬LLM,ready,,
-크라우드웍스 & 데이터라벨링 재테크 시급 높이는 프로젝트 선별법,스마트 부업 & 재테크,1.95,부업/데이터라벨링,ready,,
-리눅스 서버 성능 모니터링 핵심 명령어 top htop iotop netstat 총정리,개발 & 테크,2.05,리눅스/서버관리,ready,,
-고성능 파이썬 코딩을 위한 uv 패키지 매니저 도입 및 가상환경 세팅,개발 & 테크,2.10,파이썬/개발환경,ready,,
-구글 서치 콘솔 색인 생성 범위 오류 원인 분석과 대량 해결 노하우,스마트 부업 & 재테크,3.40,SEO/웹마스터,ready,,
-Claude Coworker처럼 활용하는 MCP(Model Context Protocol) 연동 실전,AI & 생산성,2.70,AI에이전트/MCP,ready,,
-오픈소스 대안 툴로 SaaS 구독료 월 50만원 아끼는 셀프호스팅 추천 TOP 7,스마트 부업 & 재테크,2.65,비용절감/SaaS,ready,,
-PostgreSQL 인덱스 튜닝으로 느린 SQL 쿼리 성능 10배 개선하기,개발 & 테크,3.15,데이터베이스/DBA,ready,,
-깃허브 스폰서(GitHub Sponsors)와 오픈소스 기여로 외화 달러 후원받기,스마트 부업 & 재테크,2.25,오픈소스/달러수익,ready,,
-Helm 차트를 활용한 쿠버네티스 애플리케이션 원클릭 패키징 및 배포,개발 & 테크,2.90,데브옵스/k8s,ready,,
-Perplexity AI Pro 검색 엔진 실전 활용법과 논문 리서치 시간 단축,AI & 생산성,2.20,AI검색/리서치,ready,,
-전자책 크몽 탈잉 PDF 출판으로 매달 자는 동안 연금 만들기,스마트 부업 & 재테크,2.40,지식창업/PDF전자책,ready,,
-Nginx 리버스 프록시와 Let's Encrypt 무료 SSL 인증서 자동 갱신,개발 & 테크,2.10,웹서버/보안,ready,,
-AI 음성 복제 ElevenLabs와 CapCut으로 유튜브 쇼츠 자동 제작하기,AI & 생산성,2.55,영상제작/쇼츠수익화,ready,,
+FastAPI와 Celery Redis를 결합한 비동기 백그라운드 작업 큐 구축,개발 & 테크,2.45,백엔드/파이썬,published,2026-09-07,2026-09-07-fastapi-celery-redis
+Cursor AI IDE 단축키와 실전 프롬프트로 코딩 속도 3배 높이기,AI & 생산성,2.30,AI코딩/생산성,published,2026-09-07,2026-09-07-cursor-ai-ide-3
+테라폼(Terraform) AWS 인프라 구축 기초와 상태(tfstate) 관리 모범 사례,개발 & 테크,3.20,클라우드/IaC,published,2026-09-07,2026-09-07-terraform-aws-tfstate-s3
+노코드 툴 FlutterFlow로 모바일 앱 만들고 애드몹 광고 수익 창출하기,스마트 부업 & 재테크,2.80,앱개발/수익화,published,2026-09-08,2026-09-08-flutterflow-admob
+Next.js 15 App Router와 Server Actions 완벽 정리 및 성능 최적화,개발 & 테크,2.15,프론트엔드/웹,published,2026-09-08,2026-09-08-next-js-15-app
+Ollama와 DeepSeek R1 로컬 LLM 무료 설치 및 나만의 프라이빗 AI 챗봇,AI & 생산성,2.50,오픈소스AI/로컬LLM,published,2026-09-08,2026-09-08-ollama-deepseek-r1-llm
+크라우드웍스 & 데이터라벨링 재테크 시급 높이는 프로젝트 선별법,스마트 부업 & 재테크,1.95,부업/데이터라벨링,published,2026-09-08,2026-09-08-passive-income-6503
+리눅스 서버 성능 모니터링 핵심 명령어 top htop iotop netstat 총정리,개발 & 테크,2.05,리눅스/서버관리,published,2026-09-08,2026-09-08-top-htop-iotop-netstat
+고성능 파이썬 코딩을 위한 uv 패키지 매니저 도입 및 가상환경 세팅,개발 & 테크,2.10,파이썬/개발환경,published,2026-09-08,2026-09-08-uv
+구글 서치 콘솔 색인 생성 범위 오류 원인 분석과 대량 해결 노하우,스마트 부업 & 재테크,3.40,SEO/웹마스터,published,2026-09-09,2026-09-09-google-indexing-api
+Claude Coworker처럼 활용하는 MCP(Model Context Protocol) 연동 실전,AI & 생산성,2.70,AI에이전트/MCP,published,2026-09-09,2026-09-09-claude-coworker-mcp-model
+오픈소스 대안 툴로 SaaS 구독료 월 50만원 아끼는 셀프호스팅 추천 TOP 7,스마트 부업 & 재테크,2.65,비용절감/SaaS,published,2026-09-09,2026-09-09-saas-50-top-7
+PostgreSQL 인덱스 튜닝으로 느린 SQL 쿼리 성능 10배 개선하기,개발 & 테크,3.15,데이터베이스/DBA,published,2026-09-09,2026-09-09-postgresql-sql-10
+깃허브 스폰서(GitHub Sponsors)와 오픈소스 기여로 외화 달러 후원받기,스마트 부업 & 재테크,2.25,오픈소스/달러수익,published,2026-09-09,2026-09-09-github-sponsors
+Helm 차트를 활용한 쿠버네티스 애플리케이션 원클릭 패키징 및 배포,개발 & 테크,2.90,데브옵스/k8s,published,2026-09-09,2026-09-09-helm
+Perplexity AI Pro 검색 엔진 실전 활용법과 논문 리서치 시간 단축,AI & 생산성,2.20,AI검색/리서치,published,2026-09-10,2026-09-10-perplexity-ai-pro-80
+전자책 크몽 탈잉 PDF 출판으로 매달 자는 동안 연금 만들기,스마트 부업 & 재테크,2.40,지식창업/PDF전자책,published,2026-09-10,2026-09-10-pdf
+Nginx 리버스 프록시와 Let's Encrypt 무료 SSL 인증서 자동 갱신,개발 & 테크,2.10,웹서버/보안,published,2026-09-10,2026-09-10-nginx-let-s-encrypt
+AI 음성 복제 ElevenLabs와 CapCut으로 유튜브 쇼츠 자동 제작하기,AI & 생산성,2.55,영상제작/쇼츠수익화,published,2026-09-10,2026-09-10-ai-elevenlabs-capcut

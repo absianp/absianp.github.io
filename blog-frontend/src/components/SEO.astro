@@ -27,6 +27,7 @@ const {
   tags = [],
   gaId = import.meta.env.PUBLIC_GA_ID || '',
   naverVerification = import.meta.env.PUBLIC_NAVER_VERIFICATION || 'ca222471eefa2cd5ee78b56c06323e07',
+  goatcounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE || 'absianp',
 } = Astro.props;
 
 const siteTitle = '앱시안(absian)';
@@ -144,6 +145,11 @@ const faqSchema = (faqs && faqs.length > 0) ? {
       gtag('config', gaId);
     </script>
   </>
+)}
+
+<!-- GoatCounter Lightweight Realtime Privacy Analytics -->
+{goatcounterCode && (
+  <script data-goatcounter={`https://${goatcounterCode}.goatcounter.com/count`} async src="//gc.zgo.at/count.js"></script>
 )}
 
 <!-- JSON-LD Structured Data for High Google Search Visibility -->
