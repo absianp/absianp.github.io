@@ -97,7 +97,9 @@ class PerformanceTracker:
         today_posts_count = len([p for p in posts if p.get("date") == today_str])
 
         if today_str in history:
-            return history[today_str]
+            res = history[today_str]
+            res["sources"] = self.get_traffic_sources_status()
+            return res
 
         # 어제 데이터 참조
         yesterday_data = history.get(yesterday_str, {})
@@ -230,7 +232,7 @@ class PerformanceTracker:
         }
 
         # 3. GA4 상태
-        ga_id = self.config.get("seo", {}).get("gaId") or os.getenv("PUBLIC_GA_ID", "")
+        ga_id = self.config.get("analytics", {}).get("ga_id") or self.config.get("seo", {}).get("gaId") or os.getenv("PUBLIC_GA_ID", "")
         if ga_id:
             ga_result = {
                 "name": "Google Analytics 4",
