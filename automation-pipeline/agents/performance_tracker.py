@@ -223,7 +223,7 @@ class PerformanceTracker:
                 github_result["detail"] = f"인증 확인 필요 ({e})"
 
         # 2. GoatCounter 상태
-        goat_code = self.config.get("seo", {}).get("goatcounterCode", "absianp")
+        goat_code = self.config.get("analytics", {}).get("goatcounter_code") or self.config.get("seo", {}).get("goatcounterCode") or os.getenv("PUBLIC_GOATCOUNTER_CODE", "absian")
         goat_result = {
             "name": "GoatCounter (초경량 실시간)",
             "status": "🟢 프론트엔드 연동 활성",

@@ -30,10 +30,11 @@ adsense:
     bottom_banner: "4567890123"
     sidebar_banner: "5678901234"
 
-# 3-1. 웹 분석 (GA4) 및 검색엔진 소유권 인증
+# 3-1. 웹 분석 (GA4, GoatCounter) 및 검색엔진 소유권 인증
 analytics:
   ga_id: "G-WE6WVHJ03S" # 구글 애널리틱스 4 측정 ID (예: G-XXXXXXXXXX)
   naver_verification: "ca222471eefa2cd5ee78b56c06323e07" # 네이버 서치어드바이저 사이트 확인 메타태그 값
+  goatcounter_code: "absian" # GoatCounter 사이트 코드
 
 
 # 4. 콘텐츠 생성 & 타겟 분야 설정

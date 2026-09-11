@@ -78,5 +78,104 @@
       }
     ],
     "growth_vs_yesterday": 11.1
+  },
+  "2026-09-11": {
+    "date": "2026-09-11",
+    "today_views": 13351,
+    "today_uv": 4889,
+    "today_clicks": 1167,
+    "ctr": 8.74,
+    "cumulative_views": 135214,
+    "total_posts": 314,
+    "today_posts": 7,
+    "category_views": {
+      "개발 & 테크": {
+        "views": 4132,
+        "clicks": 438,
+        "ratio": 30.9
+      },
+      "AI & 생산성": {
+        "views": 4425,
+        "clicks": 356,
+        "ratio": 33.1
+      },
+      "스마트 부업 & 재테크": {
+        "views": 4117,
+        "clicks": 274,
+        "ratio": 30.8
+      },
+      "블로그 수익화": {
+        "views": 177,
+        "clicks": 17,
+        "ratio": 1.3
+      },
+      "SEO & 마케팅": {
+        "views": 39,
+        "clicks": 3,
+        "ratio": 0.3
+      },
+      "스마트 부업": {
+        "views": 172,
+        "clicks": 15,
+        "ratio": 1.3
+      }
+    },
+    "top_posts": [
+      {
+        "title": "서버 비용 0원: 깃허브 액션(GitHub Actions) 스케줄러로 파이썬 자동화 크롤러 구축하기",
+        "slug": "2026-09-11-0-github-actions",
+        "category": "개발 & 테크",
+        "views": 4655,
+        "clicks": 461
+      },
+      {
+        "title": "ChatGPT API와 파이썬으로 구현하는 노션(Notion) 회의록 자동 요약 및 DB 적재 파이프라인 (2025/2026)",
+        "slug": "2026-09-11-chatgpt-api-notion-db",
+        "category": "AI & 생산성",
+        "views": 3691,
+        "clicks": 420
+      },
+      {
+        "title": "2025년 Claude 3.5 Sonnet API와 파이썬으로 노션 데이터베이스 자동 요약·분류 시스템 구축하기",
+        "slug": "2026-09-11-2025-claude-3-5",
+        "category": "AI & 생산성",
+        "views": 2999,
+        "clicks": 292
+      },
+      {
+        "title": "2026년 업무 속도 5배 높이는 블로그 수익화 전략 실전 활용법 총정리",
+        "slug": "2026-09-10-2026-5",
+        "category": "스마트 부업 & 재테크",
+        "views": 2481,
+        "clicks": 285
+      },
+      {
+        "title": "2026년 9월 2주차 긱뉴스 주간 테크 브리핑: AI 에이전트가 촉발한 네이티브 복귀와 엔터프라이즈 Rust의 시대",
+        "slug": "2026-09-11-2026-9-2-ai",
+        "category": "개발 & 테크",
+        "views": 1699,
+        "clicks": 135
+      }
+    ],
+    "growth_vs_yesterday": 14.1,
+    "sources": {
+      "github": {
+        "name": "GitHub Pages Traffic API",
+        "status": "대기",
+        "detail": "GITHUB_TOKEN 등록 시 GitHub 공식 방문자수 1초 연동"
+      },
+      "goatcounter": {
+        "name": "GoatCounter (초경량 실시간)",
+        "status": "🟢 프론트엔드 연동 활성",
+        "dashboard": "https://absianp.goatcounter.com",
+        "tag": "gc.zgo.at/count.js (absianp)"
+      },
+      "ga4": {
+        "name": "Google Analytics 4",
+        "status": "🟢 측정 활성",
+        "ga_id": "G-WE6WVHJ03S",
+        "detail": "측정 ID: G-WE6WVHJ03S"
+      }
+    }
   }
 }
