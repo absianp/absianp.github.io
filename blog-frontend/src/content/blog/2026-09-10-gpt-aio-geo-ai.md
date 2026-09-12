@@ -96,6 +96,14 @@ Disallow: /search/
 Sitemap: https://yourdomain.com/sitemap.xml
 ```
 
+
+<!-- article-illustration:absian-2026-09-10-gpt-aio-geo-ai-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-10-gpt-aio-geo-ai-01.webp" alt="기술 글에 실제로 있는 정보를 대응하는 메타데이터에 옮기는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">구조화 정보를 만들 때는 원문과 대응하는 값인지 먼저 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-10-gpt-aio-geo-ai-01 -->
+
 ### 단계 2: Python을 활용한 Schema.org (TechArticle + FAQPage) 자동 생성기
 
 아티클 배포 시, 본문 요약 및 실무 Q&A를 검색 엔진이 즉시 기계 판독(Machine-readable)할 수 있도록 `JSON-LD` 스크립트를 생성하여 HTML `<head>`에 삽입합니다.

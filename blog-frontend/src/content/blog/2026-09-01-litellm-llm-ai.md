@@ -118,6 +118,14 @@ general_settings:
 - **AI 인프라망(Private AI Zone)**: LiteLLM Gateway, 온프레미스 서빙 인프라(vLLM, TensorRT-LLM), 그리고 Langfuse 모니터링 스택(Next.js, Postgres, MinIO)이 격리된 서브넷에 상주합니다.
 - **DMZ / 아웃바운드 게이트웨이**: 만약 외부 상용 LLM(OpenAI 등)을 일부 병용해야 하는 하이브리드 환경이라면, 오직 LiteLLM 프록시 노드만 특정 포트(TLS 443)를 통해 화이트리스트 기반 외부 통신을 수행하며, 모니터링 서버(Langfuse)는 외부 통신이 원천 차단된 내부망에 머무릅니다.
 
+
+<!-- article-illustration:absian-2026-09-01-litellm-llm-ai-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-01-litellm-llm-ai-01.webp" alt="요청 경로의 단계마다 시간·사용량·응답을 관찰하는 추적 개념도" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">모델 요청의 어느 단계에서 시간과 사용량이 발생하는지 나누어 살펴봅니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-01-litellm-llm-ai-01 -->
+
 ### 2. 세부 지표 추적 및 비용 최적화 전략
 
 1. **TTFT(Time to First Token) 및 지연 시간 분해**: 온프레미스 GPU 클러스터의 부하 상태를 점검하기 위해 전체 응답 시간뿐만 아니라 첫 토큰 생성 시간(TTFT)과 추론 처리 속도(Tokens per Second)를 세부 지표로 분리하여 모니터링하세요.

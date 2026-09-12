@@ -68,6 +68,14 @@ LlamaIndex의 본질적인 핵심 가치는 **'데이터와 모델 간의 고정
 
 ---
 
+
+<!-- article-illustration:absian-2026-09-05-langchain-vs-llamaindex-rag-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-05-langchain-vs-llamaindex-rag-01.webp" alt="문서를 조각으로 나누고 관련 내용을 골라 답변에 연결하는 검색 증강 흐름" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">문서 처리, 검색, 재정렬과 답변 생성을 단계별로 살펴보는 개념도입니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-05-langchain-vs-llamaindex-rag-01 -->
+
 ## 2. 프로덕션 엔터프라이즈 RAG의 5단계 파이프라인
 
 단순히 텍스트를 고정 길이(500자)로 자르고 코사인 유사도로 검색하는 나이브 RAG(Naive RAG)는 엔터프라이즈 환경에서 실패할 수밖에 없습니다. 프로덕션 급 정확도를 달성하기 위한 5단계 파이프라인 아키텍처는 다음과 같습니다.

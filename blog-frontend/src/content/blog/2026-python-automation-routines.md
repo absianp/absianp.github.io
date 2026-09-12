@@ -37,6 +37,14 @@ faqs:
 
 ## 2. 실전 파이썬 자동화 스크립트 BEST 3
 
+
+<!-- article-illustration:absian-2026-python-automation-routines-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-python-automation-routines-01.webp" alt="여러 표의 열 구성을 맞추고 다른 형식은 따로 확인하며 하나로 모으는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">여러 파일을 합칠 때는 열 구조가 같은지와 예외 파일이 있는지 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-python-automation-routines-01 -->
+
 ### ① 여러 개의 엑셀 파일 1초 만에 취합하기
 부서별 또는 일자별로 분산된 수십 개의 엑셀 파일(`.xlsx`)을 하나의 마스터 파일로 자동 병합합니다.
 

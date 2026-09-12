@@ -52,6 +52,14 @@ flowchart LR
 ### 2단계: Gumroad에 상품 등록 및 링크 생성
 가격($5~$20)을 책정하고 상품 소개 페이지와 디지털 다운로드 파일을 업로드합니다.
 
+
+<!-- article-illustration:absian-2026-digital-nomad-nocode-pipeline-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-digital-nomad-nocode-pipeline-01.webp" alt="주문 기록을 정리하고 안내 자료와 다운로드 경로를 전달하는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">디지털 상품의 주문 기록과 자료 전달 결과를 나누어 관리하는 흐름입니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-digital-nomad-nocode-pipeline-01 -->
+
 ### 3단계: Make.com을 통한 전자동 고객 관리
 결제가 발생하면 자동으로 구글 스프레드시트에 구매자 정보가 기록되고, 감사 이메일과 업데이트 알림이 발송되도록 시나리오를 세팅합니다.
 

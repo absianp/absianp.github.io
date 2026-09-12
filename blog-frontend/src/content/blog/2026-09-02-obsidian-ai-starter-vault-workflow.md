@@ -45,6 +45,14 @@ faqs:
 
 ---
 
+
+<!-- article-illustration:absian-2026-09-02-obsidian-ai-starter-vault-workflow-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-02-obsidian-ai-starter-vault-workflow-01.webp" alt="일일 기록·독서록·아이디어·글 초안 용도로 나뉜 템플릿 정리함" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">템플릿은 기록 목적에 따라 나누어 두면 시작할 항목을 찾기 쉽습니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-02-obsidian-ai-starter-vault-workflow-01 -->
+
 ## 2. 스타터 볼트에 내장된 핵심 실전 템플릿 4종
 
 이 스타터 볼트의 심장은 `00_Meta/Templates/` 폴더 안에 미리 심어둔 **AI 친화형 마크다운 템플릿**들입니다.

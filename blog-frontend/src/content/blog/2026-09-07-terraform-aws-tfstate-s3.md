@@ -214,6 +214,14 @@ resource "aws_internet_gateway" "gw" {
 }
 ```
 
+
+<!-- article-illustration:absian-2026-09-07-terraform-aws-tfstate-s3-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-07-terraform-aws-tfstate-s3-01.webp" alt="공유 상태 기록을 한 작업씩 갱신하고 다른 변경은 대기시키는 잠금 개념도" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">상태를 공유하는 작업에서는 동시 변경과 잠금 상태를 함께 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-07-terraform-aws-tfstate-s3-01 -->
+
 ### Step 5: 실행 사이클 및 상태 잠금 검증
 
 ```bash

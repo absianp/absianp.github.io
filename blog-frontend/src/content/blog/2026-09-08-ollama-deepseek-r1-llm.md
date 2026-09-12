@@ -169,6 +169,14 @@ docker run -d -p 3000:8080 \
 
 로컬 환경에서 실제 업무에 도입할 때 자주 마주치는 병목과 해결책입니다.
 
+
+<!-- article-illustration:absian-2026-09-08-ollama-deepseek-r1-llm-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-08-ollama-deepseek-r1-llm-01.webp" alt="모델 일부가 GPU 메모리와 시스템 메모리에 나뉘어 놓이는 개념 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">로컬 모델이 사용하는 메모리 위치와 자원 간 이동을 함께 살펴봅니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-08-ollama-deepseek-r1-llm-01 -->
+
 ### 1) VRAM 부족(OOM) 및 CPU 오프로딩 병목 극복
 선택한 모델 크기가 그래픽 카드 VRAM을 초과하면 Ollama는 연산 레이어 일부를 일반 시스템 RAM으로 전환(Offloading)합니다. 이 경우 토큰 생성 속도가 초당 1~2토큰으로 급락합니다.
 - **해결책**: `nvidia-smi`를 확인하여 GPU 메모리 점유율이 90% 이내에 머무르는 모델(예: 8GB VRAM 환경은 `deepseek-r1:8b` Q4 양자화)을 사용하세요.

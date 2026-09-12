@@ -22,6 +22,14 @@ faqs:
 
 ---
 
+
+<!-- article-illustration:absian-2026-claude-chatgpt-prompt-mastery-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-claude-chatgpt-prompt-mastery-01.webp" alt="역할·맥락·출력 형식·예시를 한 요청으로 조립하는 프롬프트 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">요청할 때 역할, 상황, 결과 형식과 원하는 예시를 구체적으로 정리합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-claude-chatgpt-prompt-mastery-01 -->
+
 ## 1. 고품질 프롬프트의 4대 핵심: R-C-O-F 공식
 
 AI에게 지시할 때는 아래 4가지 요소를 반드시 명시해야 합니다.

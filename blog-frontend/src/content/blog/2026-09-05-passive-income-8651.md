@@ -42,6 +42,14 @@ faqs:
 
 미국 기업의 배당 프로세스는 공시된 4대 일정 메커니즘에 맞춰 기계적으로 집행됩니다. 네 날짜의 상호 작용을 이해해야 배당금을 안전하게 수령할 수 있습니다.
 
+
+<!-- article-illustration:absian-2026-09-05-passive-income-8651-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-05-passive-income-8651-01.webp" alt="배당 관련 공지와 여러 일정의 순서를 달력에서 대조하는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">배당 일정은 공지 자료를 기준으로 각 날짜의 역할을 구분해 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-05-passive-income-8651-01 -->
+
 ### 배당 라이프사이클 4단계 메커니즘
 1. **배당선언일 (Declaration Date)**: 이사회가 1주당 배당금, 배당기준일, 지급일을 공식 결의하고 발표하는 날입니다.
 2. **배당락일 (Ex-Dividend Date)**: 배당받을 권리가 소멸되는 기준일입니다. 배당락일 당일이나 그 이후에 주식을 사면 이번 배당금을 받지 못합니다. 반대로 **배당락일 당일에 주식을 전량 매도하더라도 배당금은 정상 수령**합니다.

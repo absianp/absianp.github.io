@@ -157,6 +157,14 @@ async def refresh_access_token(
 
 --- 
 
+
+<!-- article-illustration:absian-2026-09-07-cursor-ai-ide-3-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-07-cursor-ai-ide-3-01.webp" alt="프로젝트 규칙과 관련 파일을 함께 참고해 수정안을 만드는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">코드 수정 요청에는 관련 파일과 프로젝트의 공통 규칙을 함께 전달합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-07-cursor-ai-ide-3-01 -->
+
 ## 4. 생산성을 영구히 고정하는 `.cursorrules` 설정법
 
 Cursor AI의 응답 일관성과 코드 품질을 프로덕션 수준으로 유지하려면 프로젝트 루트에 `.cursorrules` 파일을 선언해야 합니다. 이 설정을 통해 프롬프트마다 코딩 스타일, 네이밍 컨벤션, 아키텍처 규칙을 반복 입력할 필요가 사라집니다.

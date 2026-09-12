@@ -42,6 +42,14 @@ Cloudflare의 최신 봇 탐지 시스템(Turnstile 및 WAF)은 과거의 단순
 
 ---
 
+
+<!-- article-illustration:absian-2026-09-05-cloudflare-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-05-cloudflare-01.webp" alt="웹 요청의 연결·환경 신호를 접근 경계에서 살펴보는 개념 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">자동화 요청이 멈췄을 때는 요청 환경과 서버의 응답을 구분해 살펴봅니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-05-cloudflare-01 -->
+
 ## 2. Cloudflare는 셀레니움을 어떻게 감지하는가? (핵심 원리 분석)
 
 크롤러를 성공적으로 위장하려면 탐지 엔진이 어떤 지점을 감시하는지 정확히 이해해야 합니다. Cloudflare가 일반적인 파이썬 셀레니움 크롤러를 1초 만에 식별하는 대표적인 4가지 핑거프린팅 지점은 다음과 같습니다.

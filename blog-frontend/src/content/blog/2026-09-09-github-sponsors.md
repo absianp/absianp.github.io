@@ -113,6 +113,14 @@ git push origin main
 
 푸시가 완료되면 리포지토리 상단에 하트 아이콘의 `Sponsor this project` 버튼이 즉시 활성화됩니다.
 
+
+<!-- article-illustration:absian-2026-09-09-github-sponsors-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-09-github-sponsors-01.webp" alt="문서·문제 제보·유지보수와 후원이 하나의 오픈소스 프로젝트를 둘러싼 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">후원을 안내할 때는 프로젝트의 실제 활동과 유지보수 내용을 함께 보여 줍니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-09-github-sponsors-01 -->
+
 ### Step 4. README.md에 시각적 스폰서 섹션 및 배지 연동
 단순히 버튼만 켜두는 것으로는 전환이 일어나지 않습니다. README 하단에 명확한 CTA(Call-to-Action) 배지를 삽입하세요.
 

@@ -42,6 +42,14 @@ faqs:
 
 ## 1. 왜 Nginx 리버스 프록시와 SSL 자동 갱신이 필수적인가?
 
+
+<!-- article-illustration:absian-2026-09-10-nginx-let-s-encrypt-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-10-nginx-let-s-encrypt-01.webp" alt="외부 요청을 프록시에서 받아 내부 애플리케이션으로 전달하는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">외부 연결과 내부 전달 경로, 인증서 관리를 나누어 이해하는 개념도입니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-10-nginx-let-s-encrypt-01 -->
+
 ### 리버스 프록시(Reverse Proxy)의 본질과 SSL Termination
 
 일반적인 포워드 프록시가 내부 클라이언트의 요청을 대리하여 외부 인터넷으로 나가는 것이라면, **리버스 프록시**는 외부 인터넷의 요청을 가장 앞단에서 받아 내부망의 적절한 백엔드 서버(포트 3000, 8000, 8080 등)로 안전하게 중계하는 관문입니다.

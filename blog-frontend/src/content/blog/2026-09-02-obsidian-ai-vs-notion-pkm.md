@@ -69,6 +69,14 @@ faqs:
 
 ---
 
+
+<!-- article-illustration:absian-2026-09-02-obsidian-ai-vs-notion-pkm-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-02-obsidian-ai-vs-notion-pkm-01.webp" alt="노트와 첨부 파일을 옮긴 뒤 링크와 내용을 확인하는 이관 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">노트를 옮긴 뒤에는 본문뿐 아니라 첨부 파일과 연결도 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-02-obsidian-ai-vs-notion-pkm-01 -->
+
 ## 3. 노션에서 옵시디언으로 이사하는 법 (5분 컷)
 
 기존 노션 사용자분들도 걱정할 필요가 없습니다. 클릭 몇 번으로 기존 노트를 그대로 가져올 수 있습니다.

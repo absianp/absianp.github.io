@@ -55,6 +55,14 @@ values
 
 이 정책은 로그인하지 않은 `anon` 역할의 읽기만 허용합니다. 브라우저에서 추가·수정·삭제하는 기능은 제공하지 않습니다. 예제를 다시 실행하면 테이블이나 정책이 이미 존재한다는 오류가 날 수 있으므로, 전체 SQL을 반복하기 전에 기존 생성 여부를 확인하세요.
 
+
+<!-- article-illustration:absian-2026-09-10-2026-cloudflare-pages-supabase-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-10-2026-cloudflare-pages-supabase-01.webp" alt="공개 공지만 방문자에게 전달하고 비공개 행은 남겨 두는 권한 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">화면에서 숨기는 것과 데이터베이스에서 접근을 제한하는 것은 구분해서 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-10-2026-cloudflare-pages-supabase-01 -->
+
 ## 공개용 키만 HTML에 넣습니다
 
 Supabase 프로젝트 URL과 **publishable key**를 준비합니다. 이 키는 브라우저에 포함될 수 있는 공개용 키이며, 접근 가능한 데이터는 권한과 RLS로 제한합니다. `secret` 키나 기존 `service_role` 키는 HTML에 넣지 않습니다. [Supabase API 키 안내](https://supabase.com/docs/guides/getting-started/api-keys)

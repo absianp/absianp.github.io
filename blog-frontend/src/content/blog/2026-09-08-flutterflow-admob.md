@@ -169,6 +169,14 @@ Future<bool> shouldShowInterstitialAd() async {
 - **보상형 광고(Rewarded Ads) 적극 도입**: 배너 광고의 eCPM이 $0.2~$1.5 수준인 반면, 보상형 비디오 광고는 $10~$30 이상의 높은 eCPM을 기록합니다. 앱 내 유료 기능 1회 사용, 광고 보고 보너스 포인트 받기 등의 가치 교환 모델을 설계하세요.
 - **콘텐츠 흐름을 방해하지 않는 내추럴 브레이크(Natural Break)**: 유저가 작업에 집중하고 있는 중간이 아니라, '할 일 완료', '계산 결과 출력' 등 심리적 완료 단계에 전면 광고를 배치해야 클릭률(CTR)과 사용자 만족도가 유지됩니다.
 
+
+<!-- article-illustration:absian-2026-09-08-flutterflow-admob-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-08-flutterflow-admob-01.webp" alt="앱 화면에서 콘텐츠와 테스트 광고 영역을 나누어 확인하는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">광고를 넣은 앱은 테스트 환경에서 배치와 사용자 동선을 먼저 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-08-flutterflow-admob-01 -->
+
 ### 2) 무효 트래픽 방지 및 계정 정지 3대 수칙
 1. **실제 기기 테스트 시 반드시 Test Device 등록**: AdMob 콘솔의 '설정 > 테스트 기기'에 본인의 스마트폰 광고 ID(IDFA/GAID)를 등록하세요.
 2. **app-ads.txt 완벽 설정**: 구글 플레이 및 앱스토어 개발자 웹사이트 도메인 루트에 `app-ads.txt`를 호스팅하여 광고 사기(Ad Fraud)를 방지하고 인벤토리 승인을 정상화해야 합니다.

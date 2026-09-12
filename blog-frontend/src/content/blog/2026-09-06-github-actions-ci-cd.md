@@ -57,6 +57,14 @@ GitHub Actions 워크플로우는 매 실행마다 완전히 깨끗한 가상 �
 [Job 성공 완료] <── [Cache Save (Post Step)] <────────────┘
 ```
 
+
+<!-- article-illustration:absian-2026-09-06-github-actions-ci-cd-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-06-github-actions-ci-cd-01.webp" alt="빌드의 키와 맞는 저장 자료를 찾고 없으면 새로 준비하는 캐시 개념도" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">캐시는 현재 요청과 저장된 자료가 어떤 기준으로 맞는지 확인하는 과정이 필요합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-06-github-actions-ci-cd-01 -->
+
 ### 캐시 키(Key)와 복원 키(Restore Keys)의 동작 구조
 
 캐시 동작의 핵심은 고유한 `key`와 폴백(fallback)을 제공하는 `restore-keys`의 유연한 조합입니다.

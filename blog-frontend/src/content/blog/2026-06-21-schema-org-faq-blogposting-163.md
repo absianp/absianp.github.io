@@ -65,6 +65,14 @@ const jsonForScript = JSON.stringify(articleData).replace(/</g, '\\u003c');
 
 실제 적용 방식은 사용하는 프레임워크의 출력·이스케이프 기능에 맞춥니다. 이미 테마나 SEO 플러그인이 Article 데이터를 만들고 있다면 같은 데이터를 또 추가하기 전에 기존 출력을 확인하세요.
 
+
+<!-- article-illustration:absian-2026-06-21-schema-org-faq-blogposting-163-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-06-21-schema-org-faq-blogposting-163-01.webp" alt="글 화면과 구조화 데이터의 제목·작성자·날짜·주소를 맞춰 보는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">구조화 데이터의 값은 실제 글에 표시한 정보와 일치하는지 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-06-21-schema-org-faq-blogposting-163-01 -->
+
 ## 검사는 세 단계로 나눕니다
 
 1. **문법 확인:** JSON의 쉼표, 따옴표와 객체 구조가 올바른지 봅니다. Markdown 글 안의 예제 코드와 실제 페이지의 JSON-LD는 별개입니다.

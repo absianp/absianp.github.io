@@ -45,6 +45,14 @@ faqs:
 * **Docker의 구조**: Docker CLI는 자체적으로 컨테이너를 실행하지 못합니다. 반드시 백그라운드에 루트 권한으로 실행 중인 `dockerd` 데몬과 REST API(UNIX 소켓)로 통신해야 합니다. 만약 `dockerd` 프로세스가 메모리 부족이나 버그로 비정상 종료되면 호스트의 모든 컨테이너 연결이 위협받습니다.
 * **Podman의 구조**: Podman은 중앙 집중식 데몬이 존재하지 않는 **데몬리스(Daemonless)** 아키텍처입니다. 전통적인 리눅스 프로세스 모델인 `fork/exec` 패턴을 사용하여 OCI(Open Container Initiative) 런타임인 `crun` 또는 `runc`를 직접 호출합니다. 컨테이너가 일반 프로세스처럼 부모-자식 트리로 동작하므로 시스템 관리자(systemd)와의 통합이 매우 자연스럽습니다.
 
+
+<!-- article-illustration:absian-2026-09-07-docker-vs-podman-rootless-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-07-docker-vs-podman-rootless-01.webp" alt="사용자 권한 범위 안에 컨테이너를 두고 호스트 권한과 나눈 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">루트리스 구성을 이해할 때는 컨테이너와 호스트의 권한 범위를 구분합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-07-docker-vs-podman-rootless-01 -->
+
 ### 1.2 루트리스(Rootless) 컨테이너의 보안 가치
 일반적으로 도커 환경에서는 컨테이너 내부의 프로세스가 루트(UID 0)로 실행되는 경우가 많습니다. 만약 애플리케이션의 제로데이 취약점으로 컨테이너 탈출(Container Escape) 공격이 발생하면, 공격자는 호스트 리눅스 커널의 루트 권한을 즉시 획득하게 됩니다.
 

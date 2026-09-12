@@ -168,6 +168,14 @@ if __name__ == "__main__":
 2. 좌측 메뉴에서 **Secrets and variables** > **Actions**를 클릭합니다.
 3. **New repository secret** 버튼을 누르고 Name에 `DISCORD_WEBHOOK_URL`, Value에 디스코드 채널 웹훅 주소를 입력한 뒤 저장합니다.
 
+
+<!-- article-illustration:absian-2026-09-11-0-github-actions-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-11-0-github-actions-01.webp" alt="예약 신호로 실행한 작업이 자료를 파일로 남긴 뒤 종료되는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">예약 작업의 실행, 수집 결과 저장과 종료를 나누어 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-11-0-github-actions-01 -->
+
 ### Step 4: 워크플로우 YAML 작성 (`.github/workflows/crawler.yml`)
 
 이제 스케줄링을 제어할 GitHub Actions 워크플로우를 정의합니다. UTC 시간 기준 매일 오전 0시(한국 시간 오전 9시)에 실행되도록 설정하고, 수동 디버깅을 위해 `workflow_dispatch` 트리거를 포함합니다.

@@ -55,6 +55,14 @@ faqs:
 
 ---
 
+
+<!-- article-illustration:absian-2026-09-06-passive-income-9269-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-06-passive-income-9269-01.webp" alt="송금 경로별 수수료와 환전 조건을 나누어 최종 수취액을 비교하는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">송금 조건은 표시 수수료와 환전 조건을 함께 놓고 비교합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-06-passive-income-9269-01 -->
+
 ## 2. 실전 구현: 최적 수취액 판별을 위한 Python 수수료 시뮬레이터
 
 정산 주기와 송금 금액($500, $2,000, $10,000 등)에 따라 어떤 경로가 가장 유리한지 정량적으로 판단해야 합니다. 아래 스크립트는 실시간 환율 API(`exchangerate-api.com` 또는 모의 데이터)를 기반으로 플랫폼별 실수령액(Net Payout)을 연산해 최저 수수료 경로를 추천합니다.

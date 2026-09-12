@@ -94,6 +94,14 @@ python summarize.py
 
 함께 생성된 `summary-source.sha256`는 원문이 바뀌었는지 확인하는 값입니다. 저장할 때 원문이 달라지면 중단합니다. 결과 파일을 열어 “신청 폼 변경”이 확정으로 적히지 않았는지, 미정 담당자가 임의로 생기지 않았는지 확인합니다. 검토한 결과만 다음 단계에서 저장합니다.
 
+
+<!-- article-illustration:absian-2026-09-11-chatgpt-api-notion-db-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-11-chatgpt-api-notion-db-01.webp" alt="긴 원문을 순서대로 나누고 끝부분까지 다시 이어 확인하는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">긴 원문은 뒤를 버리지 않고 조각의 순서와 내용이 보존되는지 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-11-chatgpt-api-notion-db-01 -->
+
 ## 2. 원문을 보존하는 블록을 만듭니다
 
 Notion은 `text.content` 길이를 2,000자로 제한하고 요청 크기와 배열 길이도 제한합니다. 다음 코드는 텍스트를 1,800자씩 나누며, Python 문자열을 이어 붙였을 때 원문이 보존되도록 합니다. 보충 평면 문자도 고려해 UTF-16 단위로 길이를 셉니다. [Notion 요청 제한](https://developers.notion.com/reference/request-limits)

@@ -51,6 +51,14 @@ AI 에이전트의 도입으로 주니어 엔지니어도 수백 줄의 코드�
 
 시니어 엔지니어들은 하루 종일 AI가 쏟아낸 방대한 PR을 검토하느라 본연의 설계 작업에 집중하지 못하고 있으며, '그럴듯하게 동작하지만 시스템 부하를 유발하는 숨은 버그'로 인한 장애가 빈번해졌습니다.
 
+
+<!-- article-illustration:absian-2026-09-01-geeknews-ai-trends-august-2026-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-01-geeknews-ai-trends-august-2026-01.webp" alt="코드 조각이 검토 대기열에 모이고 공통 기준으로 확인되는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">코드 생성 이후에는 검토 대기와 팀의 공통 기준도 운영 과제가 됩니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-01-geeknews-ai-trends-august-2026-01 -->
+
 ### 해결책: 팀 표준 컨텍스트 프로토콜 `agent.md`
 이러한 문제를 해결하기 위해 최근 글로벌 선도 팀들과 긱뉴스 개발자들 사이에서 표준으로 자리 잡은 것이 바로 **`agent.md`** 패턴입니다. 에이전트에게 무작정 프롬프트를 던지는 대신, 프로젝트 루트에 에이전트가 준수해야 할 아키텍처 원칙과 비즈니스 제약 조건을 명시하는 방식입니다.
 

@@ -41,6 +41,14 @@ faqs:
 
 ## 1. 왜 PostgreSQL 인덱스 튜닝이 필수적인가? (동작 원리와 트레이드오프)
 
+
+<!-- article-illustration:absian-2026-09-09-postgresql-sql-10-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-09-postgresql-sql-10-01.webp" alt="전체 자료를 훑는 경로와 인덱스를 따라 필요한 자료를 찾는 경로를 비교한 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">인덱스는 자료를 찾는 경로를 바꾸며, 갱신할 때 유지 비용도 생깁니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-09-postgresql-sql-10-01 -->
+
 ### B-Tree 인덱스의 동작 원리와 스캔 방식
 PostgreSQL의 기본 인덱스 알고리즘은 다분할 평형 트리 구조인 **B-Tree(Balanced Tree)**입니다. 인덱스가 없는 테이블을 조회할 경우 데이터베이스는 디스크 블록 전체를 순차적으로 읽는 `Sequential Scan(Seq Scan)`을 수행합니다. 데이터가 수백만 건 이상 누적되면 메모리 버퍼 캐시를 초과하여 심각한 디스크 I/O 병목이 발생합니다.
 

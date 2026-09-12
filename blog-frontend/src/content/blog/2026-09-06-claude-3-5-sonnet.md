@@ -168,6 +168,14 @@ export default function SaaSSimulator() {
 }
 ```
 
+
+<!-- article-illustration:absian-2026-09-06-claude-3-5-sonnet-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-06-claude-3-5-sonnet-01.webp" alt="임시 프로토타입의 구성 요소를 로컬 프로젝트로 옮겨 확인하는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">프로토타입을 옮긴 뒤에는 구성 요소와 실제 동작을 다시 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-06-claude-3-5-sonnet-01 -->
+
 ### Step 3. 로컬 프로젝트로 1분 만에 배포 및 실행하기
 Artifacts 창 우측 하단의 **'Copy code'** 버튼을 클릭한 뒤, 로컬 터미널에서 다음 명령어로 즉시 Vite 기반 개발 환경에 마운트할 수 있습니다.
 

@@ -41,6 +41,14 @@ updatedDate: '2026-09-12'
 
 여기서 `Could we`는 요청이고, `If you approve`는 조건입니다. 마지막 문장도 확정 계약을 선언하는 표현이 아니라 현재의 계획을 나타냅니다. 실제 계약상 약속을 담은 메일이라면 책임자가 표현을 확인해야 합니다.
 
+
+<!-- article-illustration:absian-2026-01-28-ai-deepl-vs-chatgpt-19-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-01-28-ai-deepl-vs-chatgpt-19-01.webp" alt="원문과 두 번역문에서 날짜, 조건, 요청과 전달 의미를 대조하는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">번역문에서는 자연스러운 표현과 함께 날짜·조건·요청의 강도를 대조합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-01-28-ai-deepl-vs-chatgpt-19-01 -->
+
 ## 자연스러움보다 먼저 네 가지를 표시합니다
 
 | 검토 항목 | 원문에서 보존할 내용 | 놓치기 쉬운 변화 |

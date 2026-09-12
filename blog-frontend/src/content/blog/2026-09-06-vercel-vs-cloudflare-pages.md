@@ -71,6 +71,14 @@ GitHub Pages는 전 세계 개발자의 코드 저장소인 GitHub 리포지토�
 
 ---
 
+
+<!-- article-illustration:absian-2026-09-06-vercel-vs-cloudflare-pages-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-06-vercel-vs-cloudflare-pages-01.webp" alt="페이지 제공과 실행 기능이 서로 다른 호스팅 구성을 나란히 비교한 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">호스팅은 필요한 실행 기능과 배포 방식에 맞춰 비교합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-06-vercel-vs-cloudflare-pages-01 -->
+
 ## 2. Vercel vs Cloudflare Pages vs GitHub Pages 스펙 종합 비교
 
 세 플랫폼의 핵심 기능과 제약 사항을 3열 비교 표로 정리했습니다.

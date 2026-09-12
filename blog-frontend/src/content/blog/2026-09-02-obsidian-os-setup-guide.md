@@ -42,6 +42,14 @@ faqs:
 
 ---
 
+
+<!-- article-illustration:absian-2026-09-02-obsidian-os-setup-guide-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-02-obsidian-os-setup-guide-01.webp" alt="프로젝트·지속 관리·참고 자료·보관 자료와 첨부 파일을 나누는 폴더 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">폴더를 나눌 때는 자료의 사용 목적과 첨부 파일 위치를 함께 정합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-02-obsidian-os-setup-guide-01 -->
+
 ## 2. 평생 정리 걱정 없는 'PARA + 메타' 폴더 아키텍처
 
 폴더를 주제별(수학, 경제, 프로그래밍, 일기...)로 잘게 쪼개다 보면 "이 메모는 어디에 넣어야 하지?"라는 결정 장애가 발생합니다. 세계적인 생산성 전문가 티아고 포르테(Tiago Forte)의 **PARA 프레임워크**를 적용하면 모든 정보가 명확한 목적을 갖게 됩니다.

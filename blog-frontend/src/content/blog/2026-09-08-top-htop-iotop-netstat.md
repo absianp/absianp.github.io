@@ -49,6 +49,14 @@ faqs:
 
 ---
 
+
+<!-- article-illustration:absian-2026-09-08-top-htop-iotop-netstat-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-08-top-htop-iotop-netstat-01.webp" alt="서버의 CPU·메모리·디스크·네트워크를 나누어 관찰하는 진단 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">서버가 느릴 때는 자원별 상태를 구분해 원인을 좁혀 갑니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-08-top-htop-iotop-netstat-01 -->
+
 ## 2. 4대 핵심 모니터링 명령어 실전 마스터
 
 ### (1) top: 시스템 리소스 분석의 기본 나침반

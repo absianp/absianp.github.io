@@ -165,6 +165,14 @@ if __name__ == "__main__":
 
 ---
 
+
+<!-- article-illustration:absian-2026-09-10-perplexity-ai-pro-80-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-10-perplexity-ai-pro-80-01.webp" alt="요약의 각 주장과 원문 논문의 근거를 연결해 대조하는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">검색 도구의 요약은 원문 자료의 근거와 다시 대조합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-10-perplexity-ai-pro-80-01 -->
+
 ## 4. 실무 트러블슈팅 및 환각(Hallucination) 방지 최적화 팁
 
 Perplexity AI Pro를 사용할 때도 잘못된 정보가 섞여 들어갈 여지는 항상 존재합니다. 다음 3가지 원칙을 통해 데이터 신뢰도를 99.9%로 끌어올리세요.

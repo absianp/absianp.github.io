@@ -93,6 +93,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 ```
 
+
+<!-- article-illustration:absian-2026-09-06-supabase-1-db-api-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-06-supabase-1-db-api-01.webp" alt="사용자 식별자에 따라 데이터베이스 행의 접근 범위를 나누는 개념도" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">행 수준 권한을 설계할 때는 어떤 사용자가 어떤 기록을 볼 수 있는지 정합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-06-supabase-1-db-api-01 -->
+
 ### Step 2: PostgreSQL 테이블 설계 및 RLS(Row Level Security) 설정
 
 Supabase의 핵심 보안 엔진은 **RLS(행 단위 보안 정책)** 입니다. 백엔드 API 코드를 별도로 작성하지 않고도 DB 레벨에서 권한을 엄격하게 제어할 수 있습니다.

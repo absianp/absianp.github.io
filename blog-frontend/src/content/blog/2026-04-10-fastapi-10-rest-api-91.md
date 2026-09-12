@@ -102,6 +102,14 @@ curl -i 'http://127.0.0.1:8000/notes/응답에서-받은-id'
 
 브라우저에서는 `http://127.0.0.1:8000/docs`의 API 문서에서도 요청할 수 있습니다. 문서가 열린다는 것과 실제 등록·조회가 성공한다는 것은 다르므로 두 요청을 모두 확인하세요.
 
+
+<!-- article-illustration:absian-2026-04-10-fastapi-10-rest-api-91-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-04-10-fastapi-10-rest-api-91-01.webp" alt="손으로 넣은 메모 카드가 서비스 상자를 거쳐 정상 메모와 빈 입력 경고로 나뉘는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">메모를 받는 API는 정상 입력과 빈 입력의 처리 결과를 나누어 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-04-10-fastapi-10-rest-api-91-01 -->
+
 ## 잘못된 요청도 확인해야 예제가 완성됩니다
 
 | 요청 | 기대하는 응답 |

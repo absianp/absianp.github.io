@@ -64,6 +64,14 @@ SAA-C03 시험은 특정 명령어 문법을 묻는 시험이 아닙니다. 고�
 
 SAA-C03에서 수험생들이 가장 혼란스러워하는 부분은 유사한 목적을 가진 서비스 간의 미묘한 차이점입니다. 다음 비교표를 머릿속에 완전히 각인해 두면 10문제 이상을 손쉽게 득점할 수 있습니다.
 
+
+<!-- article-illustration:absian-2026-09-04-aws-solutions-architect-associate-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-04-aws-solutions-architect-associate-01.webp" alt="컴퓨팅에 붙는 블록 저장소, 공유 파일함과 객체 보관함을 비교하는 학습 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">클라우드 저장소는 데이터를 연결하고 공유하는 방식에 따라 비교합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-04-aws-solutions-architect-associate-01 -->
+
 ### 핵심 스토리지 서비스 비교 분석
 
 | 구분 | Amazon S3 | Amazon EBS | Amazon EFS | Amazon FSx for Lustre/Windows |

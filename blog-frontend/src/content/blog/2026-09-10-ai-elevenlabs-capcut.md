@@ -131,6 +131,14 @@ if __name__ == "__main__":
     generate_short_voice(sample_script.strip(), "shorts_intro_01")
 ```
 
+
+<!-- article-illustration:absian-2026-09-10-ai-elevenlabs-capcut-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-10-ai-elevenlabs-capcut-01.webp" alt="영상 컷과 음성 파형, 자막 구간의 타이밍을 맞추는 편집 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">숏폼 편집에서는 영상·음성·자막의 타이밍을 함께 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-10-ai-elevenlabs-capcut-01 -->
+
 ### Step 3: CapCut을 활용한 오디오 및 자막 싱크 자동화
 
 생성된 오디오 파일을 CapCut 데스크톱(CapCut Desktop) 버전과 연동하여 시각 콘텐츠를 조립합니다.

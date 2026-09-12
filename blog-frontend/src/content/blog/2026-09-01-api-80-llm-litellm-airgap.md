@@ -150,6 +150,14 @@ general_settings:
 
 ---
 
+
+<!-- article-illustration:absian-2026-09-01-api-80-llm-litellm-airgap-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-01-api-80-llm-litellm-airgap-01.webp" alt="외부 클라우드와 연결선을 분리한 내부 모델 서버·라우터·캐시 구성도" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">폐쇄망 구성에서는 내부 요청 경로와 외부로 이어지는 연결 여부를 구분해 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-01-api-80-llm-litellm-airgap-01 -->
+
 ## 3. [심층] 완전 폐쇄망(Air-Gapped) 전용 구축 아키텍처 및 실전 사례
 
 금융권(은행/증권), 방위산업, 공공기관, 대기업 R&D 센터는 외부 인터넷이 물리적·논리적으로 완전 차단된 **에어갭(Air-gapped) 폐쇄망 환경**을 운영합니다. 이 환경에서는 외부 클라우드 API 호출이 불가능하므로, 내부 인프라만으로 고가용성과 무중단 서비스를 달성해야 합니다.

@@ -136,6 +136,14 @@ app.post('/api/create-checkout-session', async (req, res) => {
 });
 ```
 
+
+<!-- article-illustration:absian-2026-09-05-stripe-1-saas-checkout-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-05-stripe-1-saas-checkout-01.webp" alt="결제 이벤트의 서명과 중복 여부를 확인한 뒤 서비스 권한을 연결하는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">결제 후 처리에서는 이벤트 검증과 실제 권한 부여를 구분해 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-05-stripe-1-saas-checkout-01 -->
+
 ### Step 3: 위조 방지를 위한 Webhook 서명 검증 및 프로비저닝
 결제 완료 여부는 사용자의 브라우저 리다이렉트에 의존해서는 안 되며, 반드시 **Stripe Webhook**을 통해 비동기 이벤트로 확정해야 합니다. 이때 서명(Signature) 검증을 거쳐 가짜 요청을 완벽히 차단해야 합니다.
 

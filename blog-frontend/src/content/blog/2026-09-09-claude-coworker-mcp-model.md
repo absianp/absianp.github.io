@@ -47,6 +47,14 @@ faqs:
 
 MCP는 웹의 **HTTP**나 언어 서버의 **LSP(Language Server Protocol)**처럼, **AI 모델과 데이터 소스 간의 통신을 단일 표준으로 통합**한 오픈 표준 규격입니다. 클라이언트(Claude Desktop, IDE 등)와 서버(로컬 DB, 파일 시스템, 외부 API)가 JSON-RPC 2.0 기반으로 대화하므로, 한 번 작성한 MCP 서버는 프로토콜을 지원하는 모든 AI 환경에서 재사용할 수 있습니다.
 
+
+<!-- article-illustration:absian-2026-09-09-claude-coworker-mcp-model-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-09-claude-coworker-mcp-model-01.webp" alt="공통 연결부를 통해 도구·자료·지시 템플릿을 구분해 연결하는 개념도" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">연동을 설계할 때는 제공할 도구와 자료, 지시 형식을 구분합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-09-claude-coworker-mcp-model-01 -->
+
 ### MCP 아키텍처의 3대 핵심 프리미티브
 
 1. **Resources (리소스)**: AI가 읽을 수 있는 데이터입니다. 로컬 파일, DB 테이블 스키마, 로그 파일 등 수동적 컨텍스트를 제공합니다.

@@ -122,6 +122,14 @@ if __name__ == "__main__":
 
 텔레그램 텍스트 제한을 고려해 메시지를 짧게 구성했고 Markdown 해석 옵션은 사용하지 않았습니다. [sendMessage 문서](https://core.telegram.org/bots/api#sendmessage)
 
+
+<!-- article-illustration:absian-2026-09-12-0-github-actions-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-12-0-github-actions-01.webp" alt="예약 작업이 RSS 링크를 골라 메시지로 전달하는 아침 알림 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">예약 실행과 실제 수신 시각, 같은 링크의 재발송 여부는 따로 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-12-0-github-actions-01 -->
+
 ## 예약 실행 파일을 추가합니다
 
 `.github/workflows/rss-digest.yml`에 아래 내용을 저장합니다. 예제는 시간대 옵션을 생략해 UTC 기준으로 `23:17`에 예약했으며, 한국 시각으로는 다음 날 오전 `08:17`입니다.

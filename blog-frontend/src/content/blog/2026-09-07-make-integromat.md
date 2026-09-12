@@ -48,6 +48,14 @@ faqs:
 
 ---
 
+
+<!-- article-illustration:absian-2026-09-07-make-integromat-01 -->
+<figure class="article-illustration" style="margin: 2em 0;">
+  <img src="/images/articles/absian-2026-09-07-make-integromat-01.webp" alt="하나의 원문을 이미지 중심 게시물과 글 중심 게시물로 나누어 준비하는 그림" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">같은 콘텐츠라도 채널별 형식과 전달 결과를 나누어 확인합니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+</figure>
+<!-- /article-illustration:absian-2026-09-07-make-integromat-01 -->
+
 ## 2. 전체 파이프라인 아키텍처 및 동작 원리
 
 파이프라인의 전체 데이터 흐름은 다음과 같은 단계로 진행됩니다.
