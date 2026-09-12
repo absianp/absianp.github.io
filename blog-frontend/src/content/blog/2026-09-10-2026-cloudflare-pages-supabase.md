@@ -1,74 +1,139 @@
 ---
-title: 2026년 기준 Cloudflare Pages와 Supabase 무료 티어로 풀스택 웹 서비스 0원 배포 가이드
-description: 2026년 기준 Cloudflare Pages와 Supabase 무료 티어로 풀스택 웹 서비스 0원 배포 가이드에 대한 상세한
-  단계별 실전 가이드와 실무 적용 비교표, 자주 묻는 질문 3가지를 정리했습니다.
+title: Cloudflare Pages와 Supabase로 공개 공지 목록 만들기
+description: 정적 HTML에서 Supabase의 공개 공지만 읽는 예제로 RLS, 브라우저용 키, Pages 배포 디렉터리와 오류 확인 방법을 설명합니다.
 pubDate: '2026-09-10'
 category: 개발 & 테크
 tags:
-- 클라우드무료티어
-- CloudflarePages
+- Cloudflare Pages
 - Supabase
-- 웹배포자동화
+- RLS
+- 정적HTML
 author: 앱시안 (absian)
-readingTime: 6 min read
+readingTime: 7 min read
 featured: false
 draft: false
 faqs:
-- question: 클라우드 무료 티어 웹 호스팅 배포 방법을(를) 시작하려면 코딩 지식이 필수적인가요?
-  answer: 아닙니다. 최근의 대부분 도구들은 웹 브라우저나 직관적인 노코드 UI를 제공하므로 코딩을 전혀 몰라도 쉽게 활용할 수 있습니다.
-- question: 무료 버전만으로도 실무에서 충분한 성능을 발휘하나요?
-  answer: 네, 개인적인 업무 효율화나 블로그 운영 수준에서는 무료 티어에서 제공하는 기능만으로도 90% 이상의 작업을 완벽히 처리할 수 있습니다.
-- question: 구글 애드센스 승인용 글로 활용하기에 충분한가요?
-  answer: 네, 1,500자 이상의 충실한 본문, H2/H3 계층 구조, 비교표, FAQ 구조화 데이터가 모두 포함되어 있어 애드센스 승인
-    가이드라인에 완벽히 부합합니다.
+- question: 브라우저에 Supabase 키가 보여도 괜찮나요?
+  answer: 이 예제는 공개를 전제로 한 publishable key를 사용합니다. 실제 데이터 접근은 테이블 권한과 RLS로 제한해야 합니다. secret 키나 service_role 키는 브라우저에
+    넣으면 안 됩니다.
+- question: 공개 공지가 안 보이면 RLS를 꺼도 되나요?
+  answer: RLS를 끄기보다 테이블 이름, SELECT 권한, anon 정책과 published 값을 확인하세요. 관리자 권한 조회 성공과 브라우저 익명 조회 성공은 구분해야 합니다.
+updatedDate: '2026-09-12'
 ---
 
-급변하는 2026년 디지털 환경에서 생산성을 극대화하기 위해서는 단순한 툴 사용을 넘어 **체계적인 자동화 워크플로우**를 구축해야 합니다. 본 글에서는 초보자부터 실무자까지 누구나 즉시 적용할 수 있는 핵심 전략을 정리해 드립니다.
+Cloudflare Pages에 HTML을 올리고 Supabase에서 공지 목록을 읽는 작은 예제를 만들어 보겠습니다. 로그인이나 글쓰기를 한꺼번에 붙이지 않고, **공개한 공지만 누구나 읽을 수 있는지**를 먼저 확인하는 구성입니다.
 
----
+Pages는 화면 파일을 제공하고 Supabase는 데이터를 제공합니다. 아래 코드는 문서에 맞춰 작성한 학습용 예제이며 실제 클라우드 계정에서 배포·권한 검증을 완료한 결과로 소개하는 것은 아닙니다. 운영에 사용하기 전에는 마지막의 읽기·쓰기 권한 검사를 본인 프로젝트에서 진행하세요.
 
-## 1. 왜 지금 클라우드 무료 티어 웹 호스팅 배포 방법이(가) 중요한가?
+## Supabase에 연습용 테이블을 만듭니다
 
-기존의 단순 반복 작업(데이터 수집, 문서 요약, 이메일 초안 작성 등)은 하루 업무 시간의 최대 40% 이상을 소모하게 만듭니다. 하지만 최신 도구를 적절히 조합하면 이러한 수작업 시간을 획기적으로 단축할 수 있습니다.
+기존 운영 테이블과 분리된 연습 프로젝트에서 SQL 편집기를 사용합니다. RLS는 행마다 접근 가능 여부를 판단하는 PostgreSQL 기능입니다. 브라우저에서 데이터 API에 접근하도록 할 때는 테이블 권한과 RLS 정책을 함께 구성해야 합니다. [Supabase RLS 안내](https://supabase.com/docs/guides/database/postgres/row-level-security)
 
-### 핵심 이점 요약
-- **시간 절약**: 반복 루틴 작업 자동화로 주당 최소 5~10시간 절약
-- **정확도 향상**: 표준화된 프롬프트와 템플릿으로 휴먼 에러 방지
-- **멀티태스킹 최적화**: 고부가가치 기획 및 전략 수립에 온전히 집중 가능
+```sql
+create table public.demo_notices (
+  id bigint generated always as identity primary key,
+  title text not null check (char_length(title) between 1 and 100),
+  published boolean not null default false
+);
 
----
+alter table public.demo_notices enable row level security;
 
-## 2. 실무 적용 3단계 프로세스
+revoke all on public.demo_notices from anon, authenticated;
+grant select on public.demo_notices to anon;
 
-효과적인 도입을 위한 3단계 로드맵은 다음과 같습니다.
+create policy "anonymous reads published notices"
+on public.demo_notices
+for select
+to anon
+using (published = true);
 
-### 1단계: 일상 루틴 병목 구간 파악
-가장 먼저 본인이 매일 반복하는 작업 목록을 작성하고, 그중 규칙성이 명확한 작업을 선별합니다.
+insert into public.demo_notices (title, published)
+values
+  ('공개한 연습 공지', true),
+  ('아직 공개하지 않은 연습 공지', false);
+```
 
-### 2단계: 최적의 도구 스택 선정 및 연동
-상황과 목적에 맞는 최적의 도구를 선택하는 것이 성공의 핵심입니다.
+이 정책은 로그인하지 않은 `anon` 역할의 읽기만 허용합니다. 브라우저에서 추가·수정·삭제하는 기능은 제공하지 않습니다. 예제를 다시 실행하면 테이블이나 정책이 이미 존재한다는 오류가 날 수 있으므로, 전체 SQL을 반복하기 전에 기존 생성 여부를 확인하세요.
 
-| 구분 | 추천 도구 | 주요 활용처 | 난이도 |
-| :--- | :--- | :--- | :--- |
-| **자료 요약 & 분석** | Gemini / Claude | 긴 문서 분석, 핵심 인사이트 추출 | 초급 |
-| **코드 및 스크립트** | VS Code + Copilot | 데이터 가공, 크롤링 자동화 | 중급 |
-| **워크플로우 연결** | Make / Zapier | 텔레그램 알림, 시트 자동 기록 | 초급 |
+## 공개용 키만 HTML에 넣습니다
 
-### 3단계: 나만의 템플릿 자산화
-자주 사용하는 프롬프트와 자동화 규칙은 별도의 마크다운 문서나 노션 템플릿으로 저장하여 재사용성을 극대화합니다.
+Supabase 프로젝트 URL과 **publishable key**를 준비합니다. 이 키는 브라우저에 포함될 수 있는 공개용 키이며, 접근 가능한 데이터는 권한과 RLS로 제한합니다. `secret` 키나 기존 `service_role` 키는 HTML에 넣지 않습니다. [Supabase API 키 안내](https://supabase.com/docs/guides/getting-started/api-keys)
 
----
+작업 폴더 안에 `public` 폴더를 만들고 아래 내용을 `public/index.html`로 저장합니다. 코드에 표시한 두 값을 본인의 연습 프로젝트 값으로 바꿉니다.
 
-## 3. 애드센스 및 검색엔진 노출을 위한 실전 팁
+```html
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>공개 공지 목록</title>
+</head>
+<body>
+  <h1>공지</h1>
+  <p id="status" role="status">불러오는 중입니다.</p>
+  <ul id="notices"></ul>
+  <script type="module">
+    const projectUrl = 'https://YOUR_PROJECT.supabase.co';
+    const publishableKey = 'YOUR_PUBLISHABLE_KEY';
+    const status = document.querySelector('#status');
+    const list = document.querySelector('#notices');
 
-블로그나 사이트를 운영하며 관련 주제로 트래픽을 유입시키려면 다음 요소를 반드시 점검하세요.
+    async function loadNotices() {
+      const url = new URL('/rest/v1/demo_notices', projectUrl);
+      url.searchParams.set('select', 'id,title');
+      url.searchParams.set('order', 'id.desc');
+      url.searchParams.set('limit', '20');
+      const response = await fetch(url, {
+        headers: { apikey: publishableKey },
+        signal: AbortSignal.timeout(10000)
+      });
+      if (!response.ok) {
+        throw new Error(`데이터 요청 실패: HTTP ${response.status}`);
+      }
+      const rows = await response.json();
+      if (!Array.isArray(rows)) throw new Error('목록 형식이 아닙니다.');
+      list.replaceChildren();
+      for (const row of rows) {
+        const item = document.createElement('li');
+        item.textContent = row.title;
+        list.append(item);
+      }
+      status.textContent = rows.length ? `${rows.length}개 공지` : '공개 공지가 없습니다.';
+    }
 
-1. **독창적인 경험(E-E-A-T) 공유**: 툴을 직접 사용해보고 느낀 장단점을 가감 없이 솔직하게 서술하세요.
-2. **명확한 해결책 제시**: 질문에 대해 빙빙 돌리지 않고 첫 문단에서 즉각적인 솔루션을 제공하세요.
-3. **가독성 높은 서식**: 텍스트만 빽빽한 글 대신 표(Table), 굵은 글씨, 목록 기호를 적절히 배치하세요.
+    loadNotices().catch(error => {
+      status.textContent = '공지를 불러오지 못했습니다.';
+      console.error(error.message);
+    });
+  </script>
+</body>
+</html>
+```
 
----
+`innerHTML` 대신 `textContent`를 사용해 제목을 텍스트로 표시했습니다. HTML에서 필터로 숨기는 대신 데이터베이스의 RLS가 비공개 행을 제외하도록 구성한 점도 확인하세요.
 
-## 4. 마무리 및 요약
+## 로컬 확인 후 Pages에 연결합니다
 
-결국 기술의 발전은 '얼마나 빨리 내 워크플로우에 내재화하는가'의 싸움입니다. 오늘 소개해 드린 단계별 가이드를 바탕으로 지금 바로 작은 것부터 하나씩 자동화해 보시길 권장합니다.
+작업 폴더에서 다음 명령으로 파일을 엽니다.
+
+```bash
+python3 -m http.server 8080 --directory public
+```
+
+브라우저에서 `http://127.0.0.1:8080`을 열어 공개 공지 한 건만 나타나는지 봅니다. 빈 목록이면 테이블 이름, 정책, 공개 여부를 확인합니다. 오류라면 개발자 도구의 Network에서 실제 상태 코드를 확인하고 프로젝트 URL과 키를 대조합니다.
+
+Git 저장소에 `public/index.html`이 있도록 준비한 다음 Cloudflare Pages의 Git 연동에서 저장소와 배포 브랜치를 선택합니다. 이 예제는 빌드 과정이 없는 정적 HTML이므로 빌드 명령은 `exit 0`, 출력 디렉터리는 `public`으로 지정합니다. [Cloudflare 정적 HTML 배포 안내](https://developers.cloudflare.com/pages/framework-guides/deploy-anything/)
+
+배포 후에는 `pages.dev` 주소에서도 같은 목록이 표시되는지 확인합니다. 404가 나오면 출력 디렉터리 최상위에 `index.html`이 있는지 먼저 봅니다.
+
+## 공개 전에 권한을 확인합니다
+
+브라우저 개발자 도구에서 요청 주소와 키는 볼 수 있습니다. 키를 숨겼다는 생각으로 권한 검사를 생략하면 안 됩니다.
+
+- 같은 공개 키의 조회에서 `published=false`인 연습 행이 반환되지 않는지 확인합니다.
+- 연습 프로젝트에서 같은 키로 추가·수정·삭제를 요청해 허용되지 않는지 확인합니다.
+- 관리자 키로 성공한 조회를 익명 사용자 권한 검증으로 사용하지 않습니다.
+- 확인 후에도 다른 테이블에 의도치 않은 권한이 열려 있지 않은지 검토합니다.
+
+무료 사용 가능 범위는 서비스별 제한과 선택한 플랜에 따라 달라집니다. 실제 사용 전에 [Pages 제한](https://developers.cloudflare.com/pages/platform/limits/)과 [Supabase 요금·한도](https://supabase.com/pricing)를 확인하세요. 이 구성을 영구적으로 비용이 들지 않는 서비스라고 부를 수는 없습니다.

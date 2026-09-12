@@ -12,7 +12,7 @@ tags:
 author: 앱시안 (absian)
 readingTime: 7 min read
 featured: false
-draft: false
+draft: true
 faqs:
 - question: ChatGPT 검색(SearchGPT)이나 Perplexity는 어떤 기준으로 블로그 글을 인용하나요?
   answer: AI 검색 엔진은 (1) 사용자의 질문에 군더더기 없이 직접적인 답을 제시하는 두괄식 문단, (2) 비교 표(Table)나 번호
@@ -26,6 +26,8 @@ faqs:
   answer: 단순 상식이나 정의형 키워드 대신 '방법론(How-to)', '도구 및 서비스 비교(vs)', '요금제 및 솔루션 분석'처럼 사용자가
     명확한 실행이나 구매 의도를 가진 고관여 주제를 다뤄야 합니다. 특히 IT 소프트웨어, 클라우드, 웹호스팅, 생산성 툴 관련 주제는 높은 광고
     단가(CPC)가 책정되어 페이지 RPM을 크게 향상시킵니다.
+reviewStatus: "needs-fact-review"
+reviewReason: "검색 인용 방식과 수익 3배 효과를 검증 자료 없이 단정함."
 ---
 
 최근 구글 알고리즘 업데이트 이후 정성껏 작성했던 블로그 방문자 수가 급감하거나, 매일 꾸준히 글을 올려도 애드센스 수익이 제자리걸음이라 고민이 깊으신가요? 많은 블로그 운영자분들이 비슷한 위기감을 토로하고 있습니다.

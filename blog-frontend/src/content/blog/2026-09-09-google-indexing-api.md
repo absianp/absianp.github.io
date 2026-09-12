@@ -12,7 +12,7 @@ tags:
 author: 앱시안 (absian)
 readingTime: 9 min read
 featured: false
-draft: false
+draft: true
 faqs:
 - question: Google Indexing API는 채용 공고나 라이브 방송 페이지만 지원한다고 들었는데, 일반 블로그 글에 써도 페널티나
     제재를 받지 않나요?
@@ -31,6 +31,8 @@ faqs:
     문서의 E-E-A-T(경험, 전문성, 권위성, 신뢰성) 신호가 부족하여 3~5페이지 이하로 밀려났을 가능성이 큽니다. Search Console의
     '실적' 탭에서 노출 수는 발생하지만 클릭이 없는지 확인하고, 메타 디스크립션과 타이틀을 매력적으로 리팩토링하여 클릭률(CTR)을 높이시기
     바랍니다.
+reviewStatus: "needs-fact-review"
+reviewReason: "일반 블로그에도 Indexing API를 안전하게 사용 가능하다는 안내가 Google의 사용 대상 제한과 불일치."
 ---
 
 # 구글 서치 콘솔 색인 생성 범위 오류 원인 분석과 대량 해결 노하우: Google Indexing API와 크롤 예산 최적화 실전 가이드

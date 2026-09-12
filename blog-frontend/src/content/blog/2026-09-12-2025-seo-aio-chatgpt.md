@@ -13,7 +13,7 @@ tags:
 author: 앱시안 (absian)
 readingTime: 9 min read
 featured: false
-draft: false
+draft: true
 faqs:
 - question: GPTBot을 차단하면 ChatGPT Search 검색 결과에서도 완전히 제외되나요?
   answer: 아닙니다. OpenAI는 모델 학습용 봇인 'GPTBot'과 실시간 검색 인용용 봇인 'OAI-SearchBot'을 명확히 분리하여
@@ -27,6 +27,8 @@ faqs:
   answer: 우선 1) H2/H3 섹션 서두의 잡담이나 도입부를 제거하고 직답형 요약문으로 교체하세요. 2) 불릿 포인트와 마크다운 표(Table)를
     활용해 정보를 시각적·구조적으로 재정리하세요. 3) 마지막으로 TechArticle과 FAQPage 형태의 JSON-LD 구조화 데이터를 웹페이지
     상단 헤더에 추가하여 크롤러가 HTML 본문을 번거롭게 파싱하지 않고도 핵심 엔티티를 즉시 이해할 수 있도록 만드는 것이 가장 효과적입니다.
+reviewStatus: "needs-fact-review"
+reviewReason: "검색 알고리즘과 효과를 근거 없이 단정하고 확인되지 않은 성능 수치를 사용함."
 ---
 
 # 2025년 구글 SEO를 넘어선 AIO 전략: ChatGPT Search 검색 결과에 내 블로그 인용되는 최적화 방법
