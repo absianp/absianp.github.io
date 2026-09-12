@@ -1,5 +1,6 @@
 ---
 title: Docker vs Podman 차이점 완벽 분석과 루트리스(Rootless) 컨테이너 실무 전환 가이드
+heroImage: '/images/thumbnails/2026-09-07-docker-vs-podman-rootless.svg'
 description: Docker vs Podman 아키텍처 차이부터 루트리스(Rootless) 컨테이너 실무 구축 가이드까지! 데몬리스 환경을
   통한 보안 취약점 차단, 성능 최적화, 실무 트러블슈팅 노하우를 상세히 정리해 드립니다.
 pubDate: '2026-09-07'

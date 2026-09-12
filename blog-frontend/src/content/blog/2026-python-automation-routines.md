@@ -1,5 +1,6 @@
 ---
 title: "직장인 퇴근 시간 2시간 앞당기는 파이썬 업무 자동화 스크립트 5선"
+heroImage: '/images/thumbnails/2026-python-automation-routines.svg'
 description: "반복적인 엑셀 취합, 이메일 발송, 웹 데이터 크롤링을 파이썬 코드로 자동화하여 생산성을 극대화하는 실전 예제 가이드입니다."
 pubDate: 2026-08-29
 category: "개발 & 테크"

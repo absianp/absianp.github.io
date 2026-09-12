@@ -1,6 +1,6 @@
 ---
-title: 'AWS Solutions Architect Associate(SAA-C03) 단기 합격 로드맵: 비전공자도 한 달 만에 끝내는 실전
-  전략'
+title: 'AWS Solutions Architect Associate(SAA-C03) 단기 합격 로드맵: 비전공자도 한 달 만에 끝내는 실전 전략'
+heroImage: '/images/thumbnails/2026-09-04-aws-solutions-architect-associate.svg'
 description: AWS Solutions Architect Associate(SAA-C03) 자격증 단기 취득을 위한 4주 집중 로드맵입니다.
   핵심 아키텍처 원리부터 고단가 커리어 전환 전략, 빈출 서비스 비교표와 시험장 꿀팁까지 실전 노하우를 확인해보세요.
 pubDate: '2026-09-04'

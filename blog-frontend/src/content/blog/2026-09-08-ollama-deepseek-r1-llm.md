@@ -1,5 +1,6 @@
 ---
 title: Ollama와 DeepSeek R1 로컬 LLM 무료 설치 및 나만의 프라이빗 AI 챗봇
+heroImage: '/images/thumbnails/2026-09-08-ollama-deepseek-r1-llm.svg'
 description: Ollama와 DeepSeek R1을 결합하여 클라우드 구독료 0원으로 사내 보안과 개인정보를 완벽 보호하는 로컬 AI 챗봇
   구축 완벽 가이드입니다. 10분 만에 끝내는 설치부터 Python 연동, VRAM 최적화, 자동화 수익화 비법까지 지금 만나보세요.
 pubDate: '2026-09-08'

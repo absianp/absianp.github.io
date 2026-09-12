@@ -1,5 +1,6 @@
 ---
 title: GitHub Actions로 아침 RSS 링크를 텔레그램에 보내기
+heroImage: '/images/thumbnails/2026-09-12-0-github-actions.svg'
 description: Python으로 RSS 제목과 링크를 읽어 텔레그램에 보내고 GitHub Actions에서 예약 실행합니다. 비용 조건, 중복 발송과 예약 지연의 한계를 함께 설명합니다.
 pubDate: '2026-09-12'
 category: 개발 & 테크

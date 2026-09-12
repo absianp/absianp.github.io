@@ -1,5 +1,6 @@
 ---
 title: OpenAI API 회의록 요약을 검토하고 노션에 원문과 함께 저장하기
+heroImage: '/images/thumbnails/2026-09-11-chatgpt-api-notion-db.svg'
 description: 회의 메모를 요약한 뒤 사람이 확인하고 노션에 저장합니다. 긴 원문은 잘라 버리지 않고 블록으로 나누며 단일 요청 한도를 확인합니다.
 pubDate: '2026-09-11'
 category: AI & 생산성

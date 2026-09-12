@@ -1,5 +1,6 @@
 ---
 title: '서버 비용 0원: 깃허브 액션(GitHub Actions) 스케줄러로 파이썬 자동화 크롤러 구축하기'
+heroImage: '/images/thumbnails/2026-09-11-0-github-actions.svg'
 description: 매월 나가는 클라우드 서버 비용 없이 깃허브 액션(GitHub Actions) cron 스케줄러와 파이썬으로 웹 크롤러를 자동화하고
   디스코드 알림 및 깃 자동 커밋까지 연동하는 실전 가이드입니다.
 pubDate: '2026-09-11'

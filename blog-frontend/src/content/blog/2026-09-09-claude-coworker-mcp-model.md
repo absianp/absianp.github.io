@@ -1,5 +1,6 @@
 ---
 title: Claude Coworker처럼 활용하는 MCP(Model Context Protocol) 연동 실전 가이드
+heroImage: '/images/thumbnails/2026-09-09-claude-coworker-mcp-model.svg'
 description: Claude를 단순 챗봇이 아닌 진짜 AI 동료(Coworker)처럼 활용하는 법! Anthropic의 MCP 핵심 원리부터
   커스텀 서버 구축, 업무 자동화 및 고단가 생산성 극대화 전략까지 실전 코드로 완전 정복해보세요.
 pubDate: '2026-09-09'

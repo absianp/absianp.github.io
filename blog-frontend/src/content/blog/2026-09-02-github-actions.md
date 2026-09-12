@@ -1,5 +1,6 @@
 ---
 title: 내 컴퓨터 꺼도 매일 글이 올라온다! 깃허브 액션(GitHub Actions) 무인 자동 발행 시스템 구축하기
+heroImage: '/images/thumbnails/2026-09-02-github-actions.svg'
 description: 내 컴퓨터 꺼도 매일 글이 올라온다! 깃허브 액션(GitHub Actions) 무인 자동 발행 시스템 구축하기에 대한 상세한
   단계별 실전 가이드와 실무 적용 비교표, 자주 묻는 질문 3가지를 정리했습니다.
 pubDate: '2026-09-02'

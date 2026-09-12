@@ -1,5 +1,6 @@
 ---
 title: "노션 AI(Notion AI)로 업무 대시보드 자동화 구축하는 법"
+heroImage: '/images/thumbnails/2026-01-14-ai-notion-ai-5.svg'
 description: "노션 AI(Notion AI)로 업무 대시보드 자동화 구축하는 법에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-01-14
 category: "AI & 생산성"

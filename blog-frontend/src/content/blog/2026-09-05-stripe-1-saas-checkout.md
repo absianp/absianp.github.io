@@ -1,5 +1,6 @@
 ---
 title: 'Stripe 연동으로 1인 개발자 SaaS 해외 글로벌 결제 붙이기: Checkout부터 Webhook까지 실전 가이드'
+heroImage: '/images/thumbnails/2026-09-05-stripe-1-saas-checkout.svg'
 description: 1인 개발자 SaaS의 글로벌 확장을 위한 필수 관문! Stripe 연동으로 해외 결제 시스템(Stripe Checkout,
   Webhook 서명 검증, 구독 관리)을 빠르고 안전하게 구축하는 실전 아키텍처와 최적화 팁을 총정리합니다.
 pubDate: '2026-09-05'

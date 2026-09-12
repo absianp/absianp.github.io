@@ -1,5 +1,6 @@
 ---
 title: "노션에서 옵시디언 + AI로 넘어가는 결정적 이유: 로컬 보안, 속도, AI 제2의 뇌 구축"
+heroImage: '/images/thumbnails/2026-09-02-obsidian-ai-vs-notion-pkm.svg'
 description: "노션의 느린 속도와 클라우드 종속에서 벗어나 로컬 마크다운과 AI(LLM)를 결합하여 나만의 완벽한 오프라인 지식 관리 시스템(PKM)을 구축하는 핵심 가이드입니다."
 pubDate: 2026-09-02
 category: "AI & 생산성"

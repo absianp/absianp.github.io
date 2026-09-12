@@ -1,5 +1,6 @@
 ---
 title: '리눅스 서버 성능 모니터링 완벽 가이드: top, htop, iotop, netstat 핵심 명령어와 실전 트러블슈팅'
+heroImage: '/images/thumbnails/2026-09-08-top-htop-iotop-netstat.svg'
 description: 리눅스 서버의 갑작스러운 속도 저하와 장애를 즉시 해결하는 top, htop, iotop, netstat(ss) 핵심 명령어
   실전 분석 및 인프라 비용 절감 가이드입니다.
 pubDate: '2026-09-08'

@@ -1,5 +1,6 @@
 ---
 title: "GitHub Copilot 200% 활용하는 스마트 코딩 테크닉"
+heroImage: '/images/thumbnails/2026-01-16-github-copilot-200-7.svg'
 description: "GitHub Copilot 200% 활용하는 스마트 코딩 테크닉에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-01-16
 category: "AI & 생산성"

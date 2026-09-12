@@ -1,5 +1,6 @@
 ---
 title: '디지털 노마드를 위한 해외 송금 수수료 최저 비교 가이드: 파이썬 수수료 계산기부터 플랫폼 심층 분석까지'
+heroImage: '/images/thumbnails/2026-09-06-passive-income-9269.svg'
 description: 해외 클라이언트 대금 수령 시 발생하는 3~6%의 숨겨진 환전 스프레드와 중계 수수료를 최소화하는 실전 가이드입니다. Wise,
   Payoneer, SWIFT 비교와 파이썬 시뮬레이터 코드를 제공합니다.
 pubDate: '2026-09-06'

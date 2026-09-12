@@ -1,5 +1,6 @@
 ---
 title: "옵시디언에 AI 뇌 장착하기: Smart Connections와 Ollama 무료 로컬 LLM 연동법"
+heroImage: '/images/thumbnails/2026-09-02-obsidian-ai-smart-connections-ollama.svg'
 description: "내 노트가 외부로 유출될 걱정 없이 100% 무료 로컬 LLM(Ollama)과 Smart Connections 플러그인을 결합하여 내 모든 지식을 학습한 전용 AI 비서를 구축하는 실전 튜토리얼입니다."
 pubDate: 2026-09-02
 category: "AI & 생산성"

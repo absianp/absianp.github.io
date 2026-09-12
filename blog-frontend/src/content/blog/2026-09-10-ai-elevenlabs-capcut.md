@@ -1,5 +1,6 @@
 ---
 title: 'AI 음성 복제 ElevenLabs와 CapCut으로 유튜브 쇼츠 자동 제작하기: 파이프라인 구축 및 수익화 가이드'
+heroImage: '/images/thumbnails/2026-09-10-ai-elevenlabs-capcut.svg'
 description: ElevenLabs의 AI 음성 복제 API와 CapCut 편집 템플릿을 결합하여 유튜브 쇼츠 스크립트 작성부터 음성 합성,
   자막 싱크, 렌더링까지 전 과정을 자동화하는 실전 엔지니어링 가이드입니다.
 pubDate: '2026-09-10'

@@ -1,5 +1,6 @@
 ---
 title: '챗GPT 검색(AIO/GEO) 시대 블로그 유입 공략: AI 인용을 부르는 구조화 글쓰기와 애드센스 고단가 전략 (2025)'
+heroImage: '/images/thumbnails/2026-09-10-gpt-aio-geo-ai.svg'
 description: 챗GPT Search, Perplexity 등 생성형 AI 검색(GEO/AIO) 엔진의 1차 출처로 인용되는 구조화 데이터(JSON-LD)
   설계법과 IT·클라우드 고단가 애드센스 RPM을 극대화하는 실전 가이드입니다.
 pubDate: '2026-09-10'

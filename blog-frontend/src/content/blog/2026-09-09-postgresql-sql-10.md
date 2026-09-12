@@ -1,5 +1,6 @@
 ---
 title: 'PostgreSQL 인덱스 튜닝으로 느린 SQL 쿼리 성능 10배 개선하기: 실행 계획 분석부터 실무 최적화까지'
+heroImage: '/images/thumbnails/2026-09-09-postgresql-sql-10.svg'
 description: 수 초씩 걸리던 PostgreSQL 느린 쿼리를 10배 이상 단축시키는 실전 인덱스 튜닝 가이드입니다. EXPLAIN ANALYZE
   실행 계획 분석, 복합 및 커버링 인덱스 설계, 무중단 생성 기법까지 상세히 다룹니다.
 pubDate: '2026-09-09'

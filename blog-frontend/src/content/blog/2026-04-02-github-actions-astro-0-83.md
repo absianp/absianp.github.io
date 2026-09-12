@@ -1,5 +1,6 @@
 ---
 title: "GitHub Actions로 Astro 블로그 0원 무중단 자동 배포 구축"
+heroImage: '/images/thumbnails/2026-04-02-github-actions-astro-0-83.svg'
 description: "GitHub Actions로 Astro 블로그 0원 무중단 자동 배포 구축에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-04-02
 category: "개발 & 테크"

@@ -1,5 +1,6 @@
 ---
 title: "웹사이트 Core Web Vitals 점수가 구글 검색 순위에 미치는 영향과 최적화"
+heroImage: '/images/thumbnails/2026-06-24-core-web-vitals-166.svg'
 description: "웹사이트 Core Web Vitals 점수가 구글 검색 순위에 미치는 영향과 최적화에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-06-24
 category: "스마트 부업 & 재테크"

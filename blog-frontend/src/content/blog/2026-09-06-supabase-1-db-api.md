@@ -1,5 +1,6 @@
 ---
 title: 'Supabase 무료 티어로 풀스택 백엔드 1시간 만에 구축하기: 인증부터 DB, 실시간 API까지 완벽 가이드'
+heroImage: '/images/thumbnails/2026-09-06-supabase-1-db-api.svg'
 description: 비용 0원으로 시작하는 풀스택 백엔드 구축 전략! Supabase 무료 티어의 PostgreSQL, Auth, RLS, Realtime
   기능을 활용해 1시간 만에 견고한 백엔드를 완성하고 초기 인프라 비용을 극적으로 절감하는 실전 테크 가이드입니다.
 pubDate: '2026-09-06'

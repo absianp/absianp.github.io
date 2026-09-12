@@ -1,5 +1,6 @@
 ---
 title: 'Perplexity AI Pro 검색 엔진 실전 활용법: 학술 논문 리서치 시간 80% 단축과 테크 지식 자산화 전략'
+heroImage: '/images/thumbnails/2026-09-10-perplexity-ai-pro-80.svg'
 description: Perplexity AI Pro의 Academic Focus와 실시간 RAG 엔진을 활용해 논문 리서치 시간을 80% 이상
   단축하는 실전 가이드입니다. Python API 파이프라인 연동, 도구 비교, 고단가 지식 자산화 팁까지 완벽 정리했습니다.
 pubDate: '2026-09-10'

@@ -1,5 +1,6 @@
 ---
 title: '2025년 구글 SEO를 넘어선 AIO 전략: ChatGPT Search 검색 결과에 내 블로그 인용되는 최적화 방법'
+heroImage: '/images/thumbnails/2026-09-12-2025-seo-aio-chatgpt.svg'
 description: 전통적 키워드 검색을 넘어 생성형 AI 검색 시대에 맞춘 AIO(AI Optimization) 실전 전략입니다. ChatGPT
   Search에 내 블로그가 직접 인용되도록 만드는 크롤러 설정, 시맨틱 청킹, JSON-LD 구조화 데이터 적용법을 완벽히 정리했습니다.
 pubDate: '2026-09-12'

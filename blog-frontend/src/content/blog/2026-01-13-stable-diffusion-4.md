@@ -1,5 +1,6 @@
 ---
 title: "스테이블 디퓨전(Stable Diffusion) 로컬 설치 및 고화질 업스케일링"
+heroImage: '/images/thumbnails/2026-01-13-stable-diffusion-4.svg'
 description: "스테이블 디퓨전(Stable Diffusion) 로컬 설치 및 고화질 업스케일링에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-01-13
 category: "AI & 생산성"

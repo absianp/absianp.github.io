@@ -1,5 +1,6 @@
 ---
 title: "회의록 자동 녹음 및 AI 요약 솔루션(CLOVA Note, Whisper) 총정리"
+heroImage: '/images/thumbnails/2026-01-27-ai-clova-note-whisper-18.svg'
 description: "회의록 자동 녹음 및 AI 요약 솔루션(CLOVA Note, Whisper) 총정리에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-01-27
 category: "AI & 생산성"

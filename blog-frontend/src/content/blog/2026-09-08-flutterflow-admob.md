@@ -1,5 +1,6 @@
 ---
 title: 노코드 툴 FlutterFlow로 모바일 앱 만들고 구글 애드몹(AdMob) 광고 수익 창출하기
+heroImage: '/images/thumbnails/2026-09-08-flutterflow-admob.svg'
 description: 노코드 툴 FlutterFlow와 구글 애드몹을 연동해 코딩 없이 네이티브 모바일 앱을 개발하고, 배너·전면·보상형 광고로
   지속 가능한 고단가 부업 수익 파이프라인을 구축하는 실전 가이드입니다.
 pubDate: '2026-09-08'

@@ -1,5 +1,6 @@
 ---
 title: "노코드(No-Code) 툴로 월 100만원 패시브 인컴 파이프라인 구축하는 4단계"
+heroImage: '/images/thumbnails/2026-digital-nomad-nocode-pipeline.svg'
 description: "코딩 한 줄 없이 노션, Make, Gumroad, 블로그를 연결하여 전자책과 디지털 템플릿을 전자동으로 판매하는 무자본 부업 전략입니다."
 pubDate: 2026-08-29
 category: "스마트 부업"

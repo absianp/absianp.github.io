@@ -1,5 +1,6 @@
 ---
 title: "옵시디언 AI 스타터 볼트(Starter Vault) 200% 활용 매뉴얼: 자동 독서록부터 아이디어 발상까지"
+heroImage: '/images/thumbnails/2026-09-02-obsidian-ai-starter-vault-workflow.svg'
 description: "복잡한 세팅 없이 다운로드 후 바로 열어 쓰는 사전 구성형 '옵시디언 AI 스타터 볼트'의 실전 워크플로우와 운영체제별 1분 설치법, 핵심 템플릿 4종 활용 매뉴얼입니다."
 pubDate: 2026-09-02
 category: "AI & 생산성"

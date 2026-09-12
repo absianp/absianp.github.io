@@ -1,5 +1,6 @@
 ---
 title: 'Claude 3.5 Sonnet Artifacts로 10분 만에 실전 프로토타입 만들기: 기획부터 로컬 배포까지'
+heroImage: '/images/thumbnails/2026-09-06-claude-3-5-sonnet.svg'
 description: Claude 3.5 Sonnet의 Artifacts 기능을 활용해 단 10분 만에 동작 가능한 인터랙티브 웹 프로토타입을 구축하는
   실전 엔지니어링 가이드입니다. 실무 프롬프트, React 코드, 수익화 팁까지 완벽 정리했습니다.
 pubDate: '2026-09-06'

@@ -1,5 +1,6 @@
 ---
 title: 'DeepL과 ChatGPT 번역을 비교할 때 볼 항목: 일정 변경 이메일 예제'
+heroImage: '/images/thumbnails/2026-01-28-ai-deepl-vs-chatgpt-19.svg'
 description: 동일한 한국어 이메일을 번역할 때 날짜, 조건, 책임 표현이 보존되는지 확인하는 비교 양식과 요청문을 제공합니다.
 pubDate: 2026-01-28
 category: AI & 생산성

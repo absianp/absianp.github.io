@@ -1,5 +1,6 @@
 ---
 title: 'Cursor AI IDE 단축키와 실전 프롬프트로 코딩 속도 3배 높이기: 개발 생산성 극대화 및 고단가 수익화 가이드'
+heroImage: '/images/thumbnails/2026-09-07-cursor-ai-ide-3.svg'
 description: Cursor AI의 핵심 단축키(Cmd+K, Cmd+L, Composer)와 실전 프롬프트 템플릿, .cursorrules
   설정을 통해 코딩 속도를 3배 높이고 1인 외주 및 SaaS 개발의 단위 시간당 수익을 극대화하는 완벽 실무 가이드입니다.
 pubDate: '2026-09-07'

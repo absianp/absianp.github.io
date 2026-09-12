@@ -1,5 +1,6 @@
 ---
 title: '구글 서치 콘솔 색인 생성 범위 오류 원인 분석과 대량 해결 노하우: Google Indexing API와 크롤 예산 최적화 실전 가이드'
+heroImage: '/images/thumbnails/2026-09-09-google-indexing-api.svg'
 description: 구글 서치 콘솔의 '발견됨 - 현재 색인이 생성되지 않음', '적절한 표준 태그 없음' 등 치명적인 색인 오류 원인을 기술적으로
   분석하고, Python Indexing API 자동화 스크립트와 크롤 예산 최적화로 대량 색인을 완벽 해결하는 실전 가이드입니다.
 pubDate: '2026-09-09'

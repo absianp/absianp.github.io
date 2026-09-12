@@ -1,5 +1,6 @@
 ---
 title: '2026년 8월 긱뉴스(GeekNews) AI 테크 트렌드 총결산: 에이전트의 현실과 개발 생산성의 진실'
+heroImage: '/images/thumbnails/2026-09-01-geeknews-ai-trends-august-2026.svg'
 description: 2026년 8월 긱뉴스에서 화제가 된 AI 에이전트 트렌드와 개발 생산성의 역설을 심층 분석합니다. PR 병목 해결을 위한
   agent.md 도입법부터 Stripe·SpaceX의 빅딜, 고효율 SLM, 실전 RAG 아키텍처까지 핵심 인사이트를 확인해보세요.
 pubDate: '2026-09-01'

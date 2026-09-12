@@ -1,5 +1,6 @@
 ---
 title: "비디오 생성 AI(Sora, Runway Gen-3)로 쇼츠 영상 5분 만에 만들기"
+heroImage: '/images/thumbnails/2026-01-22-ai-sora-runway-gen-13.svg'
 description: "비디오 생성 AI(Sora, Runway Gen-3)로 쇼츠 영상 5분 만에 만들기에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-01-22
 category: "AI & 생산성"

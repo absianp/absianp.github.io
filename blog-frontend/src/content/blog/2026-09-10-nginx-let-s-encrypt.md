@@ -1,5 +1,6 @@
 ---
 title: Nginx 리버스 프록시와 Let's Encrypt 무료 SSL 인증서 자동 갱신 완벽 가이드
+heroImage: '/images/thumbnails/2026-09-10-nginx-let-s-encrypt.svg'
 description: Nginx 리버스 프록시 구축부터 Let's Encrypt 무료 SSL 인증서 발급, 무중단 자동 갱신 파이프라인 및 보안
   최적화까지 실무 엔지니어의 관점에서 단계별로 상세히 정리했습니다.
 pubDate: '2026-09-10'

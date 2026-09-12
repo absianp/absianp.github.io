@@ -1,5 +1,6 @@
 ---
 title: 미국 주식 배당락일 캘린더 확인법과 양도소득세 250만 원 비과세 절세 테크닉
+heroImage: '/images/thumbnails/2026-09-05-passive-income-8651.svg'
 description: 미국 주식 투자자를 위한 T+1 결제주기 반영 배당락일 캘린더 확인법과 연 250만 원 기본공제를 극대화하는 손실확정매매(Tax-Loss
   Harvesting), 배우자 증여 리셋 절세 테크닉을 알기 쉽게 정리해 드립니다.
 pubDate: '2026-09-05'

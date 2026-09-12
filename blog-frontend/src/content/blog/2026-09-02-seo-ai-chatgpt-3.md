@@ -1,5 +1,6 @@
 ---
 title: '구글 SEO 넘어선 AI 검색 공략: ChatGPT 검색 유입으로 블로그 애드센스 수익 3배 올리는 법'
+heroImage: '/images/thumbnails/2026-09-02-seo-ai-chatgpt-3.svg'
 description: ChatGPT와 Perplexity 등 생성형 AI 검색 유입을 이끄는 AIO·GEO 최적화 실전 전략! 표와 구조화 데이터
   세팅부터 고관여 방문자 체류 시간을 늘려 구글 애드센스 수익을 3배로 끌어올리는 배치 노하우까지 한 번에 확인하세요.
 pubDate: '2026-09-02'

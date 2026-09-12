@@ -1,5 +1,6 @@
 ---
 title: 코딩 몰라도 30분 만에 끝내는 깃허브 블로그 만들기 (Hugo & Claude Code 활용법)
+heroImage: '/images/thumbnails/2026-09-02-30-hugo-claude-code.svg'
 description: 코딩 몰라도 30분 만에 끝내는 깃허브 블로그 만들기 (Hugo & Claude Code 활용법)에 대한 상세한 단계별 실전
   가이드와 실무 적용 비교표, 자주 묻는 질문 3가지를 정리했습니다.
 pubDate: '2026-09-02'

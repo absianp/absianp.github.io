@@ -1,6 +1,6 @@
 ---
-title: 'Vercel vs Cloudflare Pages vs GitHub Pages 정적 사이트 호스팅 완벽 비교: 개발자 및 수익형 블로그를
-  위한 최적의 선택'
+title: 'Vercel vs Cloudflare Pages vs GitHub Pages 정적 사이트 호스팅 완벽 비교: 개발자 및 수익형 블로그를 위한 최적의 선택'
+heroImage: '/images/thumbnails/2026-09-06-vercel-vs-cloudflare-pages.svg'
 description: Vercel vs Cloudflare Pages vs GitHub Pages 3대 정적 사이트 호스팅의 성능, 대역폭 한계,
   엣지 런타임 및 비용 리스크를 완벽 비교합니다. 수익형 블로그와 웹 서비스를 위한 최적의 배포 전략을 확인해보세요.
 pubDate: '2026-09-06'

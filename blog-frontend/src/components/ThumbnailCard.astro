@@ -32,8 +32,9 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
   day: 'numeric',
 }).format(pubDate);
 
+const resolvedHeroImage = heroImage && heroImage.startsWith('/') ? `${base}${heroImage}` : heroImage;
 const thumbnailSrc = heroImage && heroImage !== '/images/default-hero.svg'
-  ? heroImage
+  ? resolvedHeroImage
   : `${base}/og/${slug}.svg`;
 
 const displaySummary = summary || description || '실전 노하우와 유용한 팁을 담은 심층 가이드입니다.';

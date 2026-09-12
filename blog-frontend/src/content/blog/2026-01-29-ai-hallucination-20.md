@@ -1,5 +1,6 @@
 ---
 title: "생성형 AI 환각(Hallucination) 방지 및 팩트체크 프롬프트 기법"
+heroImage: '/images/thumbnails/2026-01-29-ai-hallucination-20.svg'
 description: "생성형 AI 환각(Hallucination) 방지 및 팩트체크 프롬프트 기법에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-01-29
 category: "AI & 생산성"

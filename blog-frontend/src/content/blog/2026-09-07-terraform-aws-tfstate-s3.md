@@ -1,6 +1,6 @@
 ---
-title: '테라폼(Terraform) AWS 인프라 구축 기초와 상태(tfstate) 관리 모범 사례: S3 백엔드와 DynamoDB 락킹 완벽
-  가이드'
+title: '테라폼(Terraform) AWS 인프라 구축 기초와 상태(tfstate) 관리 모범 사례: S3 백엔드와 DynamoDB 락킹 완벽 가이드'
+heroImage: '/images/thumbnails/2026-09-07-terraform-aws-tfstate-s3.svg'
 description: 테라폼(Terraform)으로 AWS 클라우드 인프라를 안전하게 자동화하는 방법과 협업 시 필수인 S3 및 DynamoDB
   기반 tfstate 원격 백엔드 구축, 락킹, 보안 모범 사례를 완벽 정리합니다.
 pubDate: '2026-09-07'

@@ -1,5 +1,6 @@
 ---
 title: 'FastAPI 첫 API 만들기: 메모 등록·조회와 422 오류 확인'
+heroImage: '/images/thumbnails/2026-04-10-fastapi-10-rest-api-91.svg'
 description: Python 가상환경에 FastAPI를 설치하고 메모를 등록·조회하는 작은 API를 만듭니다. 요청 검증, 404·422 응답과 메모리 저장의 한계를 설명합니다.
 pubDate: 2026-04-10
 category: 개발 & 테크

@@ -1,5 +1,6 @@
 ---
 title: FastAPI와 Celery Redis를 결합한 비동기 백그라운드 작업 큐 구축
+heroImage: '/images/thumbnails/2026-09-07-fastapi-celery-redis.svg'
 description: FastAPI와 Celery Redis를 결합한 비동기 백그라운드 작업 큐 구축에 대한 상세한 단계별 실전 가이드와 실무 적용
   비교표, 자주 묻는 질문 3가지를 정리했습니다.
 pubDate: '2026-09-07'

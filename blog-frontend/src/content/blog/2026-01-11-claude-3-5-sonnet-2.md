@@ -1,5 +1,6 @@
 ---
 title: "Claude 3.5 Sonnet 프롬프트 엔지니어링 마스터 가이드"
+heroImage: '/images/thumbnails/2026-01-11-claude-3-5-sonnet-2.svg'
 description: "Claude 3.5 Sonnet 프롬프트 엔지니어링 마스터 가이드에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-01-11
 category: "AI & 생산성"

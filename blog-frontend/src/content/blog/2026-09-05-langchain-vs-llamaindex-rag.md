@@ -1,5 +1,6 @@
 ---
 title: LangChain vs LlamaIndex 차이점 비교와 프로덕션 엔터프라이즈 RAG 구축 완벽 가이드
+heroImage: '/images/thumbnails/2026-09-05-langchain-vs-llamaindex-rag.svg'
 description: LangChain과 LlamaIndex의 아키텍처 철학을 정밀 비교하고, BM25·Dense Vector 결합 및 Cohere
   Rerank 기반 5단계 프로덕션 RAG 구축 파이프라인과 실전 Python 코드를 완벽 정리했습니다.
 pubDate: '2026-09-05'

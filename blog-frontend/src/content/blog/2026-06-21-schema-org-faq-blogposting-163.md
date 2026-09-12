@@ -1,5 +1,6 @@
 ---
 title: '블로그 JSON-LD 점검: BlogPosting 정보와 실제 화면 맞추기'
+heroImage: '/images/thumbnails/2026-06-21-schema-org-faq-blogposting-163.svg'
 description: 제목, 작성자, 게시일이 실제 글과 일치하는 BlogPosting 예제를 만들고 구조화 데이터 검사 결과의 의미를 구분합니다.
 pubDate: 2026-06-21
 category: 개발 & 테크

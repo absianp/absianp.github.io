@@ -1,5 +1,6 @@
 ---
 title: '깃허브 스폰서(GitHub Sponsors)와 오픈소스 기여로 외화 달러 후원받기: 개발자 패시브 인컴 실전 가이드'
+heroImage: '/images/thumbnails/2026-09-09-github-sponsors.svg'
 description: 깃허브 스폰서(GitHub Sponsors) 등록부터 FUNDING.yml 설정, W-8BEN 세금 신고, 후원 전환율 극대화
   전략까지! 오픈소스 기여를 통해 매달 달러(USD) 후원을 받는 개발자 실전 파이프라인을 총정리했습니다.
 pubDate: '2026-09-09'

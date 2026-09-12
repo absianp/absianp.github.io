@@ -1,5 +1,6 @@
 ---
 title: Make(구 Integromat)를 활용한 인스타그램/스레드 동시 자동 포스팅 파이프라인 구축 가이드
+heroImage: '/images/thumbnails/2026-09-07-make-integromat.svg'
 description: Make(구 Integromat)를 연동하여 인스타그램과 스레드에 콘텐츠를 원클릭으로 동시 발행하는 무중단 자동화 파이프라인
   구축법을 코드와 함께 상세히 정리했습니다.
 pubDate: '2026-09-07'

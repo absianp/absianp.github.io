@@ -1,5 +1,6 @@
 ---
 title: LiteLLM과 연동하는 폐쇄망·하이브리드 LLM 옵저버빌리티 도구 완벽 비교 (온프레미스 AI 모니터링)
+heroImage: '/images/thumbnails/2026-09-01-litellm-llm-ai.svg'
 description: 사내 보안 규제와 망분리 환경을 충족하면서도 LLM 서비스의 토큰 비용, 지연 시간, 응답 품질을 정밀하게 추적하는 사내 구축형(Self-hosted)
   옵저버빌리티 도구(Langfuse, Arize Phoenix 등)를 심층 비교 분석합니다.
 pubDate: '2026-09-01'

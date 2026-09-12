@@ -1,5 +1,6 @@
 ---
 title: "깃허브 페이지로 월 50만원 부업 블로그 구축하기: 애드센스 승인부터 SEO 자동화까지"
+heroImage: '/images/thumbnails/2026-github-pages-adsense-guide.svg'
 description: "서버 비용 0원으로 운영되는 GitHub Pages와 Astro 정적 사이트를 결합하여 구글 애드센스 승인을 통과하고 검색엔진 상위 노출을 만드는 완벽 실전 가이드입니다."
 pubDate: 2026-08-29
 category: "스마트 부업"

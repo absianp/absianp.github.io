@@ -1,5 +1,6 @@
 ---
 title: Cloudflare Pages와 Supabase로 공개 공지 목록 만들기
+heroImage: '/images/thumbnails/2026-09-10-2026-cloudflare-pages-supabase.svg'
 description: 정적 HTML에서 Supabase의 공개 공지만 읽는 예제로 RLS, 브라우저용 키, Pages 배포 디렉터리와 오류 확인 방법을 설명합니다.
 pubDate: '2026-09-10'
 category: 개발 & 테크

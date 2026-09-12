@@ -1,5 +1,6 @@
 ---
 title: 'GitHub Actions 캐시 최적화 완벽 가이드: CI/CD 빌드 시간 80% 단축과 비용 절감 전략'
+heroImage: '/images/thumbnails/2026-09-06-github-actions-ci-cd.svg'
 description: 반복되는 의존성 설치와 빌드로 지연되는 GitHub Actions 워크플로우를 actions/cache와 Buildx GHA
   캐싱으로 최대 80% 단축하고, 러너 비용과 개발 생산성을 극대화하는 실전 엔지니어링 가이드입니다.
 pubDate: '2026-09-06'

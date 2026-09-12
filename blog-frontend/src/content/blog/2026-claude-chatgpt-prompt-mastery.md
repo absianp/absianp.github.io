@@ -1,5 +1,6 @@
 ---
 title: "Claude & ChatGPT 답변 퀄리티 10배 올리는 실전 구조화 프롬프트 템플릿"
+heroImage: '/images/thumbnails/2026-claude-chatgpt-prompt-mastery.svg'
 description: "원하는 결과물을 단 한 번의 질문으로 완벽하게 이끌어내는 고품질 시스템 프롬프트 작성 공식과 실무 템플릿 5종을 소개합니다."
 pubDate: 2026-08-29
 category: "AI & 생산성"

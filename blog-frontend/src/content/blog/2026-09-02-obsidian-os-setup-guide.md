@@ -1,5 +1,6 @@
 ---
 title: "옵시디언 초기 환경 구축 완벽 가이드: Mac·Windows·Linux OS별 핵심 세팅과 폴더 구조"
+heroImage: '/images/thumbnails/2026-09-02-obsidian-os-setup-guide.svg'
 description: "운영체제별(Mac, Windows, Linux) 옵시디언 최적 설치 위치부터 평생 정리 걱정 없는 PARA 폴더 아키텍처, 필수 커뮤니티 플러그인 설정까지 한 번에 끝내는 실전 가이드입니다."
 pubDate: 2026-09-02
 category: "AI & 생산성"

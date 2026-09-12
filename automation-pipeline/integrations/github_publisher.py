@@ -64,6 +64,21 @@ class GitHubPublisher:
         for key in ("heroImage", "summaryCards"):
             if key in article:
                 data[key] = article[key]
+        if "heroImage" not in data or not data["heroImage"] or data["heroImage"] == "/images/default-hero.svg":
+            try:
+                from modules.thumbnail_generator import generate_thumbnail_for_post
+                slug = article.get("slug") or self.generate_slug(article.get("title", ""), article.get("category", "general"))
+                post_data = {
+                    "slug": slug,
+                    "title": article.get("title", ""),
+                    "description": article.get("description", ""),
+                    "category": article.get("category", "개발 & 테크"),
+                    "tags": article.get("tags", [])
+                }
+                data["heroImage"] = generate_thumbnail_for_post(post_data)
+            except Exception:
+                slug = article.get("slug") or self.generate_slug(article.get("title", ""), article.get("category", "general"))
+                data["heroImage"] = f"/images/thumbnails/{slug}.svg"
         if existing is not None:
             data["updatedDate"] = datetime.now().strftime("%Y-%m-%d")
             data.pop("reviewStatus", None)

@@ -1,5 +1,6 @@
 ---
 title: "리눅스 Systemd Timer로 매일 아침 자동 스크립트 실행하기"
+heroImage: '/images/thumbnails/2026-04-04-systemd-timer-85.svg'
 description: "리눅스 Systemd Timer로 매일 아침 자동 스크립트 실행하기에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-04-04
 category: "개발 & 테크"

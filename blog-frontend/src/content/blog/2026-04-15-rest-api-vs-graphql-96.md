@@ -1,5 +1,6 @@
 ---
 title: "REST API vs GraphQL 핵심 차이점과 프로젝트별 기술 선정 기준"
+heroImage: '/images/thumbnails/2026-04-15-rest-api-vs-graphql-96.svg'
 description: "REST API vs GraphQL 핵심 차이점과 프로젝트별 기술 선정 기준에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-04-15
 category: "개발 & 테크"

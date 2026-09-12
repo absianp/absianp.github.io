@@ -1,5 +1,6 @@
 ---
 title: 'API 비용 80% 절감과 철통 보안: 사내 로컬 LLM·LiteLLM 스마트 라우팅 및 폐쇄망 구축 가이드'
+heroImage: '/images/thumbnails/2026-09-01-api-80-llm-litellm-airgap.svg'
 description: 최신 오픈소스 모델(DeepSeek-R1, Qwen 2.5, Llama 3.3)과 LiteLLM Proxy를 활용해 API
   비용을 80% 절감하고, 금융·보안 민감 기업을 위한 100% 폐쇄망(에어갭) 구축 실전 아키텍처를 상세히 공유합니다.
 pubDate: '2026-09-01'

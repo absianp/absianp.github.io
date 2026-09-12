@@ -1,5 +1,6 @@
 ---
 title: '파이썬 셀레니움 헤드리스 크롤러 Cloudflare 탐지 우회 비법: 완벽 실전 가이드'
+heroImage: '/images/thumbnails/2026-09-05-cloudflare.svg'
 description: 파이썬 셀레니움(Selenium) 헤드리스 크롤러로 Cloudflare Turnstile 및 봇 탐지를 완벽 우회하는 최신
   기법입니다. undetected-chromedriver 핵심 설정과 실전 코드, 트러블슈팅, 고단가 데이터 수익화 전략까지 총정리했습니다.
 pubDate: '2026-09-05'

@@ -1,5 +1,6 @@
 ---
 title: "구글 서치 콘솔(Search Console) 완벽 활용법: 색인 등록 및 클릭률 개선"
+heroImage: '/images/thumbnails/2026-06-17-search-console-159.svg'
 description: "구글 서치 콘솔(Search Console) 완벽 활용법: 색인 등록 및 클릭률 개선에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-06-17
 category: "스마트 부업 & 재테크"

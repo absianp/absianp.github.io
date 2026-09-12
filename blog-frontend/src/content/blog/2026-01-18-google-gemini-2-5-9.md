@@ -1,5 +1,6 @@
 ---
 title: "Google Gemini 2.5 Pro를 활용한 대용량 문서 요약 및 데이터 분석"
+heroImage: '/images/thumbnails/2026-01-18-google-gemini-2-5-9.svg'
 description: "Google Gemini 2.5 Pro를 활용한 대용량 문서 요약 및 데이터 분석에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-01-18
 category: "AI & 생산성"

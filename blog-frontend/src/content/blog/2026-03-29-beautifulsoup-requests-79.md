@@ -1,5 +1,6 @@
 ---
 title: "웹 크롤링 입문: BeautifulSoup과 Requests로 네이버 뉴스 자동 수집"
+heroImage: '/images/thumbnails/2026-03-29-beautifulsoup-requests-79.svg'
 description: "웹 크롤링 입문: BeautifulSoup과 Requests로 네이버 뉴스 자동 수집에 대한 체계적인 실무 적용 가이드, 비교 분석 표, 실전 팁 및 FAQ 3가지를 정리한 심층 가이드입니다."
 pubDate: 2026-03-29
 category: "개발 & 테크"
