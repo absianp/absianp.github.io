@@ -173,5 +173,100 @@
         "detail": "측정 ID: G-WE6WVHJ03S"
       }
     }
+  },
+  "2026-09-12": {
+    "date": "2026-09-12",
+    "is_measured": true,
+    "today_views": 0,
+    "today_uv": 0,
+    "today_clicks": 0,
+    "ctr": 0.0,
+    "cumulative_views": 78,
+    "total_uniques_14d": 3,
+    "latest_active_date": "2026-09-09",
+    "latest_active_views": 3,
+    "total_posts": 319,
+    "today_posts": 319,
+    "category_views": {
+      "스마트 부업 & 재테크": {
+        "views": 0,
+        "clicks": 0,
+        "ratio": 30.7
+      },
+      "AI & 생산성": {
+        "views": 0,
+        "clicks": 0,
+        "ratio": 32.9
+      },
+      "개발 & 테크": {
+        "views": 0,
+        "clicks": 0,
+        "ratio": 33.5
+      },
+      "스마트 부업": {
+        "views": 0,
+        "clicks": 0,
+        "ratio": 1.3
+      },
+      "블로그 수익화": {
+        "views": 0,
+        "clicks": 0,
+        "ratio": 1.3
+      },
+      "SEO & 마케팅": {
+        "views": 0,
+        "clicks": 0,
+        "ratio": 0.3
+      }
+    },
+    "top_posts": [
+      {
+        "title": "블로그 수익이 늘지 않을 때: 유입·페이지 RPM·운영비 나누어 보기",
+        "slug": "2026-09-10-2026-5",
+        "category": "스마트 부업 & 재테크",
+        "views": 0,
+        "clicks": 0
+      },
+      {
+        "title": "Claude API로 노션 문서 한 건 요약·분류하기: 검토 후 저장하는 예제",
+        "slug": "2026-09-11-2025-claude-3-5",
+        "category": "AI & 생산성",
+        "views": 0,
+        "clicks": 0
+      },
+      {
+        "title": "GitHub Actions로 아침 RSS 링크를 텔레그램에 보내기",
+        "slug": "2026-09-12-0-github-actions",
+        "category": "개발 & 테크",
+        "views": 0,
+        "clicks": 0
+      }
+    ],
+    "growth_vs_yesterday": 0.0,
+    "sources": {
+      "github": {
+        "name": "GitHub Pages Traffic API",
+        "status": "🟢 실측 연동됨",
+        "today_views": 0,
+        "today_uniques": 0,
+        "total_views_14d": 78,
+        "total_uniques_14d": 3,
+        "latest_active_date": "2026-09-09",
+        "latest_active_views": 3,
+        "detail": "14일간 누적 78 뷰 (3 순방문)"
+      },
+      "goatcounter": {
+        "name": "GoatCounter (초경량 실시간)",
+        "status": "🟢 프론트엔드 연동 활성",
+        "dashboard": "https://absian.goatcounter.com",
+        "tag": "gc.zgo.at/count.js (absian)"
+      },
+      "ga4": {
+        "name": "Google Analytics 4",
+        "status": "🟢 측정 활성",
+        "ga_id": "G-WE6WVHJ03S",
+        "detail": "측정 ID: G-WE6WVHJ03S"
+      }
+    }
   }
 }

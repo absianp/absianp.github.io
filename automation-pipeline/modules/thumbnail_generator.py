@@ -552,6 +552,8 @@ def generate_svg_string(post: Dict[str, Any]) -> str:
   {artwork}
 </svg>"""
 
+DEFAULT_DIST_DIR = Path(__file__).resolve().parents[2] / "blog-frontend" / "dist" / "images" / "thumbnails"
+
 def generate_thumbnail_for_post(post_data: Dict[str, Any], output_dir: Optional[str] = None) -> str:
     """새 글 등록 시 해당 글에 맞는 고유 SVG 썸네일을 파일로 생성하고 상대 경로 반환"""
     out_dir = Path(output_dir) if output_dir else DEFAULT_OUTPUT_DIR
@@ -561,4 +563,9 @@ def generate_thumbnail_for_post(post_data: Dict[str, Any], output_dir: Optional[
     file_path = out_dir / f"{slug}.svg"
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(svg_str)
+    try:
+        DEFAULT_DIST_DIR.mkdir(parents=True, exist_ok=True)
+        (DEFAULT_DIST_DIR / f"{slug}.svg").write_text(svg_str, encoding="utf-8")
+    except Exception:
+        pass
     return f"/images/thumbnails/{slug}.svg"
