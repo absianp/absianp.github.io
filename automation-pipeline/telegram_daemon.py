@@ -15,6 +15,7 @@ from integrations.telegram_bot import _load_env_file, TelegramNotifier
 from integrations.antigravity_runner import AntigravityRunner
 from agents.performance_tracker import PerformanceTracker
 from modules.draft_queue import DraftApprovalQueue
+from modules.agent_manager import AgentManager
 from agents.editorial_reviewer import EditorialReviewAgent
 from templates.prompt_templates import EDITORIAL_RULES
 from main_pipeline import load_config, publish_queued_draft, KeywordHarvester, ContentWriter, PolicyInspector, GitHubPublisher, GoogleIndexing
@@ -37,6 +38,26 @@ sessions = {}
 raw_content_dir = config.get("github", {}).get("blog_content_dir", "../blog-frontend/src/content/blog")
 CONTENT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), raw_content_dir))
 
+KPOP_PIPELINE_DIR = "/home/ian/BLOG/kpop-hangul-blog/automation-pipeline"
+
+def get_kpop_queue():
+    try:
+        kpop_queue_file = os.path.join(KPOP_PIPELINE_DIR, "data", "draft_queue.json")
+        return DraftApprovalQueue(kpop_queue_file)
+    except Exception as e:
+        logger.warning(f"Failed to load K-Pop queue: {e}")
+        return None
+
+def publish_kpop_draft(draft_id: str) -> tuple:
+    try:
+        if KPOP_PIPELINE_DIR not in sys.path:
+            sys.path.insert(0, KPOP_PIPELINE_DIR)
+        from daily_kpop_pipeline import load_config as load_kpop_config, publish_queued_draft as kpop_publish
+        kpop_cfg = load_kpop_config()
+        return kpop_publish(kpop_cfg, draft_id, human_approved=True)
+    except Exception as e:
+        return False, f"K-Pop 초안 발행 중 오류: {e}"
+
 def configured_chat_id():
     value = config.get("telegram", {}).get("chat_id") or os.getenv("TELEGRAM_CHAT_ID")
     if isinstance(value, bool) or not re.fullmatch(r"-?\d+", str(value or "").strip()):
@@ -54,7 +75,7 @@ def require_allowed_chat(handler):
             logger.warning("Rejected Telegram update outside the configured chat.")
             return
         current = sessions.get(actual, {})
-        readonly = {"handle_help_command", "handle_status_command", "handle_queue_command", "handle_review_command", "handle_traffic_command", "start"}
+        readonly = {"handle_help_command", "handle_status_command", "handle_queue_command", "handle_review_command", "handle_traffic_command", "start", "handle_delete_command", "handle_agent_command"}
         if current.get("publication_inflight") and handler.__name__ not in readonly:
             return
         return await handler(update, context)
@@ -127,6 +148,7 @@ async def handle_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE
 ━━━━━━━━━━━━━━━━━━━━
 🤖 <b>기본 명령어 목록:</b>
 
+• <code>/agent</code> : 라즈베리파이 자동화 에이전트 관제 (스케줄 확인, 시작/중지, 즉시실행)
 • <code>/traffic</code> (또는 <code>/views</code>, <code>/clicks</code>) : 오늘 실시간 클릭수 및 뷰(PV/UV) 트래픽 보고서 즉시 조회
 • <code>/status</code> : 라즈베리파이 상태, 타이머 스케줄, 대기 큐 및 세션 조회
 • <code>/queue</code> : 발행 대기 중인 초안 큐 목록 및 감수 점수 조회
@@ -135,6 +157,7 @@ async def handle_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE
 • <code>/review [ID]</code> : 특정 초안의 AI 편집 의견과 검토 상태 조회
 • <code>/write [주제/자료]</code> : 새로운 블로그 포스팅 기획 및 작성 시작
 • <code>/edit [URL] [요청사항]</code> : 기존 블로그 포스팅 내용 또는 URL(슬러그) 수정
+• <code>/delete [슬러그]</code> : 발행된 블로그 글 영구 삭제 (마크다운+이미지+썸네일)
 • <code>/cancel</code> 또는 <code>/reset</code> : 진행 중인 기획/초안 작업 취소 및 초기화
 • <code>/help</code> : 사용 가능한 명령어 목록 및 사용 가이드 보기
 
@@ -329,14 +352,20 @@ async def handle_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def handle_queue_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     queue = DraftApprovalQueue()
     pending = queue.list_pending()
-    if not pending:
+
+    kpop_queue = get_kpop_queue()
+    kpop_pending = kpop_queue.list_pending() if kpop_queue else []
+
+    total_count = len(pending) + len(kpop_pending)
+    if total_count == 0:
         await update.message.reply_text("📋 <b>현재 승인 대기 중인 초안이 없습니다.</b>\n새 글이 작성되면 이곳에 누적됩니다.", parse_mode="HTML")
         return
         
-    msg_lines = [f"📋 <b>[{SITE_TITLE} 검토 대기 큐 목록 ({len(pending)}건)]</b>\n━━━━━━━━━━━━━━━━━━━━"]
+    msg_lines = [f"📋 <b>[검토 대기 큐 목록 (총 {total_count}건)]</b>\n━━━━━━━━━━━━━━━━━━━━"]
     keyboard = []
     
-    for idx, d in enumerate(pending[:5], 1):
+    item_idx = 1
+    for d in pending[:4]:
         draft_id = d.get("draft_id", "")
         title = d.get("title", "제목 없음")
         score = d.get("review", {}).get("total_score", 0)
@@ -344,15 +373,35 @@ async def handle_queue_command(update: Update, context: ContextTypes.DEFAULT_TYP
         created = d.get("created_at", "")[:16]
         
         msg_lines.append(
-            f"<b>{idx}. {title}</b>\n"
+            f"<b>{item_idx}. [앱시안] {title}</b>\n"
             f"  • ID: <code>{draft_id}</code>\n"
             f"  • 감수 점수: <b>{score}점</b> ({verdict}) | 📅 {created}\n"
         )
         keyboard.append([
-            InlineKeyboardButton(f"✅ 승인 #{idx}", callback_data=f"approve:{draft_id}"),
-            InlineKeyboardButton(f"📖 초안 #{idx}", callback_data=f"view_draft:{draft_id}"),
-            InlineKeyboardButton(f"❌ 보류 #{idx}", callback_data=f"reject:{draft_id}")
+            InlineKeyboardButton(f"✅ 승인 #{item_idx}", callback_data=f"approve:{draft_id}"),
+            InlineKeyboardButton(f"📖 초안 #{item_idx}", callback_data=f"view_draft:{draft_id}"),
+            InlineKeyboardButton(f"❌ 보류 #{item_idx}", callback_data=f"reject:{draft_id}")
         ])
+        item_idx += 1
+
+    for d in kpop_pending[:3]:
+        draft_id = d.get("draft_id", "")
+        title = d.get("title", "제목 없음")
+        score = d.get("review", {}).get("total_score", 90)
+        verdict = d.get("review", {}).get("verdict", "PASS")
+        created = d.get("created_at", "")[:16]
+        
+        msg_lines.append(
+            f"<b>{item_idx}. [K-Pop] {title}</b>\n"
+            f"  • ID: <code>{draft_id}</code>\n"
+            f"  • 감수 점수: <b>{score}점</b> ({verdict}) | 📅 {created}\n"
+        )
+        keyboard.append([
+            InlineKeyboardButton(f"✅ 승인 #{item_idx}", callback_data=f"approve:{draft_id}"),
+            InlineKeyboardButton(f"📖 초안 #{item_idx}", callback_data=f"view_draft:{draft_id}"),
+            InlineKeyboardButton(f"❌ 보류 #{item_idx}", callback_data=f"reject:{draft_id}")
+        ])
+        item_idx += 1
         
     msg_lines.append("━━━━━━━━━━━━━━━━━━━━\n💡 <i>버튼을 누르거나 <code>/approve &lt;ID&gt;</code> 로 승인할 수 있습니다.</i>")
     reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
@@ -362,8 +411,10 @@ async def handle_queue_command(update: Update, context: ContextTypes.DEFAULT_TYP
 async def handle_approve_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     args = context.args
     queue = DraftApprovalQueue()
+    kpop_queue = get_kpop_queue()
+
     if not args:
-        pending = queue.list_pending()
+        pending = queue.list_pending() + (kpop_queue.list_pending() if kpop_queue else [])
         if not pending:
             await update.message.reply_text("⚠️ 대기 중인 초안이 없습니다.")
             return
@@ -380,19 +431,30 @@ async def handle_approve_command(update: Update, context: ContextTypes.DEFAULT_T
         draft_id = args[0]
         
     draft = queue.get_draft(draft_id)
+    is_kpop = False
+    if not draft and kpop_queue:
+        draft = kpop_queue.get_draft(draft_id)
+        if draft:
+            is_kpop = True
+
     if not draft:
         await update.message.reply_text(f"❌ 초안 ID '{draft_id}'를 찾을 수 없습니다.")
         return
         
+    target_blog = "K-Pop 한글" if is_kpop else "앱시안"
     status_msg = await update.message.reply_text(
-        f"🚀 <b>초안('{draft.get('title')}') 승인 완료!</b>\nGitHub Pages에 배포를 진행 중입니다...",
+        f"🚀 <b>[{target_blog}] 초안('{draft.get('title')}') 승인 완료!</b>\n저장소 배포를 진행 중입니다...",
         parse_mode="HTML"
     )
     
-    success, res = publish_queued_draft(config, draft["draft_id"], human_approved=True)
+    if is_kpop:
+        success, res = publish_kpop_draft(draft["draft_id"])
+    else:
+        success, res = publish_queued_draft(config, draft["draft_id"], human_approved=True)
+
     if success:
         await status_msg.edit_text(
-            f"🎉 <b>[포스팅 승인 및 저장소 반영 요청 완료]</b>\n━━━━━━━━━━━━━━━━━━━━\n"
+            f"🎉 <b>[{target_blog} 포스팅 승인 및 저장소 반영 완료]</b>\n━━━━━━━━━━━━━━━━━━━━\n"
             f"📌 <b>제목</b>: <b>{draft.get('title')}</b>\n"
             f"🔗 <b>글 바로가기</b>: <a href=\"{res}\">{res}</a>\n\n"
             f"✨ <i>저장소 반영 요청이 완료되었습니다. Pages 배포 결과와 실제 URL을 확인하세요.</i>",
@@ -406,31 +468,244 @@ async def handle_approve_command(update: Update, context: ContextTypes.DEFAULT_T
 async def handle_reject_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     args = context.args
     queue = DraftApprovalQueue()
+    kpop_queue = get_kpop_queue()
+
     if not args:
         await update.message.reply_text("⚠️ 보류할 초안 ID를 입력해주세요:\n<code>/reject &lt;draft_id&gt;</code>", parse_mode="HTML")
         return
     draft_id = args[0]
     ok = queue.mark_rejected(draft_id)
+    if not ok and kpop_queue:
+        ok = kpop_queue.mark_rejected(draft_id)
+
     if ok:
         await update.message.reply_text(f"❌ 초안(<code>{draft_id}</code>)이 보류 처리되었습니다.", parse_mode="HTML")
     else:
         await update.message.reply_text(f"⚠️ 초안(<code>{draft_id}</code>)을 찾을 수 없습니다.", parse_mode="HTML")
 
 @require_allowed_chat
+async def handle_delete_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """발행된 블로그 글 삭제"""
+    import urllib.parse
+    args = context.args
+    target_text = " ".join(args).strip() if args else ""
+    
+    if not target_text:
+        # Show recent posts list for selection
+        try:
+            md_files = sorted(glob.glob(os.path.join(CONTENT_DIR, "*.md")), key=os.path.getmtime, reverse=True)[:10]
+            if not md_files:
+                await update.message.reply_text("📋 삭제할 수 있는 게시글이 없습니다.")
+                return
+            msg_lines = [f"🗑️ <b>[{SITE_TITLE} 삭제 가능한 최근 게시글 목록]</b>\n━━━━━━━━━━━━━━━━━━━━"]
+            keyboard = []
+            for idx, fp in enumerate(md_files[:6], 1):
+                slug = os.path.splitext(os.path.basename(fp))[0]
+                with open(fp, "r", encoding="utf-8") as f:
+                    content = f.read()
+                title_match = re.search(r"^title:\s*(.+)$", content, re.MULTILINE)
+                title = title_match.group(1).strip("'\"") if title_match else slug
+                msg_lines.append(f"<b>{idx}.</b> {title}\n  • <code>{slug}</code>")
+                keyboard.append([InlineKeyboardButton(f"🗑️ #{idx} 삭제: {title[:18]}...", callback_data=f"delete_confirm:{slug}")])
+            msg_lines.append("\n━━━━━━━━━━━━━━━━━━━━\n💡 <i>삭제할 글의 버튼을 누르거나 슬러그/링크를 직접 입력하세요:</i>\n<code>/delete &lt;slug 또는 URL&gt;</code>")
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            await update.message.reply_text("\n".join(msg_lines), parse_mode="HTML", reply_markup=reply_markup)
+        except Exception as e:
+            await update.message.reply_text(f"⚠️ 게시글 목록 조회 중 오류: {e}")
+        return
+    
+    # Extract slug from full URL or text
+    raw_input = urllib.parse.unquote(target_text)
+    url_match = re.search(r"blog/([^/\s?#]+)", raw_input)
+    if url_match:
+        slug = url_match.group(1).rstrip("/")
+    else:
+        slug = raw_input.strip().strip("/").split()[-1]
+    
+    filepath = os.path.join(CONTENT_DIR, f"{slug}.md")
+    if not os.path.exists(filepath):
+        # 1. Prefix match
+        matched = [f for f in os.listdir(CONTENT_DIR) if f.startswith(slug) and f.endswith(".md")]
+        # 2. Substring match
+        if not matched:
+            matched = [f for f in os.listdir(CONTENT_DIR) if slug.lower() in f.lower() and f.endswith(".md")]
+        
+        if len(matched) == 1:
+            slug = os.path.splitext(matched[0])[0]
+            filepath = os.path.join(CONTENT_DIR, matched[0])
+        elif len(matched) > 1:
+            keyboard = []
+            msg_lines = [f"🔍 <b>'{slug}' 검색 결과 여러 글이 발견되었습니다:</b>\n━━━━━━━━━━━━━━━━━━━━"]
+            for idx, mf in enumerate(matched[:5], 1):
+                s = os.path.splitext(mf)[0]
+                with open(os.path.join(CONTENT_DIR, mf), "r", encoding="utf-8") as f:
+                    c = f.read()
+                tm = re.search(r"^title:\s*(.+)$", c, re.MULTILINE)
+                t = tm.group(1).strip("'\"") if tm else s
+                msg_lines.append(f"<b>{idx}.</b> {t} (<code>{s}</code>)")
+                keyboard.append([InlineKeyboardButton(f"🗑️ #{idx} 삭제 선택", callback_data=f"delete_confirm:{s}")])
+            keyboard.append([InlineKeyboardButton("❌ 취소", callback_data="btn_cancel_session")])
+            await update.message.reply_text("\n".join(msg_lines), parse_mode="HTML", reply_markup=InlineKeyboardMarkup(keyboard))
+            return
+        else:
+            await update.message.reply_text(f"❌ 해당 게시글(<code>{slug}</code>)을 찾을 수 없습니다.\n<code>/delete</code> 만 입력하시면 최근 글 목록을 확인하실 수 있습니다.", parse_mode="HTML")
+            return
+    
+    # Read title for confirmation
+    with open(filepath, "r", encoding="utf-8") as f:
+        content = f.read()
+    title_match = re.search(r"^title:\s*(.+)$", content, re.MULTILINE)
+    title = title_match.group(1).strip("'\"") if title_match else slug
+    
+    await update.message.reply_text(
+        f"⚠️ <b>[글 삭제 최종 확인]</b>\n━━━━━━━━━━━━━━━━━━━━\n"
+        f"📌 <b>제목</b>: <b>{title}</b>\n"
+        f"🔗 <b>슬러그</b>: <code>{slug}</code>\n\n"
+        f"⚠️ <i>이 작업은 되돌릴 수 없습니다. 마크다운 파일, 썸네일, 본문 이미지가 완전히 삭제되고 Git에 반영됩니다.</i>",
+        parse_mode="HTML",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("🗑️ 확인 - 영구 삭제", callback_data=f"delete_execute:{slug}")],
+            [InlineKeyboardButton("❌ 취소", callback_data="btn_cancel_session")]
+        ])
+    )
+
+def format_agent_dashboard(mgr: AgentManager) -> (str, InlineKeyboardMarkup):
+    agents = mgr.list_all_agents()
+    lines = [
+        "⚙️ <b>[라즈베리파이 5 자동화 에이전트 관제센터]</b>",
+        "━━━━━━━━━━━━━━━━━━━━",
+        "💡 <i>시스템 스케줄 타이머와 백그라운드 파이프라인 실시간 제어</i>\n"
+    ]
+    
+    keyboard = []
+    row = []
+    for idx, a in enumerate(agents, 1):
+        status_badge = "🟢 활성" if a["timer_active"] else "🔴 중지"
+        time_info = a["left_time"] or a["next_run"]
+        lines.append(f"<b>{idx}.</b> {a['icon']} <b>{a['name']}</b>\n   └ 상태: {status_badge} | ⏱️ <code>{time_info}</code>")
+        
+        btn_text = f"{a['icon']} {a['name'].split()[0]}"
+        row.append(InlineKeyboardButton(btn_text, callback_data=f"agent_view:{a['key']}"))
+        if len(row) == 2:
+            keyboard.append(row)
+            row = []
+    if row:
+        keyboard.append(row)
+    
+    keyboard.append([InlineKeyboardButton("🔄 현황 새로고침", callback_data="agent_list")])
+    lines.append("\n━━━━━━━━━━━━━━━━━━━━\n👇 <i>제어할 에이전트를 아래 버튼에서 선택하세요:</i>")
+    return "\n".join(lines), InlineKeyboardMarkup(keyboard)
+
+def format_agent_detail(mgr: AgentManager, key: str) -> (str, InlineKeyboardMarkup):
+    st = mgr.get_agent_status(key)
+    if not st:
+        return "❌ 에이전트 정보를 찾을 수 없습니다.", InlineKeyboardMarkup([[InlineKeyboardButton("🔙 목록", callback_data="agent_list")]])
+    
+    timer_badge = "🟢 활성 (ACTIVE)" if st["timer_active"] else "🔴 일시중지 (INACTIVE)"
+    svc_badge = "⚡ 실행 중 (RUNNING)" if st["service_active"] else "💤 대기 중 (IDLE)"
+    
+    text = f"""{st['icon']} <b>[에이전트 제어] {st['name']}</b>
+━━━━━━━━━━━━━━━━━━━━
+📝 <b>설명</b>: {st['desc']}
+⏰ <b>타이머</b>: <code>{st['timer']}</code>
+⚙️ <b>서비스</b>: <code>{st['service']}</code>
+
+📊 <b>현재 상태</b>:
+  • 스케줄 타이머: <b>{timer_badge}</b>
+  • 서비스 상태: <b>{svc_badge}</b>
+  • 다음 실행 예정: <code>{st['next_run']}</code> ({st['left_time'] or '대기'})
+
+━━━━━━━━━━━━━━━━━━━━
+👇 <b>원하시는 작업을 선택하세요:</b>"""
+
+    keyboard = [
+        [InlineKeyboardButton("🚀 지금 즉시 실행 (Run Now)", callback_data=f"agent_run:{key}")],
+    ]
+    if st["timer_active"]:
+        keyboard.append([InlineKeyboardButton("⏸️ 스케줄 타이머 일시중지", callback_data=f"agent_stop:{key}")])
+    else:
+        keyboard.append([InlineKeyboardButton("▶️ 스케줄 타이머 시작", callback_data=f"agent_start:{key}")])
+    
+    keyboard.append([
+        InlineKeyboardButton("🔄 타이머 재시작", callback_data=f"agent_restart:{key}"),
+        InlineKeyboardButton("🔙 에이전트 목록", callback_data="agent_list")
+    ])
+    return text, InlineKeyboardMarkup(keyboard)
+
+@require_allowed_chat
+async def handle_agent_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """라즈베리파이 5 자동화 에이전트 관리 및 스케줄 제어"""
+    mgr = AgentManager()
+    args = context.args
+    
+    if not args:
+        text, reply_markup = format_agent_dashboard(mgr)
+        await update.message.reply_text(text, parse_mode="HTML", reply_markup=reply_markup)
+        return
+    
+    action = args[0].lower()
+    target_key = args[1].lower() if len(args) > 1 else None
+    
+    if action == "list":
+        text, reply_markup = format_agent_dashboard(mgr)
+        await update.message.reply_text(text, parse_mode="HTML", reply_markup=reply_markup)
+        return
+        
+    if not target_key:
+        await update.message.reply_text("⚠️ 대상 에이전트 키를 입력해주세요.\n예: <code>/agent start morning</code>, <code>/agent run absian</code>", parse_mode="HTML")
+        return
+        
+    if action == "start":
+        ok, res_msg = mgr.start_agent(target_key)
+        await update.message.reply_text(res_msg, parse_mode="HTML")
+    elif action == "stop":
+        ok, res_msg = mgr.stop_agent(target_key)
+        await update.message.reply_text(res_msg, parse_mode="HTML")
+    elif action == "restart":
+        ok, res_msg = mgr.restart_agent(target_key)
+        await update.message.reply_text(res_msg, parse_mode="HTML")
+    elif action in ("run", "trigger"):
+        ok, res_msg = mgr.trigger_run_now(target_key)
+        await update.message.reply_text(res_msg, parse_mode="HTML")
+    else:
+        await update.message.reply_text(f"⚠️ 알 수 없는 액션: {action}\n(가능 액션: list, start, stop, restart, run)", parse_mode="HTML")
+
+@require_allowed_chat
 async def handle_review_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     args = context.args
     queue = DraftApprovalQueue()
+    kpop_queue = get_kpop_queue()
+
     if not args:
         await update.message.reply_text("⚠️ 조회할 초안 ID를 입력해주세요:\n<code>/review &lt;draft_id&gt;</code>", parse_mode="HTML")
         return
     draft_id = args[0]
     draft = queue.get_draft(draft_id)
+    is_kpop = False
+    if not draft and kpop_queue:
+        draft = kpop_queue.get_draft(draft_id)
+        if draft:
+            is_kpop = True
+
     if not draft:
         await update.message.reply_text(f"⚠️ 초안(<code>{draft_id}</code>)을 찾을 수 없습니다.", parse_mode="HTML")
         return
         
-    notifier = TelegramNotifier(config)
-    notifier.send_review_report(draft["draft_id"], draft.get("article", {}), draft.get("review", {}))
+    if is_kpop:
+        try:
+            if KPOP_PIPELINE_DIR not in sys.path:
+                sys.path.insert(0, KPOP_PIPELINE_DIR)
+            from daily_kpop_pipeline import load_config as load_kpop_config
+            from integrations.telegram_bot import TelegramNotifier as KpopNotifier
+            kpop_notifier = KpopNotifier(load_kpop_config())
+            kpop_notifier.send_review_report(draft["draft_id"], draft.get("article", {}), draft.get("review", {}))
+        except Exception as e:
+            await update.message.reply_text(f"⚠️ K-Pop 보고서 전송 실패: {e}")
+            return
+    else:
+        notifier = TelegramNotifier(config)
+        notifier.send_review_report(draft["draft_id"], draft.get("article", {}), draft.get("review", {}))
+
     await update.message.reply_text(f"🧐 초안(<code>{draft_id}</code>)의 감수 보고서를 전송했습니다.", parse_mode="HTML")
 
 @require_allowed_chat
@@ -464,6 +739,34 @@ async def route_message(message, user_text, context):
         return
     if session:
         invalidate_approvals(session)
+
+    # 0. Delete Request Detection (자연어 삭제 감지)
+    stripped = user_text.strip()
+    if stripped.startswith("/delete") or any(kw in stripped for kw in ["글 삭제", "포스트 삭제", "게시글 삭제", "글삭제", "포스팅 삭제"]) or stripped == "삭제":
+        clean_arg = re.sub(r"(?:/delete|글\s*삭제(?:해줘)?|포스트\s*삭제(?:해줘)?|게시글\s*삭제(?:해줘)?|삭제(?:해줘)?)", "", stripped).strip()
+        class DummyContext:
+            args = clean_arg.split() if clean_arg else []
+        class DummyUpdate:
+            effective_chat = message.chat
+            class Msg:
+                def __init__(self, m):
+                    self.reply_text = m.reply_text
+            message = Msg(message)
+        await handle_delete_command(DummyUpdate(), DummyContext())
+        return
+
+    # 0-1. Agent & Scheduler Management Detection (자연어 에이전트/스케줄 감지)
+    if stripped.startswith("/agent") or any(kw in stripped for kw in ["에이전트 관리", "스케줄 관리", "타이머 관리", "에이전트", "스케줄러"]):
+        class DummyContext:
+            args = []
+        class DummyUpdate:
+            effective_chat = message.chat
+            class Msg:
+                def __init__(self, m):
+                    self.reply_text = m.reply_text
+            message = Msg(message)
+        await handle_agent_command(DummyUpdate(), DummyContext())
+        return
 
     # 1. Existing Blog Edit Request
     blog_url_match = re.search(r"(?:https?://[^/\s]+/)?blog/([^/\s?#]+)", user_text)
@@ -1157,10 +1460,23 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if data.startswith("approve:"):
         target_id = data.split("approve:", 1)[1]
         await query.edit_message_text("🚀 <b>[초안 승인 접수]</b> GitHub Pages 배포를 시작합니다...", parse_mode="HTML")
-        success, res = publish_queued_draft(config, target_id, human_approved=True)
+        queue = DraftApprovalQueue()
+        draft = queue.get_draft(target_id)
+        if draft:
+            success, res = publish_queued_draft(config, target_id, human_approved=True)
+            target_blog = "앱시안"
+        else:
+            kpop_queue = get_kpop_queue()
+            if kpop_queue and kpop_queue.get_draft(target_id):
+                success, res = publish_kpop_draft(target_id)
+                target_blog = "K-Pop 한글"
+            else:
+                success, res = False, f"초안 ID '{target_id}'를 찾을 수 없습니다."
+                target_blog = "블로그"
+
         if success:
             await query.message.reply_text(
-                f"🎉 <b>[포스팅 승인 및 저장소 반영 요청 완료]</b>\n━━━━━━━━━━━━━━━━━━━━\n"
+                f"🎉 <b>[{target_blog} 포스팅 승인 및 저장소 반영 완료]</b>\n━━━━━━━━━━━━━━━━━━━━\n"
                 f"🔗 <b>글 바로가기</b>: <a href=\"{res}\">{res}</a>\n\n"
                 f"✨ <i>저장소 반영 요청이 완료되었습니다. Pages 배포 결과와 실제 URL을 확인하세요.</i>",
                 parse_mode="HTML",
@@ -1173,7 +1489,11 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if data.startswith("reject:"):
         target_id = data.split("reject:", 1)[1]
         queue = DraftApprovalQueue()
-        queue.mark_rejected(target_id)
+        ok = queue.mark_rejected(target_id)
+        if not ok:
+            kpop_queue = get_kpop_queue()
+            if kpop_queue:
+                ok = kpop_queue.mark_rejected(target_id)
         await query.edit_message_text(f"❌ 초안(<code>{target_id[:16]}...</code>)이 발행 보류 처리되었습니다.", parse_mode="HTML")
         return
 
@@ -1181,6 +1501,11 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         target_id = data.split("view_draft:", 1)[1]
         queue = DraftApprovalQueue()
         draft = queue.get_draft(target_id)
+        if not draft:
+            kpop_queue = get_kpop_queue()
+            if kpop_queue:
+                draft = kpop_queue.get_draft(target_id)
+
         if draft:
             from html import escape
             raw_content = draft.get("article", {}).get("markdown_content", "본문 없음")
@@ -1284,6 +1609,95 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
+    if data.startswith("delete_confirm:"):
+        slug = data.split("delete_confirm:", 1)[1]
+        filepath = os.path.join(CONTENT_DIR, f"{slug}.md")
+        if not os.path.exists(filepath):
+            await query.edit_message_text(f"❌ 해당 게시글(<code>{slug}</code>)을 찾을 수 없습니다.", parse_mode="HTML")
+            return
+        with open(filepath, "r", encoding="utf-8") as f:
+            content = f.read()
+        title_match = re.search(r"^title:\s*(.+)$", content, re.MULTILINE)
+        title = title_match.group(1).strip("'\"" ) if title_match else slug
+        await query.edit_message_text(
+            f"⚠️ <b>[글 삭제 최종 확인]</b>\n━━━━━━━━━━━━━━━━━━━━\n"
+            f"📌 <b>제목</b>: <b>{title}</b>\n"
+            f"🔗 <b>슬러그</b>: <code>{slug}</code>\n\n"
+            f"⚠️ <i>이 작업은 되돌릴 수 없습니다.</i>",
+            parse_mode="HTML",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("🗑️ 확인 - 영구 삭제", callback_data=f"delete_execute:{slug}")],
+                [InlineKeyboardButton("❌ 취소", callback_data="btn_cancel_session")]
+            ])
+        )
+        return
+
+    if data.startswith("delete_execute:"):
+        slug = data.split("delete_execute:", 1)[1]
+        try:
+            publisher = GitHubPublisher(config)
+            deleted_title = publisher.delete_article(slug, human_approved=True)
+            await query.edit_message_text(
+                f"🗑️ <b>[게시글 삭제 완료]</b>\n━━━━━━━━━━━━━━━━━━━━\n"
+                f"📌 <b>제목</b>: <b>{deleted_title}</b>\n"
+                f"🔗 <b>슬러그</b>: <code>{slug}</code>\n\n"
+                f"✅ <i>마크다운 파일, 썸네일, 본문 이미지가 삭제되고 Git에 커밋되었습니다.</i>",
+                parse_mode="HTML"
+            )
+        except Exception as e:
+            logger.error(f"글 삭제 실패: {e}")
+            await query.edit_message_text(f"❌ 글 삭제 중 오류가 발생했습니다: {e}")
+        return
+
+    if data == "agent_list":
+        mgr = AgentManager()
+        text, reply_markup = format_agent_dashboard(mgr)
+        await query.edit_message_text(text, parse_mode="HTML", reply_markup=reply_markup)
+        return
+
+    if data.startswith("agent_view:"):
+        key = data.split("agent_view:", 1)[1]
+        mgr = AgentManager()
+        text, reply_markup = format_agent_detail(mgr, key)
+        await query.edit_message_text(text, parse_mode="HTML", reply_markup=reply_markup)
+        return
+
+    if data.startswith("agent_start:"):
+        key = data.split("agent_start:", 1)[1]
+        mgr = AgentManager()
+        ok, msg = mgr.start_agent(key)
+        await query.answer(text="타이머 시작됨", show_alert=False)
+        text, reply_markup = format_agent_detail(mgr, key)
+        await query.edit_message_text(f"{msg}\n\n{text}", parse_mode="HTML", reply_markup=reply_markup)
+        return
+
+    if data.startswith("agent_stop:"):
+        key = data.split("agent_stop:", 1)[1]
+        mgr = AgentManager()
+        ok, msg = mgr.stop_agent(key)
+        await query.answer(text="타이머 일시중지됨", show_alert=False)
+        text, reply_markup = format_agent_detail(mgr, key)
+        await query.edit_message_text(f"{msg}\n\n{text}", parse_mode="HTML", reply_markup=reply_markup)
+        return
+
+    if data.startswith("agent_restart:"):
+        key = data.split("agent_restart:", 1)[1]
+        mgr = AgentManager()
+        ok, msg = mgr.restart_agent(key)
+        await query.answer(text="타이머 재시작됨", show_alert=False)
+        text, reply_markup = format_agent_detail(mgr, key)
+        await query.edit_message_text(f"{msg}\n\n{text}", parse_mode="HTML", reply_markup=reply_markup)
+        return
+
+    if data.startswith("agent_run:"):
+        key = data.split("agent_run:", 1)[1]
+        mgr = AgentManager()
+        ok, msg = mgr.trigger_run_now(key)
+        await query.answer(text="파이프라인 백그라운드 가동됨", show_alert=False)
+        text, reply_markup = format_agent_detail(mgr, key)
+        await query.edit_message_text(f"{msg}\n\n{text}", parse_mode="HTML", reply_markup=reply_markup)
+        return
+
     if data == "btn_view_full_edit":
         session = sessions.get(chat_id)
         if session and session.get("data"):
@@ -1300,14 +1714,22 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def post_init(application):
     commands = [
-        BotCommand("traffic", "실시간 클릭수 & 뷰 트래픽 보고서"),
-        BotCommand("status", "서버 상태 & 대기 큐 조회"),
+        BotCommand("agent", "에이전트 관리 (스케줄/시작/중지/실행)"),
+        BotCommand("approve", "대기 초안 승인 및 배포"),
+        BotCommand("cancel", "진행 중인 작업 취소 및 초기화"),
+        BotCommand("delete", "발행된 글 삭제 (목록/슬러그)"),
+        BotCommand("edit", "기존 글 내용 또는 URL 수정"),
+        BotCommand("help", "사용 가이드 및 명령어 보기"),
         BotCommand("queue", "발행 대기 초안 목록 조회"),
+        BotCommand("reject", "대기 초안 발행 보류"),
+        BotCommand("review", "초안 AI 감수 보고서 조회"),
+        BotCommand("status", "서버 상태, 스케줄 & 대기 큐 조회"),
+        BotCommand("traffic", "실시간 클릭수 & 뷰 트래픽 보고서"),
         BotCommand("write", "새 블로그 글 작성 기획"),
-        BotCommand("help", "사용 가이드 및 명령어"),
     ]
     try:
         await application.bot.set_my_commands(commands)
+        logger.info("✅ 텔레그램 봇 전체 명령어(set_my_commands) 알파벳순 등록 성공!")
     except Exception as e:
         logger.warning(f"set_my_commands 실패: {e}")
 
@@ -1324,6 +1746,7 @@ def main():
     
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", handle_help_command))
+    app.add_handler(CommandHandler(["agent", "agents"], handle_agent_command))
     app.add_handler(CommandHandler("status", handle_status_command))
     app.add_handler(CommandHandler(["traffic", "views", "clicks", "report"], handle_traffic_command))
     app.add_handler(CommandHandler("cancel", handle_cancel))
@@ -1334,6 +1757,7 @@ def main():
     app.add_handler(CommandHandler("review", handle_review_command))
     app.add_handler(CommandHandler("write", handle_write_command))
     app.add_handler(CommandHandler("edit", handle_edit_command))
+    app.add_handler(CommandHandler("delete", handle_delete_command))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text_message))
     app.add_handler(CallbackQueryHandler(button_callback))
     
