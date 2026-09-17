@@ -29,17 +29,17 @@ faqs:
   answer: 생성형 AI 검색은 출처 카드에 썸네일과 본문 다이어그램을 함께 렌더링하는 멀티모달 인용 방식을 채택하고 있습니다. 이미지 URL이
     404로 깨져 있으면 크롤러가 시각적 자산을 파싱하지 못해 인용 카드에서 썸네일이 누락되거나 출처 신뢰도 평가에서 감점 요인이 되므로, 정적
     자산의 절대 URL이 200 OK로 서빙되는지 배포 전 반드시 확인해야 합니다.
-heroImage: /images/thumbnails/2026-09-15-chatgpt-ai-aio.svg
+heroImage: /images/thumbnails/2026-09-15-chatgpt-ai-aio-gpt-repair-20260917-thumbnail.png
 ---
 
 ChatGPT Search와 Perplexity 등 생성형 AI 검색(AIO, Artificial Intelligence Optimization)에서 신뢰할 수 있는 출처(Citation)로 채택되려면 키워드 밀도 중심의 전통적 검색엔진 최적화(SEO)에서 벗어나, RAG(검색 증강 생성) 파이프라인의 벡터 임베딩과 청킹(Chunking) 알고리즘이 소비하기 쉬운 구조로 본문을 재설계해야 합니다. 생성형 AI 모델은 웹페이지 전체의 체류 시간이나 백링크 수량보다 질의어에 직결된 단일 단락의 완결성과 팩트 밀도를 기준으로 인용 여부를 결정합니다.
 
-<!-- article-illustration:absian-2026-09-14-chatgpt-ai-aio-01 -->
+<!-- article-illustration:2026-09-15-chatgpt-ai-aio-gpt-repair-20260917-body-1 -->
 <figure class="article-illustration" style="margin: 2em 0;">
-  <img src="/images/articles/absian-2026-09-14-chatgpt-ai-aio-01.webp" alt="ChatGPT·생성형 AI 검색에 인용되는 콘텐츠 작성법과 AIO 기초 가이드 - 1. 전통적 키워드 SEO와 생성형 AI 검색(AIO)의 동작 메커니즘 차이 설명 다이어그램" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
-  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">1. 전통적 키워드 SEO와 생성형 AI 검색(AIO)의 동작 메커니즘 차이의 핵심 구조와 워크플로우를 정리한 다이어그램입니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+  <img src="/images/articles/2026-09-15-chatgpt-ai-aio-gpt-repair-20260917-body-1.png" alt="문서에서 관련 정보를 찾아 출처와 함께 답변하는 개념 흐름" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">문서의 의미 단위와 관련 정보를 연결하는 일반적인 검색·답변 흐름을 설명한 GPT 생성 이미지입니다.</figcaption>
 </figure>
-<!-- /article-illustration:absian-2026-09-14-chatgpt-ai-aio-01 -->
+<!-- /article-illustration:2026-09-15-chatgpt-ai-aio-gpt-repair-20260917-body-1 -->
 
 ## 1. 전통적 키워드 SEO와 생성형 AI 검색(AIO)의 동작 메커니즘 차이
 
@@ -71,12 +71,12 @@ AI 검색 에이전트는 사용자의 자연어 질문을 헤딩 태그와 매�
 
 또한 설명문 형태의 긴 나열보다 Markdown Table을 우선 파싱하는 LLM 특성을 활용하여, 비교 데이터나 수치 정보는 반드시 2열 이상의 구조화된 표로 정리해야 인용 확률이 높아집니다.
 
-<!-- article-illustration:absian-2026-09-14-chatgpt-ai-aio-02 -->
+<!-- article-illustration:2026-09-15-chatgpt-ai-aio-gpt-repair-20260917-body-2 -->
 <figure class="article-illustration" style="margin: 2em 0;">
-  <img src="/images/articles/absian-2026-09-14-chatgpt-ai-aio-02.webp" alt="ChatGPT·생성형 AI 검색에 인용되는 콘텐츠 작성법과 AIO 기초 가이드 - 3. 답변 신뢰도를 높이는 팩트 위주 서술과 데이터 출처 명시 실전 가이드 다이어그램" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
-  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">3. 답변 신뢰도를 높이는 팩트 위주 서술과 데이터 출처 명시의 주요 구현 단계와 최적화 포인트를 정리한 다이어그램입니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+  <img src="/images/articles/2026-09-15-chatgpt-ai-aio-gpt-repair-20260917-body-2.png" alt="공식 출처, 기준일, 링크와 이미지를 확인하는 발행 점검" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">발행 전 근거와 정적 자산을 확인하는 점검 항목을 설명한 GPT 생성 이미지입니다.</figcaption>
 </figure>
-<!-- /article-illustration:absian-2026-09-14-chatgpt-ai-aio-02 -->
+<!-- /article-illustration:2026-09-15-chatgpt-ai-aio-gpt-repair-20260917-body-2 -->
 
 ## 3. 답변 신뢰도를 높이는 팩트 위주 서술과 데이터 출처 명시
 
@@ -98,7 +98,7 @@ AI 검색 크롤러가 HTML DOM 트리를 파싱할 때 본문 의미를 가장 
   "@context": "https://schema.org",
   "@type": "TechArticle",
   "headline": "ChatGPT·생성형 AI 검색에 인용되는 콘텐츠 작성법",
-  "image": "https://absianp.github.io/images/articles/absian-2026-09-14-chatgpt-ai-aio-01.webp",
+  "image": "https://absianp.github.io/images/articles/2026-09-15-chatgpt-ai-aio-gpt-repair-20260917-body-1.png",
   "author": {
     "@type": "Organization",
     "name": "기술문서운영팀"

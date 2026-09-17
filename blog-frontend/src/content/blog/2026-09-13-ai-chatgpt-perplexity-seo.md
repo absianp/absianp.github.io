@@ -26,15 +26,15 @@ faqs:
 - question: 구조화 데이터를 삽입하면 AI 검색 모델의 인용이 보장되나요?
   answer: 인용이 보장되지는 않습니다. 구조화 데이터는 검색 로봇이 본문 구조를 기계적으로 쉽게 해석하도록 돕는 규격일 뿐이며, 실제 답변
     생성 및 출처 인용 여부는 모델의 관련성 판단, RAG 알고리즘, 원천 정보의 신뢰도 등에 따라 결정됩니다.
-heroImage: /images/thumbnails/2026-09-13-ai-chatgpt-perplexity-seo.svg
+heroImage: /images/thumbnails/2026-09-13-ai-chatgpt-perplexity-seo-gpt-repair-20260917-thumbnail.png
 ---
 
-<!-- article-illustration:absian-2026-09-13-ai-chatgpt-perplexity-seo-01 -->
+<!-- article-illustration:2026-09-13-ai-chatgpt-perplexity-seo-gpt-repair-20260917-body-1 -->
 <figure class="article-illustration" style="margin: 2em 0;">
-  <img src="/images/articles/absian-2026-09-13-ai-chatgpt-perplexity-seo-01.webp" alt="AI 검색(ChatGPT·Perplexity) 시대의 콘텐츠 전략: 기존 SEO와 AIO 최적화의 핵심 차이 - AI 검색 최적화(AIO), 기존 SEO와 무엇이 다른가요? 설명 다이어그램" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
-  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">AI 검색 최적화(AIO), 기존 SEO와 무엇이 다른가요?의 핵심 구조와 워크플로우를 정리한 다이어그램입니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+  <img src="/images/articles/2026-09-13-ai-chatgpt-perplexity-seo-gpt-repair-20260917-body-1.png" alt="검색 결과 링크와 출처를 연결한 AI 답변의 개념 비교" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">관련 링크를 탐색하는 방식과 여러 출처를 연결한 답변의 개념을 비교한 GPT 생성 이미지입니다.</figcaption>
 </figure>
-<!-- /article-illustration:absian-2026-09-13-ai-chatgpt-perplexity-seo-01 -->
+<!-- /article-illustration:2026-09-13-ai-chatgpt-perplexity-seo-gpt-repair-20260917-body-1 -->
 
 ## AI 검색 최적화(AIO), 기존 SEO와 무엇이 다른가요?
 
@@ -59,12 +59,12 @@ heroImage: /images/thumbnails/2026-09-13-ai-chatgpt-perplexity-seo.svg
 
 ---
 
-<!-- article-illustration:absian-2026-09-13-ai-chatgpt-perplexity-seo-02 -->
+<!-- article-illustration:2026-09-13-ai-chatgpt-perplexity-seo-gpt-repair-20260917-body-2 -->
 <figure class="article-illustration" style="margin: 2em 0;">
-  <img src="/images/articles/absian-2026-09-13-ai-chatgpt-perplexity-seo-02.webp" alt="AI 검색(ChatGPT·Perplexity) 시대의 콘텐츠 전략: 기존 SEO와 AIO 최적화의 핵심 차이 - 2. LLM이 쉽게 인용하는 콘텐츠 구조화 요령 실전 가이드 다이어그램" width="1536" height="1024" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
-  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">2. LLM이 쉽게 인용하는 콘텐츠 구조화 요령의 주요 구현 단계와 최적화 포인트를 정리한 다이어그램입니다. AI로 제작한 설명용 이미지입니다.</figcaption>
+  <img src="/images/articles/2026-09-13-ai-chatgpt-perplexity-seo-gpt-repair-20260917-body-2.png" alt="질문, 핵심 답변, 근거, 출처와 기준일로 구성한 정보 구조" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 0.75rem;" />
+  <figcaption style="margin-top: 0.65em; font-size: 0.95em; line-height: 1.6; color: #475569;">질문에 답하고 근거와 출처를 연결하는 글의 구조를 설명한 GPT 생성 이미지입니다.</figcaption>
 </figure>
-<!-- /article-illustration:absian-2026-09-13-ai-chatgpt-perplexity-seo-02 -->
+<!-- /article-illustration:2026-09-13-ai-chatgpt-perplexity-seo-gpt-repair-20260917-body-2 -->
 
 ## 2. LLM이 쉽게 인용하는 콘텐츠 구조화 요령
 
