@@ -34,6 +34,10 @@ class ApprovalBoundaryTests(unittest.TestCase):
         self.cfg = patch.object(self.daemon, "config", {"telegram":{"chat_id":"42"}})
         self.cfg.start()
         self.addCleanup(self.cfg.stop)
+        if hasattr(self.daemon, "get_kpop_queue"):
+            self.peer = patch.object(self.daemon, "get_kpop_queue", return_value=None)
+            self.peer.start()
+            self.addCleanup(self.peer.stop)
         self.daemon.sessions.clear()
         self.addCleanup(self.daemon.sessions.clear)
         self.context = SimpleNamespace(args=["known-draft"], bot=SimpleNamespace(send_message=AsyncMock(return_value=SimpleNamespace(edit_text=AsyncMock()))))
@@ -79,7 +83,8 @@ class ApprovalBoundaryTests(unittest.TestCase):
             queue.assert_called_once()
 
     def test_existing_queue_approval_only_for_configured_chat(self):
-        with patch.object(self.daemon, "publish_queued_draft", return_value=(False,"needs review")) as publish:
+        with patch.object(self.daemon, "DraftApprovalQueue") as queue, patch.object(self.daemon, "publish_queued_draft", return_value=(False,"needs review")) as publish:
+            queue.return_value.get_draft.return_value = {"draft_id":"known-draft", "status":"pending_review"}
             asyncio.run(self.daemon.button_callback(self.update("approve:known-draft"), self.context))
             publish.assert_called_once_with(self.daemon.config, "known-draft", human_approved=True)
 

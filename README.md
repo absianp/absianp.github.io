@@ -1,5 +1,7 @@
 # 🚀 GitHub Pages + AdSense AI 자동화 수익형 블로그 시스템
 
+현재 GPT 모델, 이미지 생성과 승인 절차: [GPT 에이전트 운영 안내](GPT_AGENT_CONFIGURATION.md).
+
 > **비용 0원(100% 평생 무료 호스팅)**으로 운영되는 GitHub Pages 기반의 초고속 Astro 블로그와 **AI 에이전트 자동화 파이프라인**을 결합한 부업 수익화 솔루션입니다.
 > 사용자의 노동은 최소화(주제 제안/승인, 원클릭 발행, 모바일 성과 보고 수신)하고 자료 수집, 1,500자+ 심층 글 작성, SEO/애드센스 슬롯 최적화, 정적 배포 및 구글 색인 요청을 에이전트가 전자동으로 수행합니다.
 
@@ -15,7 +17,7 @@
 3. **💰 구글 애드센스(Google AdSense) 수익 최적화**:
    - 상단 배너, 본문 문맥 내(In-Article), 본문 하단, 사이드바, 멀티플렉스 반응형 광고 슬롯 컴포넌트(`AdSense.astro`) 사전 배치.
    - 애드센스 필수 승인 요건인 `About`, `Privacy Policy`, `Terms`, `Contact`, `ads.txt` 완비.
-4. **🤖 멀티 에이전트 파이프라인 (Python + Gemini)**:
+4. **🤖 멀티 에이전트 파이프라인 (Python + GPT)**:
    - **키워드 하베스터 (`keyword_harvester.py`)**: 검색량 대비 경쟁이 적은 롱테일 키워드 및 트렌드 발굴.
    - **콘텐츠 라이터 (`content_writer.py`)**: 1,500~2,500자 이상의 심층 마크다운, 비교 분석표, FAQ 생성.
    - **정책 감사관 (`policy_inspector.py`)**: SEO 점수, 애드센스 금칙어/품질 사전 검토.
@@ -59,7 +61,7 @@ auto_blog_system/
 ├── automation-pipeline/              # AI 에이전트 자동화 파이프라인
 │   ├── config/
 │   │   ├── config.yaml               # 사이트 정보, 애드센스 ID, 타겟 카테고리 설정
-│   │   └── .env                      # API 키 (GEMINI_API_KEY, TELEGRAM_BOT_TOKEN 등)
+│   │   └── .env                      # API 키 (TELEGRAM_BOT_TOKEN 등; GPT는 Codex 로그인 사용)
 │   ├── agents/
 │   │   ├── keyword_harvester.py      # 자료 수집 및 롱테일 키워드 발굴
 │   │   ├── content_writer.py         # 1,500자+ 심층 글 및 FAQ 작성
@@ -76,7 +78,7 @@ auto_blog_system/
 └── .github/
     └── workflows/
         ├── deploy.yml                # Push 시 GitHub Pages 자동 빌드 & 배포 CI/CD
-        └── agent-cron.yml            # (옵션) 매일 자동 글 작성 및 발행 크론
+        └── agent-cron.yml            # 파이프라인 오프라인 검증
 ```
 
 ---
@@ -107,8 +109,8 @@ python3 main_pipeline.py --mode interactive
 # (2) 사용자 직접 주제 지정 발행 모드
 python3 main_pipeline.py --topic "2026 노션 AI 실전 템플릿 제작법"
 
-# (3) 완전 무인 자동 모드 (GitHub Actions 크론용)
-python3 main_pipeline.py --mode auto --approve
+# (3) 초안 자동 생성 모드 (발행 전 사람 승인)
+python3 main_pipeline.py --mode auto
 
 # (4) 주간 운영 성과 모니터링 리포트 확인
 python3 main_pipeline.py --mode report
@@ -136,7 +138,7 @@ python3 main_pipeline.py --mode report
 ## 💰 구글 애드센스 승인 및 연동 가이드
 
 1. **기본 글 15~20개 발행**:
-   - `python3 main_pipeline.py --mode auto --approve` 명령으로 다양한 카테고리의 글을 15~20편 자동 생성합니다.
+   - `python3 main_pipeline.py --mode auto` 명령으로 다양한 카테고리의 글을 초안을 생성하고 검토·승인 후 발행합니다.
 2. **구글 애드센스 신청**:
    - [Google AdSense](https://adsense.google.com)에 로그인하여 사이트 URL 등록.
    - 발급된 퍼블리셔 ID(`ca-pub-XXXXXXXXXXXXXXXX`)를 `automation-pipeline/config/config.yaml`과 `blog-frontend/public/ads.txt`에 입력.

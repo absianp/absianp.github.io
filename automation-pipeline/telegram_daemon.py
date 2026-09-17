@@ -15,6 +15,7 @@ from integrations.telegram_bot import _load_env_file, TelegramNotifier
 from integrations.antigravity_runner import AntigravityRunner
 from agents.performance_tracker import PerformanceTracker
 from modules.draft_queue import DraftApprovalQueue
+from modules.gpt_images import prepare_article_images
 from modules.agent_manager import AgentManager
 from agents.editorial_reviewer import EditorialReviewAgent
 from templates.prompt_templates import EDITORIAL_RULES
@@ -48,15 +49,23 @@ def get_kpop_queue():
         logger.warning(f"Failed to load K-Pop queue: {e}")
         return None
 
-def publish_kpop_draft(draft_id: str) -> tuple:
+def call_kpop_worker(action, payload):
+    env = os.environ.copy()
+    for key in ("TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "SITE_URL"):
+        env.pop(key, None)
+    result = subprocess.run([sys.executable, os.path.join(KPOP_PIPELINE_DIR, "pipeline_bridge.py"), action],
+        input=json.dumps(payload, ensure_ascii=False), text=True, capture_output=True,
+        cwd=KPOP_PIPELINE_DIR, env=env, timeout=3600)
+    if result.returncode:
+        raise RuntimeError("K-Pop worker failed; inspect the K-Pop service logs")
+    return json.loads(result.stdout)
+
+def publish_kpop_draft(draft_id):
     try:
-        if KPOP_PIPELINE_DIR not in sys.path:
-            sys.path.insert(0, KPOP_PIPELINE_DIR)
-        from daily_kpop_pipeline import load_config as load_kpop_config, publish_queued_draft as kpop_publish
-        kpop_cfg = load_kpop_config()
-        return kpop_publish(kpop_cfg, draft_id, human_approved=True)
-    except Exception as e:
-        return False, f"K-Pop 초안 발행 중 오류: {e}"
+        result = call_kpop_worker("publish", {"draft_id": draft_id})
+        return result["success"], result["result"]
+    except Exception as exc:
+        return False, str(exc)
 
 def configured_chat_id():
     value = config.get("telegram", {}).get("chat_id") or os.getenv("TELEGRAM_CHAT_ID")
@@ -379,6 +388,7 @@ async def handle_queue_command(update: Update, context: ContextTypes.DEFAULT_TYP
         )
         keyboard.append([
             InlineKeyboardButton(f"✅ 승인 #{item_idx}", callback_data=f"approve:{draft_id}"),
+            InlineKeyboardButton(f"✏️ 수정 #{item_idx}", callback_data=f"edit_draft:{draft_id}"),
             InlineKeyboardButton(f"📖 초안 #{item_idx}", callback_data=f"view_draft:{draft_id}"),
             InlineKeyboardButton(f"❌ 보류 #{item_idx}", callback_data=f"reject:{draft_id}")
         ])
@@ -398,12 +408,13 @@ async def handle_queue_command(update: Update, context: ContextTypes.DEFAULT_TYP
         )
         keyboard.append([
             InlineKeyboardButton(f"✅ 승인 #{item_idx}", callback_data=f"approve:{draft_id}"),
+            InlineKeyboardButton(f"✏️ 수정 #{item_idx}", callback_data=f"edit_draft:{draft_id}"),
             InlineKeyboardButton(f"📖 초안 #{item_idx}", callback_data=f"view_draft:{draft_id}"),
             InlineKeyboardButton(f"❌ 보류 #{item_idx}", callback_data=f"reject:{draft_id}")
         ])
         item_idx += 1
         
-    msg_lines.append("━━━━━━━━━━━━━━━━━━━━\n💡 <i>버튼을 누르거나 <code>/approve &lt;ID&gt;</code> 로 승인할 수 있습니다.</i>")
+    msg_lines.append("━━━━━━━━━━━━━━━━━━━━\n💡 <i>버튼을 누르거나 <code>/approve &lt;ID&gt;</code>, <code>/edit &lt;ID&gt;</code> 로 관리할 수 있습니다.</i>")
     reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
     await update.message.reply_text("\n".join(msg_lines), parse_mode="HTML", reply_markup=reply_markup)
 
@@ -693,12 +704,7 @@ async def handle_review_command(update: Update, context: ContextTypes.DEFAULT_TY
         
     if is_kpop:
         try:
-            if KPOP_PIPELINE_DIR not in sys.path:
-                sys.path.insert(0, KPOP_PIPELINE_DIR)
-            from daily_kpop_pipeline import load_config as load_kpop_config
-            from integrations.telegram_bot import TelegramNotifier as KpopNotifier
-            kpop_notifier = KpopNotifier(load_kpop_config())
-            kpop_notifier.send_review_report(draft["draft_id"], draft.get("article", {}), draft.get("review", {}))
+            await asyncio.to_thread(call_kpop_worker, "review", {"draft_id": draft["draft_id"]})
         except Exception as e:
             await update.message.reply_text(f"⚠️ K-Pop 보고서 전송 실패: {e}")
             return
@@ -768,6 +774,19 @@ async def route_message(message, user_text, context):
         await handle_agent_command(DummyUpdate(), DummyContext())
         return
 
+    # 0-2. Queue Draft Direct Editing Session Feedback
+    if session and session.get("state") == "QUEUE_DRAFT_EDITING":
+        session.setdefault("feedbacks", []).append(user_text)
+        await refine_queued_draft(message, chat_id, user_text, context)
+        return
+
+    # 1-0. Draft Queue Direct Edit Request by ID (e.g. /edit draft_... or 초안 수정 draft_...)
+    draft_match = re.search(r"draft_\d+_\d+_[a-zA-Z0-9가-힣]+", user_text)
+    if (user_text.strip().startswith("/edit") or "초안 수정" in user_text) and draft_match:
+        target_draft_id = draft_match.group(0)
+        await start_queue_draft_edit(message, chat_id, target_draft_id, context)
+        return
+
     # 1. Existing Blog Edit Request
     blog_url_match = re.search(r"(?:https?://[^/\s]+/)?blog/([^/\s?#]+)", user_text)
     if blog_url_match or user_text.strip().startswith("/edit"):
@@ -803,12 +822,12 @@ async def route_message(message, user_text, context):
 async def generate_or_update_topic_plan(message, chat_id, user_input, context, is_update=False):
     if chat_id in sessions:
         invalidate_approvals(sessions[chat_id])
-    loading_text = "🔄 추가 첨언 및 자료를 반영하여 기획안을 보강 중입니다..." if is_update else "⏳ 입력하신 자료를 분석하여 포스팅 기획안을 작성 중입니다. (Antigravity CLI 가동 중...)"
+    loading_text = "🔄 추가 첨언 및 자료를 반영하여 기획안을 보강 중입니다..." if is_update else "⏳ 입력하신 자료를 분석하여 포스팅 기획안을 작성 중입니다. (GPT / Codex CLI 가동 중...)"
     processing_msg = await message.reply_text(loading_text)
 
     session = sessions.get(chat_id, {})
     session["busy"] = True
-    session["action"] = "포스팅 기획안 업데이트 중" if is_update else "새 글 포스팅 기획안 작성 (Antigravity CLI)"
+    session["action"] = "포스팅 기획안 업데이트 중" if is_update else "새 글 포스팅 기획안 작성 (GPT / Codex CLI)"
     session["started_at"] = time.time()
     sessions[chat_id] = session
 
@@ -885,9 +904,9 @@ async def generate_or_update_topic_plan(message, chat_id, user_input, context, i
 
 반드시 마크다운 코드블록(```json) 없이 순수한 JSON으로만 응답하세요.
 """
-        raw_output = runner.generate_text(system_prompt=system_prompt + "\n" + EDITORIAL_RULES, user_prompt=user_prompt)
+        raw_output = await asyncio.to_thread(runner.generate_text, system_prompt=system_prompt + "\n" + EDITORIAL_RULES, user_prompt=user_prompt)
         if not raw_output:
-            raise Exception("Antigravity 파이프라인에서 응답을 생성하지 못했습니다.")
+            raise Exception("GPT 파이프라인에서 응답을 생성하지 못했습니다.")
 
         topic_data = extract_json(raw_output)
 
@@ -977,12 +996,12 @@ async def create_article_draft(chat_id, message_id, context):
 
     status_msg = await context.bot.send_message(
         chat_id=chat_id,
-        text="✍️ <b>Antigravity 에이전트가 주제별 아티클 초안을 작성 중입니다... (약 1~2분 소요)</b>",
+        text="✍️ <b>GPT 에이전트가 주제별 아티클 초안을 작성 중입니다... (약 1~2분 소요)</b>",
         parse_mode="HTML"
     )
 
     session["busy"] = True
-    session["action"] = "주제별 본문 초안 작성 (Antigravity CLI)"
+    session["action"] = "주제별 본문 초안 작성 (GPT / Codex CLI)"
     session["started_at"] = time.time()
     sessions[chat_id] = session
 
@@ -996,7 +1015,9 @@ async def create_article_draft(chat_id, message_id, context):
                 f"[사용자 추가 요청] {fb}" for fb in feedbacks[1:]
             ]
 
-        article = writer.write_article(enhanced_topic)
+        article = await asyncio.to_thread(writer.write_article, enhanced_topic)
+        article = await asyncio.to_thread(prepare_article_images, article, config)
+        await asyncio.to_thread(TelegramNotifier(config).send_draft_images, "interactive-preview", article)
         session["draft"] = article
         approval_token = issue_approval(session, "draft")
         session["state"] = "DRAFTED"
@@ -1056,7 +1077,7 @@ async def refine_article_draft(message, chat_id, user_feedback, context):
 
     current_draft = session["draft"]
     session["busy"] = True
-    session["action"] = "본문 피드백/첨언 반영 및 수정 중 (Antigravity CLI)"
+    session["action"] = "본문 피드백/첨언 반영 및 수정 중 (GPT / Codex CLI)"
     session["started_at"] = time.time()
     sessions[chat_id] = session
 
@@ -1097,11 +1118,14 @@ async def refine_article_draft(message, chat_id, user_feedback, context):
   "markdown_content": "수정된 본문 전체 내용 (마크다운 H2, H3, 표, 리스트 포함)"
 }}
 """
-        raw_output = runner.generate_text(system_prompt=system_prompt + "\n" + EDITORIAL_RULES, user_prompt=user_prompt)
+        raw_output = await asyncio.to_thread(runner.generate_text, system_prompt=system_prompt + "\n" + EDITORIAL_RULES, user_prompt=user_prompt)
         if not raw_output:
-            raise Exception("Antigravity 에디터로부터 응답을 받지 못했습니다.")
+            raise Exception("GPT 에디터로부터 응답을 받지 못했습니다.")
 
         updated_draft = extract_json(raw_output)
+        updated_draft = {**session.get("draft", {}), **updated_draft}
+        updated_draft = await asyncio.to_thread(prepare_article_images, updated_draft, config)
+        await asyncio.to_thread(TelegramNotifier(config).send_draft_images, "interactive-preview", updated_draft)
         session["draft"] = updated_draft
         approval_token = issue_approval(session, "draft")
         sessions[chat_id] = session
@@ -1132,6 +1156,194 @@ async def refine_article_draft(message, chat_id, user_feedback, context):
 
     except Exception as e:
         logger.error(f"Error in refine_article_draft: {e}")
+        await processing_msg.edit_text(f"❌ 초안 수정 중 오류가 발생했습니다: {e}")
+    finally:
+        if chat_id in sessions:
+            sessions[chat_id]["busy"] = False
+
+# -------------------------------------------------------------
+# STEP 2-1: QUEUE DRAFT DIRECT EDITING & HITL REFINEMENT
+# -------------------------------------------------------------
+async def start_queue_draft_edit(reply_target, chat_id, draft_id, context):
+    queue = DraftApprovalQueue()
+    draft = queue.get_draft(draft_id)
+    is_kpop = False
+    if not draft:
+        kpop_queue = get_kpop_queue()
+        if kpop_queue:
+            draft = kpop_queue.get_draft(draft_id)
+            if draft:
+                is_kpop = True
+
+    if not draft:
+        msg = f"⚠️ 초안(<code>{draft_id}</code>)을 대기 큐에서 찾을 수 없습니다."
+        if hasattr(reply_target, "edit_message_text"):
+            await reply_target.edit_message_text(msg, parse_mode="HTML")
+        else:
+            await reply_target.reply_text(msg, parse_mode="HTML")
+        return
+
+    article = draft.get("article", {})
+    title = article.get("title", draft.get("title", "제목 없음"))
+    review = draft.get("review", {})
+    points = draft.get("human_edit_points") or review.get("human_edit_points") or []
+    if not points:
+        body = article.get("markdown_content", "")
+        markers = re.findall(r"(\[(?:💡|🔍)[^\]\n]+\])", body)
+        points = [{"index": i, "marker": m, "recommendation": "수정/확인 필요"} for i, m in enumerate(markers, 1)]
+
+    sessions[chat_id] = {
+        "state": "QUEUE_DRAFT_EDITING",
+        "draft_id": draft_id,
+        "is_kpop": is_kpop,
+        "draft": article,
+        "topic": draft.get("topic", {}),
+        "review": review,
+        "human_edit_points": points,
+        "feedbacks": [],
+        "busy": False
+    }
+
+    from html import escape
+    p_lines = []
+    if points:
+        for p in points:
+            idx = p.get("index", len(p_lines) + 1)
+            m = p.get("marker", "")
+            rec = p.get("recommendation") or p.get("guide") or ""
+            p_lines.append(f"  {idx}️⃣ <b>{escape(str(m))}</b>\n     ↳ <i>{escape(str(rec))}</i>")
+        points_info = "💡 <b>[본문 수정 추천 위치 (경험/수치 확인)]</b>:\n" + "\n".join(p_lines) + "\n\n"
+    else:
+        points_info = "💡 <i>본문에 특별한 마커는 없으나, 실제 경험담 추가나 전체적인 내용 보강이 가능합니다.</i>\n\n"
+
+    guide_msg = (
+        f"✏️ <b>[초안 직접 수정 모드 - {escape(title[:30])}]</b>\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n"
+        f"🆔 <b>초안 ID</b>: <code>{escape(draft_id)}</code>\n\n"
+        f"{points_info}"
+        f"💬 <b>수정 안내</b>:\n"
+        f"본문에 추가할 실제 경험담이나 수정/보완 요청사항을 메시지로 보내주세요.\n\n"
+        f"예시:\n"
+        f"• <code>1번에 경험 추가: 라즈베리파이 5 8GB에서 직접 테스트해보니 CPU 점유율 10% 미만으로 쾌적했음</code>\n"
+        f"• <code>전체적으로 2026년 최신 기준으로 수치와 주의사항을 더 보강해줘</code>\n\n"
+        f"보내주신 피드백을 AI가 본문에 자연스럽게 녹여내어 즉시 큐를 갱신합니다."
+    )
+
+    keyboard = [
+        [InlineKeyboardButton("📖 현재 초안 전문 보기", callback_data=f"view_draft:{draft_id}")],
+        [InlineKeyboardButton("❌ 수정 모드 취소", callback_data="btn_cancel_session")]
+    ]
+    await context.bot.send_message(chat_id=chat_id, text=guide_msg, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(keyboard))
+
+async def refine_queued_draft(message, chat_id, user_feedback, context):
+    session = sessions.get(chat_id)
+    if not session or not session.get("draft") or not session.get("draft_id"):
+        await message.reply_text("⚠️ 수정 대상 초안이 없습니다. 다시 선택해주세요.")
+        return
+
+    if session.get("busy"):
+        return
+    session["busy"] = True
+    draft_id = session["draft_id"]
+    is_kpop = session.get("is_kpop", False)
+    current_draft = session["draft"]
+
+    processing_msg = await message.reply_text(f"🔄 보내주신 경험/피드백을 본문 초안(<code>{draft_id[:16]}...</code>)에 반영하여 수정 중입니다...", parse_mode="HTML")
+
+    try:
+        runner = AntigravityRunner(config)
+        system_prompt = (
+            "당신은 블로그 글의 최고 편집자입니다. "
+            "사용자가 제공한 실제 경험담이나 수정 요청사항을 기존 초안의 해당 위치([💡 사용자 경험/관점 추가] 마커 등)에 자연스럽고 깊이 있게 녹여내어 글을 대폭 업그레이드하세요.\n"
+            "[wikidocs 366621 규칙 엄수]\n"
+            "- 속 빈 서론(예고형 도입부) 금지, 억지 3분할 금지, 공허한 맺음말(형식적 인사) 금지.\n"
+            "- 추상적 형용사 대신 구체적 수치, 비교, 사용자의 실제 경험담 활용.\n"
+            "- 사용자가 입력한 실제 경험/의견을 본문 마커 자리에 자연스러운 1인칭이나 실무 팁 문장으로 치환하세요.\n"
+            "- 반드시 유효한 순수 JSON 형식으로만 응답하세요."
+        )
+
+        user_prompt = f"""
+[현재 초안 데이터]
+- 제목: {current_draft.get('title')}
+- 메타 설명: {current_draft.get('description')}
+- 카테고리: {current_draft.get('category')}
+- 태그: {', '.join(current_draft.get('tags', []))}
+- FAQ 목록: {json.dumps(current_draft.get('faqs', []), ensure_ascii=False)}
+- 본문 마크다운:
+{current_draft.get('markdown_content')}
+
+[사용자가 직접 입력한 경험담 및 수정 피드백]
+{user_feedback}
+
+위 사용자의 실제 경험과 피드백을 본문의 마커 위치나 관련 문맥에 자연스러운 문장으로 완벽히 반영하세요.
+사용자가 채워준 마커([💡 사용자 경험/관점 추가])는 사용자의 내용으로 자연스럽게 교체하여 마커를 제거하세요.
+
+출력 JSON 형식:
+{{
+  "title": "수정/보강된 제목",
+  "description": "수정된 메타 디스크립션",
+  "category": "{current_draft.get('category')}",
+  "tags": {json.dumps(current_draft.get('tags', []), ensure_ascii=False)},
+  "readingTime": "6 min read",
+  "faqs": {json.dumps(current_draft.get('faqs', []), ensure_ascii=False)},
+  "change_summary": "수정 및 경험담 반영 핵심 내용 요약 (1~2줄)",
+  "markdown_content": "수정된 본문 전체 내용 (마크다운 H2, H3, 표, 리스트 포함)"
+}}
+"""
+        raw_output = await asyncio.to_thread(runner.generate_text, system_prompt=system_prompt + "\n" + EDITORIAL_RULES, user_prompt=user_prompt)
+        if not raw_output:
+            raise Exception("AI 엔진으로부터 수정 응답을 받지 못했습니다.")
+
+        updated_draft = extract_json(raw_output)
+        updated_draft = {**session.get("draft", {}), **updated_draft}
+        if is_kpop:
+            updated_draft = await asyncio.to_thread(call_kpop_worker, "images", updated_draft)
+        else:
+            updated_draft = await asyncio.to_thread(prepare_article_images, updated_draft, config)
+
+        # 큐 업데이트!
+        change_summary = updated_draft.get("change_summary", "사용자 직접 수정 및 경험 반영")
+        queue = get_kpop_queue() if is_kpop else DraftApprovalQueue()
+        if queue is None or not queue.update_draft_content(draft_id, updated_draft, change_summary=change_summary):
+            raise OSError("초안 수정 저장에 실패했습니다")
+
+        session["draft"] = updated_draft
+        sessions[chat_id] = session
+
+        inspector = PolicyInspector(config)
+        inspection = inspector.inspect_article(updated_draft)
+        char_count = inspection.get("char_count", len(updated_draft.get("markdown_content", "")))
+
+        # 잔여 마커 확인
+        body = updated_draft.get("markdown_content", "")
+        remaining_markers = re.findall(r"(\[(?:💡|🔍)[^\]\n]+\])", body)
+        marker_status = f"⚠️ 아직 채우지 않은 마커 {len(remaining_markers)}개가 남아있습니다." if remaining_markers else "✅ 모든 경험/확인 마커가 완벽히 반영되었습니다!"
+
+        from html import escape
+        reply_text = (
+            f"🔄 <b>[초안 직접 수정 및 큐 반영 완료]</b>\n"
+            f"━━━━━━━━━━━━━━━━━━━━\n"
+            f"📌 <b>제목</b>: <b>{escape(updated_draft.get('title', ''))}</b>\n"
+            f"🆔 <b>초안 ID</b>: <code>{escape(draft_id)}</code>\n"
+            f"💡 <b>수정 내용</b>: {escape(change_summary)}\n"
+            f"📏 <b>본문 분량</b>: <code>{char_count:,}자</code>\n"
+            f"📌 <b>마커 상태</b>: {marker_status}\n\n"
+            f"✨ <i>대기 큐가 성공적으로 갱신되었습니다. 아래 버튼을 눌러 즉시 발행하거나 추가 수정을 진행하세요.</i>"
+        )
+
+        keyboard = [
+            [InlineKeyboardButton("🚀 수정본 즉시 승인 및 발행", callback_data=f"approve:{draft_id}")],
+            [
+                InlineKeyboardButton("✏️ 추가 수정하기", callback_data=f"edit_draft:{draft_id}"),
+                InlineKeyboardButton("📖 수정본 전문 보기", callback_data=f"view_draft:{draft_id}")
+            ],
+            [InlineKeyboardButton("❌ 수정 모드 종료", callback_data="btn_cancel_session")]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await processing_msg.edit_text(reply_text, reply_markup=reply_markup, parse_mode="HTML")
+
+    except Exception as e:
+        logger.error(f"Error in refine_queued_draft: {e}")
         await processing_msg.edit_text(f"❌ 초안 수정 중 오류가 발생했습니다: {e}")
     finally:
         if chat_id in sessions:
@@ -1222,8 +1434,9 @@ async def execute_batch_publish(chat_id, context):
         queue = DraftApprovalQueue()
         telegram = TelegramNotifier(config)
         for topic in session["topics"]:
-            article = writer.write_article(topic)
-            review = reviewer.review_article(article, topic)
+            article = await asyncio.to_thread(writer.write_article, topic)
+            article = await asyncio.to_thread(prepare_article_images, article, config)
+            review = await asyncio.to_thread(reviewer.review_article, article, topic)
             draft_id = queue.add_draft(article, review, topic=topic)
             completed.append(draft_id)
             telegram.send_review_report(draft_id, article, review)
@@ -1239,7 +1452,7 @@ async def execute_batch_publish(chat_id, context):
 async def process_edit_input(message, user_text, blog_url_match, context, is_update=False):
     if message.chat_id in sessions:
         invalidate_approvals(sessions[message.chat_id])
-    loading_text = "🔄 추가 수정 요청사항을 반영 중입니다..." if is_update else "🔍 수정할 블로그 포스팅을 조회하고 수정안을 기획 중입니다. (Antigravity CLI 가동 중...)"
+    loading_text = "🔄 추가 수정 요청사항을 반영 중입니다..." if is_update else "🔍 수정할 블로그 포스팅을 조회하고 수정안을 기획 중입니다. (GPT / Codex CLI 가동 중...)"
     processing_msg = await message.reply_text(loading_text)
     
     chat_id = message.chat_id
@@ -1270,7 +1483,7 @@ async def process_edit_input(message, user_text, blog_url_match, context, is_upd
             return
 
     session["busy"] = True
-    session["action"] = f"기존 글({slug}) 수정안 기획 (Antigravity CLI)"
+    session["action"] = f"기존 글({slug}) 수정안 기획 (GPT / Codex CLI)"
     session["started_at"] = time.time()
     sessions[chat_id] = session
 
@@ -1327,12 +1540,15 @@ async def process_edit_input(message, user_text, blog_url_match, context, is_upd
   "markdown_content": "수정된 본문 전체 내용 (마크다운 H2, H3, 표, 리스트 포함)"
 }}
 """
-        raw_output = runner.generate_text(system_prompt=system_prompt + "\n" + EDITORIAL_RULES, user_prompt=user_prompt)
+        raw_output = await asyncio.to_thread(runner.generate_text, system_prompt=system_prompt + "\n" + EDITORIAL_RULES, user_prompt=user_prompt)
         if not raw_output:
-            raise Exception("Antigravity 에디터로부터 응답을 받지 못했습니다.")
+            raise Exception("GPT 에디터로부터 응답을 받지 못했습니다.")
 
         modified_data = extract_json(raw_output)
+        modified_data["slug"] = modified_data.get("new_slug") or slug
+        modified_data = await asyncio.to_thread(prepare_article_images, modified_data, config)
         session["slug"] = slug
+        await asyncio.to_thread(TelegramNotifier(config).send_draft_images, "interactive-preview", modified_data)
         session["data"] = modified_data
         approval_token = issue_approval(session, "data")
         session["filepath"] = filepath
@@ -1495,6 +1711,11 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if kpop_queue:
                 ok = kpop_queue.mark_rejected(target_id)
         await query.edit_message_text(f"❌ 초안(<code>{target_id[:16]}...</code>)이 발행 보류 처리되었습니다.", parse_mode="HTML")
+        return
+
+    if data.startswith("edit_draft:"):
+        target_id = data.split("edit_draft:", 1)[1].strip()
+        await start_queue_draft_edit(query, chat_id, target_id, context)
         return
 
     if data.startswith("view_draft:"):
