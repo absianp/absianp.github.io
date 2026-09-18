@@ -1,12 +1,13 @@
 name: Pipeline Offline Checks
 
-# Content generation runs on the authenticated local systemd host.
+# Content generation is on demand through the local Codex + agy coordinator.
 # Never copy the host's ChatGPT credentials into GitHub Actions.
 on:
   workflow_dispatch:
   push:
     paths:
       - 'automation-pipeline/**'
+      - 'blog-operations/**'
       - '.github/workflows/agent-cron.yml'
 permissions:
   contents: read
@@ -21,4 +22,16 @@ jobs:
       - run: pip install -r automation-pipeline/requirements.txt
       - name: Verify offline behavior
         working-directory: automation-pipeline
+        run: python -m unittest discover -s tests -v
+
+  coordinator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r blog-operations/requirements.txt
+      - name: Verify coordinator without models or credentials
+        working-directory: blog-operations
         run: python -m unittest discover -s tests -v
