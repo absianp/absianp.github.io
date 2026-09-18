@@ -1,0 +1,18 @@
+[Unit]
+Description=Blog Operations on-demand bot (%i)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/BLOG/auto_blog_system/blog-operations
+ExecStart=%h/BLOG/auto_blog_system/automation-pipeline/venv/bin/python3 manage.py bot --site %i
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=PYTHONUNBUFFERED=1
+UMask=0077
+Restart=on-failure
+RestartSec=20
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target

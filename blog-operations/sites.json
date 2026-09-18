@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "limits": {"codex_calls_per_day": 8, "agy_calls_per_day": 12, "new_workflows_per_day": 1, "pending_per_site": 6, "worker_timeout_seconds": 900},
+  "providers": {"codex_model": "gpt-6-astra", "agy_model": "gemini-3.8-flash-low"},
+  "sites": {
+    "absian": {"name": "앱시안", "repo": "auto_blog_system", "url": "https://absianp.github.io", "github_repo": "absianp/absianp.github.io", "language": "ko", "focus": "검증 가능한 AI·개발·업무 자동화 실습", "gsc_property": "https://absianp.github.io/", "ga4_property": null},
+    "goldenlife": {"name": "골든라이프", "repo": "golden-life-blog", "url": "https://goldianpark.github.io", "github_repo": "goldianpark/goldianpark.github.io", "language": "ko", "focus": "공식 근거와 기준일이 명확한 시니어 복지 신청 안내", "gsc_property": "https://goldianpark.github.io/", "ga4_property": null},
+    "kpop": {"name": "K-Pop Hangul", "repo": "kpop-hangul-blog", "url": "https://kpop-hangul.github.io", "github_repo": "kpop-hangul/kpop-hangul.github.io", "language": "en", "focus": "가사 재현 없이 원창작 예문·퀴즈로 배우는 한국어", "gsc_property": "https://kpop-hangul.github.io/", "ga4_property": null}
+  }
+}
