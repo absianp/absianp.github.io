@@ -26,6 +26,8 @@ def main(argv=None):
     workflow.add_argument("--value",required=True,help="독자가 얻는 원본 가치")
     workflow.add_argument("--run",action="store_true")
     workflow.add_argument("--existing-slug",help="기존 URL을 유지하며 글을 수정")
+    workflow.add_argument("--verification-file",action="append",default=[],help="실제 테스트 기록·검증된 예제 파일")
+    workflow.add_argument("--image-assets",help="기존·준비된 이미지의 경로와 SHA256 JSON")
     task=sub.add_parser("task")
     task.add_argument("--site",required=True,choices=settings()["sites"])
     task.add_argument("--kind",required=True,choices=["report_summary","triage","plan","experiment"])
@@ -55,7 +57,7 @@ def main(argv=None):
         from .bot import run
         return run(args.site)
     if args.command=="draft":
-        ident=create_workflow(args.site,args.topic,args.source,args.value,store,existing_slug=args.existing_slug)
+        ident=create_workflow(args.site,args.topic,args.source,args.value,store,existing_slug=args.existing_slug,verification_files=args.verification_file,image_assets=json.loads(Path(args.image_assets).read_text()) if args.image_assets else None)
         return output(run_workflow(ident,store) if args.run else {"workflow_id":ident,"status":"queued"})
     if args.command=="task":
         payload=json.loads(Path(args.input).read_text())

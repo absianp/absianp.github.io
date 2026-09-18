@@ -65,6 +65,9 @@ class WorkflowTests(Isolated):
    result=workflows.run_workflow(ident,self.store)
   self.assertEqual(result['state'],'needs_attention');bridge.assert_not_called()
   self.assertEqual(self.store.list(parent=ident)[-1]['state'],'queued')
+  rejected=self.store.list(parent=ident)[-2]['result']
+  self.assertEqual(rejected['decision'],'revise')
+  self.assertEqual(rejected['issues'],['Unsupported fact'])
  def test_image_budget_reservation_does_not_partially_consume(self):
   ident=self.create()
   for task in self.store.list(parent=ident):

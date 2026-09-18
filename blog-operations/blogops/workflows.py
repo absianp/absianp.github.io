@@ -5,7 +5,7 @@ import tempfile
 import time
 from pathlib import Path
 from .config import ROOT,settings,site_config,state_dir,save_json
-from .content import collect_evidence,content_issues,digest,inventory,validate_review,image_urls,local_asset,read_post,image_manifest
+from .content import collect_evidence,content_issues,digest,inventory,validate_review,image_urls,local_asset,read_post,image_manifest,local_evidence,validate_verified_code
 from .routing import route,validate_auxiliary
 from .runners import Runner,RunnerError
 from .store import Store,BudgetExceeded,today
@@ -35,11 +35,12 @@ def legacy(site,mode,payload):
                     if store.get(workflow):store.finish(workflow,{"draft_id":payload["draft_id"],"publication":value},state=item.get("status","needs_attention"))
         return value
 
-def create_workflow(site,topic,urls,original_value,store=None,existing_slug=None):
+def create_workflow(site,topic,urls,original_value,store=None,existing_slug=None,verification_files=(),image_assets=None):
     store=store or Store()
     cfg=site_config(site)
     if not topic.strip() or not original_value.strip() or not urls:
         raise ValueError("Topic, primary-source URLs and original reader value are required")
+    verified=local_evidence(verification_files)
     existing_article=None
     if existing_slug:
         import re
@@ -58,6 +59,8 @@ def create_workflow(site,topic,urls,original_value,store=None,existing_slug=None
         if len(todays)>=settings()["limits"]["new_workflows_per_day"]:
             raise BudgetExceeded("Daily new draft limit reached; prioritize existing drafts")
         payload={"topic":topic,"urls":urls,"original_value":original_value,"site":site}
+        if verified:payload["verification_records"]=verified
+        if image_assets is not None:payload["image_assets"]=image_assets
         if existing_slug:
             payload.update(existing_slug=existing_slug,existing_article=existing_article)
         workflow=store.enqueue(site,"workflow","code",payload)
@@ -79,12 +82,13 @@ def article_from(results):
 
 def prompt(kind,cfg,payload,results):
     source=results.get("evidence",[])
-    common={"site":{"name":cfg["name"],"language":cfg["language"],"focus":cfg["focus"]},"request":payload,
+    request_payload={k:v for k,v in payload.items() if k not in ("verification_records","image_assets")}
+    common={"site":{"name":cfg["name"],"language":cfg["language"],"focus":cfg["focus"]},"request":request_payload,
             "evidence":source,"previous":{k:v for k,v in results.items() if k not in ("evidence","images")}}
     instruction={
       "source_summary":"Extract supporting source passages. Return {sources:[{source_id,quote,summary}],escalation_reason:null}. Every quote must be an exact substring of the supplied source text. No new facts.",
       "plan":"Plan one useful article. Return {reader_problem,original_value,outline,claims_to_verify}. Reject fabricated experiments/experience. Original value must be possible using supplied facts; do not pretend tests happened.",
-      "draft":"If request.existing_article is present, revise that post for the requested reader value while preserving useful verified parts. Treat existing claims as unverified; recheck against provided evidence. Write one complete publishable draft as JSON with title,description,category,tags,markdown_content,faqs. Include source links and relevant reference dates. No unfinished placeholders, false experience, promises of income, medical prescriptions, or copied lyrics. K-Pop lessons use original everyday examples, never lyric quotation or translation; include artist,songTitle,genre,difficulty (Beginner/Intermediate/Advanced) when relevant. Match site language. Do not include images or frontmatter; a later stage generates images. All material factual claims must come from provided evidence. If inadequate, return {error:reason}.",
+      "draft":"If request.existing_article is present, revise that post for the requested reader value while preserving useful verified parts. Treat existing claims as unverified; recheck against provided evidence. Write one complete publishable draft as JSON with title,description,category,tags,markdown_content,faqs. Include source links and relevant reference dates. No unfinished placeholders, false experience, promises of income, medical prescriptions, or copied lyrics. K-Pop lessons use original everyday examples, never lyric quotation or translation; include artist,songTitle,genre,difficulty (Beginner/Intermediate/Advanced) when relevant. Match site language. Do not include images or frontmatter; a later stage generates images. All material factual claims must come from provided evidence. Operator-supplied test artifacts describe observations only in their recorded environment; distinguish injected faults from physical hardware tests. If a verified Python script is provided, reproduce it exactly in one Python code block without rewriting it. Cite official web sources by URL; do not expose local absolute paths or include fabricated web links for local artifacts. Article test dates and counts must match the records. If inadequate, return {error:reason}.",
       "metadata":"Improve only description and tags, based on the existing article. Return {description:string,tags:[string],escalation_reason:null}. Do not return or change body/title or add unsupported facts.",
       "review":"Independently check the supplied final article and attached images against the full source texts, not just previous summaries. Return {decision:pass|revise,rights:clear|needs_review,original_value:string,requires_expert_review:boolean,coverage_checked:boolean,issues:[string],claims:[{claim,source_id,quote,assessment:supported|unsupported}]}. Each claim must be an exact substring (whole statement/sentence) in the article; quote must be a meaningful exact substring of the source. Cover all material factual claims, especially EVERY date, financial number, percent and benefit claim. Set coverage_checked only after checking the entire article. Mark unsupported or conflicting claims, image/text mistakes, insufficient original value and incomplete notes. For K-Pop disallow lyric reproduction/translation and verify Korean grammar. For health/personal financial advice require expert review. Generated illustrations cannot serve as proof of real use. When uncertain use revise. Do not claim human or Google approval.",
       "report_summary":"Summarize the supplied measured report in Korean. Preserve unavailable values, never fill them with estimates. Return {summary:string,actions:[string],escalation_reason:null}.",
@@ -102,15 +106,19 @@ def run_task(ident,store=None):
         return None
     cfg=site_config(task["site"])
     result_inputs=inputs(store,task["parent"]) if task["parent"] else {}
+    result=None
     try:
         kind=task["kind"]
         if kind=="evidence":
-            result=collect_evidence(task["payload"]["urls"])
+            result=collect_evidence(task["payload"]["urls"])+task["payload"].get("verification_records",[])
         elif kind in ("audit","inventory"):
             result=inventory(task["site"],task["payload"].get("live",False))
         elif kind=="metrics":
             from .metrics import collect
             result=collect(task["site"])
+        elif kind=="images" and task["payload"].get("image_assets") is not None:
+            from .prepared_assets import attach_images
+            result=attach_images(article_from(result_inputs),task["payload"]["image_assets"],cfg["root"])
         elif kind=="images":
             with store.lock("provider:codex",3100):
                 calls=[]
@@ -160,6 +168,7 @@ def run_task(ident,store=None):
                 result=runner.run(task["provider"],request,ident,images=images)
                 if kind=="review":result["_reviewed_images"]=reviewed_images
             if kind=="draft":
+                validate_verified_code(result,result_inputs.get("evidence",[]))
                 if task["payload"].get("existing_slug"):
                     result["existing_slug"]=task["payload"]["existing_slug"]
                     result["slug"]=task["payload"]["existing_slug"]
@@ -174,7 +183,7 @@ def run_task(ident,store=None):
     except Exception as exc:
         state="budget_wait" if isinstance(exc,BudgetExceeded) else "needs_attention"
         safe_message=str(exc) if isinstance(exc,(RunnerError,BudgetExceeded,ValueError)) else type(exc).__name__
-        saved=store.finish(ident,error=safe_message,state=state,expected_attempt=task["attempts"])
+        saved=store.finish(ident,result,error=safe_message,state=state,expected_attempt=task["attempts"])
         if saved and task["parent"]:
             store.finish(task["parent"],{"task_id":ident,"reason":safe_message},state=state)
         return {"status":state,"reason":safe_message}

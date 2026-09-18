@@ -68,14 +68,37 @@ def collect_evidence(urls):
         title = soup.title.get_text(" ",strip=True) if soup.title else url
         for tag in soup(["script","style","nav","footer","header"]):
             tag.decompose()
-        text = soup.get_text(" ",strip=True)
+        fragment=unquote(urlsplit(url).fragment)
+        selected=soup
+        if fragment:
+            anchor=soup.find(id=fragment)
+            if anchor is None:raise ValueError("Source section anchor not found")
+            selected=anchor.find_parent("dl") if anchor.name=="dt" else anchor
+            if selected is None:selected=anchor
+        text = selected.get_text(" ",strip=True)
         if len(text) < 100:
             raise ValueError("Source text too short or inaccessible")
         record = {"id":hashlib.sha256(response["url"].encode()).hexdigest()[:16],"url":response["url"],
                   "title":title,"retrieved_at":timestamp(),"sha256":hashlib.sha256(response["body"]).hexdigest(),
-                  "text":text[:20000],"truncated":len(text)>20000}
+                  "text":text[:20000],"truncated":len(text)>20000,"selection":("fragment:"+fragment if fragment else "document_start")}
         save_json(state_dir()/"evidence"/(record["id"]+".json"),record)
         records.append(record)
+    return records
+
+def local_evidence(paths):
+    """Snapshot explicitly supplied local test artifacts, never pretend they are web sources."""
+    records=[]
+    for path in paths:
+        path=Path(path).expanduser().resolve(strict=True)
+        if not path.is_file() or path.suffix not in (".json",".py",".md",".txt"):
+            raise ValueError("Unsupported local evidence artifact")
+        raw=path.read_bytes()
+        if len(raw)>160000:raise ValueError("Local evidence artifact is too large")
+        text=raw.decode("utf-8")
+        sha=hashlib.sha256(raw).hexdigest()
+        record={"id":"local-"+sha[:16],"kind":"operator_supplied_test_artifact","title":path.name,
+                "source_path":str(path),"sha256":sha,"text":text,"retrieved_at":timestamp(),"truncated":False}
+        if record["id"] not in {r["id"] for r in records}:records.append(record)
     return records
 
 def read_post(path):
@@ -221,7 +244,23 @@ def inventory(site, check_live=False):
     save_json(state_dir()/"reports"/(site+"-inventory.json"),report)
     return report
 
+def validate_verified_code(article,evidence):
+    """Keep explicitly supplied Python examples identical to their tested snapshot."""
+    if not isinstance(evidence,(list,tuple)) or any(not isinstance(item,dict) for item in evidence):
+        raise ValueError("Invalid source evidence")
+    scripts=[item for item in evidence if item.get("kind")=="operator_supplied_test_artifact"
+             and isinstance(item.get("title"),str) and Path(item["title"]).suffix.lower()==".py"]
+    if not scripts:return
+    blocks=re.findall(r"^```python[ \t]*\n(.*?)^```[ \t]*$",article.get("markdown_content",""),re.M|re.S)
+    for script in scripts:
+        source=script.get("text","")
+        if not isinstance(source,str) or not source or hashlib.sha256(source.encode()).hexdigest()!=script.get("sha256"):
+            raise ValueError("Verified Python evidence snapshot is invalid")
+        if blocks.count(source)!=1:
+            raise ValueError("Verified Python script must appear unchanged in one Python code block")
+
 def validate_review(article,review,evidence,site):
+    validate_verified_code(article,evidence)
     issues = content_issues(article,site)
     if any(i["severity"]=="blocker" for i in issues):
         raise ValueError("Content has unresolved blocking checks")
