@@ -315,6 +315,11 @@ class ContentTests(OfflineCase):
         issues = content.content_issues(self.article(markdown_content='The placeholder `{{ title }}` is sample syntax.'), 'absian')
         self.assertFalse(any(issue['code'] == 'unfinished_marker' for issue in issues))
 
+    def test_multiline_inline_code_is_not_an_unfinished_note(self):
+        body = "Caption: `{{ title }}\n\n{{ body }}\n#` + `join(tags)`"
+        issues = content.content_issues(self.article(markdown_content=body), 'absian')
+        self.assertFalse(any(issue['code'] == 'unfinished_marker' for issue in issues))
+
     def test_real_prose_placeholders_and_missing_fields_block(self):
         for body in ('TODO: check the source', '내용을 {{ 작성 }} 하세요', '[🔍 출처 확인]'):
             with self.subTest(body=body):

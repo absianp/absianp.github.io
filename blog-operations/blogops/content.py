@@ -134,7 +134,7 @@ def prose_text(value):
         else:
             lines.append(line)
     # Match inline code with its actual delimiter length, including double ticks.
-    return re.sub(r"(`+)(?!`)(.+?)(?<!`)\1(?!`)", "", "".join(lines))
+    return re.sub(r"(`+)(?!`)(.+?)(?<!`)\1(?!`)", "", "".join(lines), flags=re.S)
 
 
 def claim_prose(value):
