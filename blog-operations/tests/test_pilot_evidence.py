@@ -52,3 +52,12 @@ class PilotEvidenceTests(unittest.TestCase):
   with self.assertRaises(ValueError):validate_verified_code({'markdown_content':body+'\n'+body},evidence)
   evidence[0]['text']='changed'
   with self.assertRaisesRegex(ValueError,'snapshot'):validate_verified_code({'markdown_content':body},evidence)
+ def test_review_uses_final_article_without_duplicate_drafts(self):
+  cfg={'name':'Site','language':'ko','focus':'test'}
+  final={'title':'Final','markdown_content':'A checked statement.'}
+  data=json.loads(prompt('review',cfg,{'topic':'Useful','existing_article':{'markdown_content':'Stale body'}},
+      {'draft':{'title':'Prior draft'},'images':final,'evidence':[]}).split('INPUT DATA:\n')[1])
+  self.assertNotIn('previous',data)
+  self.assertNotIn('existing_article',data['request'])
+  self.assertEqual(data['final_article'],final)
+  self.assertFalse(data['verified_python_identity_checked'])

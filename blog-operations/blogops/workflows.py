@@ -96,7 +96,20 @@ def prompt(kind,cfg,payload,results):
       "experiment":"Propose one bounded experiment only from supplied measured data. Return {hypothesis,change,measurement,stop_conditions,insufficient_data:boolean}. Do not predict revenue or declare a winner without adequate data."
     }[kind]
     if kind=="review":
+        common.pop("previous")
+        common["request"]={key:value for key,value in request_payload.items() if key!="existing_article"}
         common["final_article"]=article_from(results)
+        validate_verified_code(common["final_article"],source)
+        common["verified_python_identity_checked"]=any(item.get("kind")=="operator_supplied_test_artifact"
+            and str(item.get("title","")).endswith(".py") for item in source)
+        instruction+=(" Keep the JSON concise: group related factual prose into at most 40 exact claim excerpts, "
+                      "using only the relevant source quote (at most 900 characters per quote). "
+                      "Do not repeat entire scripts or enumerate every code token as a separate claim. "
+                      "When verified_python_identity_checked is true, deterministic code has already confirmed the "
+                      "article Python block matches the supplied tested script byte for byte. Still review its stated "
+                      "behavior and limitations, prose, FAQs, and images for conflicts. Claims should cite exact excerpts "
+                      "from title, description, or markdown_content; report FAQ problems in issues. "
+                      "Do not drop unsupported claims to meet the output bound; use revise if coverage is inadequate.")
     return instruction+"\nINPUT DATA:\n"+json.dumps(common,ensure_ascii=False,default=str)
 
 def run_task(ident,store=None):
