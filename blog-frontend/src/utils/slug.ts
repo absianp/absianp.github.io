@@ -9,11 +9,12 @@ export function getCategorySlug(category: string = ''): string {
   if (normalized.includes('ai') || normalized.includes('생산성') || normalized.includes('productivity')) {
     return 'ai-productivity';
   }
-  if (normalized.includes('개발') || normalized.includes('테크') || normalized.includes('dev') || normalized.includes('tech')) {
-    return 'tech-dev';
-  }
+  // '재테크'에도 '테크'가 포함되므로 부업/재테크를 먼저 분류합니다.
   if (normalized.includes('부업') || normalized.includes('재테크') || normalized.includes('income')) {
     return 'side-income';
+  }
+  if (normalized.includes('개발') || normalized.includes('테크') || normalized.includes('dev') || normalized.includes('tech')) {
+    return 'tech-dev';
   }
   if (normalized.includes('마케팅') || normalized.includes('marketing')) {
     return 'marketing';

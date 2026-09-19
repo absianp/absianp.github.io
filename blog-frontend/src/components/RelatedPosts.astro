@@ -16,10 +16,15 @@ const {
 } = Astro.props;
 
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const normalizeTag = (tag: string) => tag.normalize('NFKC').toLowerCase().replace(/\s+/g, '');
+// Generic promotional tags should not make unrelated subjects appear relevant.
+const broadTags = new Set(['고단가수익', '재테크', '개발', 'ai', '스마트부업', '테크']);
+const topicTags = new Set(currentTags.map(normalizeTag).filter(tag => !broadTags.has(tag)));
+const hasUnfinishedNotes = (body: string) => /\[(?:💡|🔍)[^\]]*\]|^\s*TODO\s*:/m.test(body.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, ''));
 
 // 현재 글을 제외하고 연관도 점수 계산
 const scoredPosts = allPosts
-  .filter((post) => post.slug !== currentSlug)
+  .filter((post) => post.slug !== currentSlug && !hasUnfinishedNotes(post.body))
   .map((post) => {
     let score = 0;
     // 동일 카테고리 가중치 +3점
@@ -28,8 +33,8 @@ const scoredPosts = allPosts
     }
     // 공통 태그 가중치 각 +1점
     const postTags = post.data.tags || [];
-    const sharedTags = postTags.filter((t: string) => currentTags.includes(t));
-    score += sharedTags.length;
+    const sharedTags = new Set(postTags.map(normalizeTag).filter(tag => topicTags.has(tag)));
+    score += sharedTags.size * 4;
 
     return {
       post,
@@ -37,6 +42,7 @@ const scoredPosts = allPosts
       pubDate: post.data.pubDate.valueOf(),
     };
   })
+  .filter(item => item.score > 0)
   .sort((a, b) => {
     if (b.score !== a.score) {
       return b.score - a.score;

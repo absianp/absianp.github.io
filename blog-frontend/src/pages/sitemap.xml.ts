@@ -1,5 +1,6 @@
 import { getCollection } from 'astro:content';
 import { getCategorySlug } from '../utils/slug';
+import { POSTS_PER_PAGE, archivePath } from '../utils/archive';
 
 export async function GET(context: any) {
   const siteUrl = String(context.site || 'https://absianp.github.io').replace(/\/$/, '');
@@ -8,6 +9,10 @@ export async function GET(context: any) {
   const staticPages = [
     { url: '/', changefreq: 'daily', priority: '1.0' },
     { url: '/blog/', changefreq: 'daily', priority: '0.9' },
+    { url: '/start/', changefreq: 'monthly', priority: '0.8' },
+    ...Array.from({ length: Math.max(0, Math.ceil(posts.length / POSTS_PER_PAGE) - 1) }, (_, i) => ({
+      url: archivePath(i + 2), changefreq: 'weekly', priority: '0.7',
+    })),
     { url: '/about/', changefreq: 'monthly', priority: '0.7' },
     { url: '/privacy-policy/', changefreq: 'monthly', priority: '0.5' },
     { url: '/terms/', changefreq: 'monthly', priority: '0.5' },

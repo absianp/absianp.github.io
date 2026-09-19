@@ -19,6 +19,7 @@ const recentPosts = sortedPosts.slice(0, 12);
 const { primaryCategories, secondaryCategories } = await getDynamicCategories(3);
 
 const categories = [
+  { name: '처음이라면: 작업별 시작 안내', href: `${base}/start/` },
   { name: '전체 글', href: `${base}/blog/` },
   { name: '갤러리', href: `${base}/gallery/` },
   ...primaryCategories.map(c => ({ name: c.name, href: c.href })),
