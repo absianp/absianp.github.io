@@ -109,6 +109,8 @@ def prompt(kind,cfg,payload,results):
                       "article Python block matches the supplied tested script byte for byte. Still review its stated "
                       "behavior and limitations, prose, FAQs, and images for conflicts. Claims should cite exact excerpts "
                       "from title, description, or markdown_content; report FAQ problems in issues. "
+                      "For a source retrieval-date claim, quote its exact retrieved_at timestamp; "
+                      "this is collection metadata, not a date asserted by the webpage. "
                       "Do not drop unsupported claims to meet the output bound; use revise if coverage is inadequate.")
     return instruction+"\nINPUT DATA:\n"+json.dumps(common,ensure_ascii=False,default=str)
 

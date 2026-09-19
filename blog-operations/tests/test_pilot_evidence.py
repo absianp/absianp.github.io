@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
-from blogops.content import collect_evidence,local_evidence,validate_verified_code
+from blogops.content import collect_evidence,local_evidence,validate_verified_code,validate_review
 from blogops.workflows import create_workflow,prompt
 from blogops.store import Store
 
@@ -61,3 +61,14 @@ class PilotEvidenceTests(unittest.TestCase):
   self.assertNotIn('existing_article',data['request'])
   self.assertEqual(data['final_article'],final)
   self.assertFalse(data['verified_python_identity_checked'])
+ def test_retrieval_date_claim_traces_exact_recorded_timestamp(self):
+  stamp='2026-09-18T23:48:10.275275+00:00'
+  text='Sources were retrieved on 2026-09-18 UTC.'
+  article={'title':'Observed retrieval','description':'Collection details','category':'Guide','tags':[],'markdown_content':text,'faqs':[]}
+  source={'id':'official','text':'The official document explains an API operation.','retrieved_at':stamp,'title':'A page title that is not supporting evidence'}
+  review={'decision':'pass','rights':'clear','original_value':'Reproducible collection date','requires_expert_review':False,'coverage_checked':True,'issues':[],
+          'claims':[{'claim':text,'source_id':'official','quote':stamp,'assessment':'supported'}]}
+  validate_review(article,review,[source],'absian')
+  for quote in (stamp[:19],source['title'],'2026-09-19T23:48:10.275275+00:00'):
+   review['claims'][0]['quote']=quote
+   with self.assertRaisesRegex(ValueError,'traced'):validate_review(article,review,[source],'absian')

@@ -290,7 +290,15 @@ def validate_review(article,review,evidence,site):
         statement = claim.get("claim")
         if not isinstance(statement,str) or len(statement.strip())<8 or statement not in article_text:
             raise ValueError("Verified claim must identify an exact statement in the article")
-        if claim.get("assessment") != "supported" or not source or not isinstance(quote,str) or len(quote.strip())<12 or quote not in source["text"]:
+        # Retrieval dates describe our collection event, not the webpage prose.
+        # Accept only the exact recorded timestamp, never arbitrary metadata.
+        retrieval_quote=False
+        if source and isinstance(quote,str) and quote==source.get("retrieved_at"):
+            try:
+                retrieval_quote=datetime.fromisoformat(quote.replace("Z","+00:00")).tzinfo is not None
+            except ValueError:
+                pass
+        if claim.get("assessment") != "supported" or not source or not isinstance(quote,str) or len(quote.strip())<12 or (quote not in source["text"] and not retrieval_quote):
             raise ValueError("Claim evidence is missing or cannot be traced")
         covered.extend(line.strip() for line in claim_prose(statement).splitlines() if line.strip())
     prose = claim_prose(article_text)
